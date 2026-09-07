@@ -4,6 +4,7 @@ import { CapacityPicker } from "./Barns.jsx";
 import { CAPACITIES } from "./barns.js";
 import { uid, today } from "./model";
 import "./stretch.css";
+import StretchRefiner from "./StretchRefiner.jsx";
 
 export default function Stretch({ data, save, go }) {
   const [editor, setEditor] = useState(null),
@@ -447,6 +448,16 @@ export default function Stretch({ data, save, go }) {
                   honestly.
                 </p>
               </>
+            )}
+            {!finishing && (
+              <StretchRefiner
+                key={editor.id}
+                draft={editor}
+                data={data}
+                onApply={(suggestion) =>
+                  setEditor((current) => ({ ...current, ...suggestion }))
+                }
+              />
             )}
             <div className="form-actions">
               <Button

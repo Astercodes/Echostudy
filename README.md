@@ -40,7 +40,15 @@ Use **Record capacity evidence** inside a Barn to retain a separate dated self-a
 
 Run `node tests/barns-browser.cjs` against the fixture server to verify session tagging, evidence, filters, persistence and mobile layout.
 
-## Organizing goals
+## AI refinement in Stretch
+
+In **Shape your stretch**, fill any activity, ability or success field and choose **Refine with AI**. The three fields and selected goal/area/sub-area/capacities/duration are sent to OpenAI only on that action. A preview shows suggested text, which replaces only those three fields after **Apply suggestion**. Changing a draft makes older suggestions inapplicable. No completed results, uploaded resources, or full workspace are sent. Manual editing works when AI is unavailable.
+
+Set `OPENAI_API_KEY` as a **server-only** Vercel environment variable and redeploy. Never use a `VITE_` prefix for this secret. Optional `OPENAI_STRETCH_MODEL` defaults to `gpt-4.1-mini`. The `/api/refine-stretch` Vercel function verifies the user's Supabase bearer token before invoking OpenAI. Supabase environment overrides must match the frontend project. It uses the [Responses API with structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs), bounded input/output and timeouts, and `store: false` (this does not imply zero provider retention). The API key is never returned to the browser. Configure provider budget controls for this separately billed API usage. The 10-request/5-minute user throttle is per function instance and is not a durable global quota across scaling or cold starts.
+
+The plain Vite development server does not run Vercel functions: use Vercel's local runtime with these environment settings to exercise a live integration. Tests use mocked provider responses: `node --test tests/refine-api.test.js` and `node tests/refine-browser.cjs` against the fixture server. Production activation and live model response quality require an API key and deployment verification.
+
+## Working with goals
 
 Open **Goals → Life areas** to explore or edit the starting catalog. **Add life area** creates another area, with optional sub-areas and a palette color. Each area has **Add a goal**, while **New goal** is available at the top of the page. There is no one-goal-per-horizon limit. Use the + beside a goal to create another child goal at a shorter horizon.
 
