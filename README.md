@@ -8,7 +8,9 @@ Built with React, Vite, Lucide icons, PDF.js, and Supabase Auth. Designed for Ve
 
 The public route is a landing page. The dashboard is gated behind email/password sign-in, signup, email confirmation, password reset, and sign-out. Supabase Auth is integrated with the browser client. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in Vercel project settings; never add a service-role key to the frontend. Configure your Supabase Auth redirect URLs for `/login` and `/reset-password`.
 
-When those variables are absent, the landing page and account screens remain available but show a setup notice and do not expose the dashboard.
+EchoStudy includes its public Supabase project URL and publishable key in `src/auth.js`, so the production build works without extra Vercel variables. These are browser-visible settings, not administrative credentials. To use another project, override both environment variables together. A partial override disables account access rather than mixing credentials from different projects.
+
+Email confirmation is enabled on the connected project. In Supabase **Authentication → URL Configuration**, set **Site URL** to the production Vercel origin and allow that origin's `/login` and `/reset-password` URLs. New users must follow their confirmation email before signing in.
 
 ## What works
 
@@ -73,7 +75,7 @@ The fixture server uses port 5180. Set `ECHO_URL` for another server using the s
 1. Import the GitHub repository **Astercodes/Echostudy** into Vercel.
 2. Select the **Vite** framework preset.
 3. Use `npm run build` as the build command and `dist` as the output directory.
-4. Set the public Supabase variables described under Account access, then deploy. Without them, account access remains in setup mode.
+4. Deploy. The included public Supabase configuration enables account access. If overriding it, set both variables described under Account access. Configure the production email redirect URLs in Supabase.
 
 The checked-in `vercel.json` defines the build/output settings and SPA fallback. This repository does not create or use ChatGPT Sites infrastructure.
 
