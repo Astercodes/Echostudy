@@ -26,7 +26,15 @@ Email confirmation is enabled on the connected project. In Supabase **Authentica
 
 The initial day, goal hierarchy, and knowledge tree are **editable examples**, not claims about your habits or accomplishments. Progress starts at zero.
 
-## Life areas and goal organization
+## Barns: dimensions of capacity
+
+Open **Barns** to explore 16 capacities distinct from your life areas. Select multiple capacities in a goal or at the start of a study session. Completed sessions contribute focused minutes to each selected Barn, with the session's original life-area/sub-area context preserved. Totals overlap across Barns and should not be summed.
+
+Use **Record capacity evidence** inside a Barn to save a dated, contextual self-assessment: beginning with support, practising with guidance, applying independently, sustaining under complexity, or helping others develop. Include a concrete example and optionally link a completed study session. Filter by life area and sub-area to see its evidence history. Barn fill reflects the latest contextual assessment, not an automatic score from hours studied; different contexts are not directly comparable. Older untagged sessions stay unassigned. Evidence and tags are included in browser persistence and JSON backups, and existing workspaces remain compatible.
+
+Run `node tests/barns-browser.cjs` against the fixture server to verify session tagging, evidence, filters, persistence and mobile layout.
+
+## Organizing goals
 
 Open **Goals → Life areas** to explore or edit the starting catalog. **Add life area** creates another area, with optional sub-areas and a palette color. Each area has **Add a goal**, while **New goal** is available at the top of the page. There is no one-goal-per-horizon limit. Use the + beside a goal to create another child goal at a shorter horizon.
 

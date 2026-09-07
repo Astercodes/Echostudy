@@ -21,6 +21,7 @@ import {
 } from "./model";
 import { goalLocation, validateLifeArea } from "./life-areas";
 import "./goals.css";
+import { CapacityPicker } from "./Barns.jsx";
 
 const horizonLabels = {
   Year: "Yearly",
@@ -409,6 +410,7 @@ export default function Goals({ data, save, edit, create, notify }) {
           area={areaEditor}
           areas={areas}
           goals={data.goals}
+          evidence={data.capacityEvidence || []}
           close={() => setAreaEditor(null)}
           submit={(a) => {
             save((d) => ({
@@ -474,6 +476,10 @@ export function GoalModal({
           submit(next);
         }}
       >
+        <CapacityPicker
+          value={g.capacityIds || []}
+          onChange={(capacityIds) => setG({ ...g, capacityIds })}
+        />
         <Field label="What capacity or outcome are you building?">
           <input
             required
@@ -593,7 +599,7 @@ export function GoalModal({
   );
 }
 
-function LifeAreaModal({ area, areas, goals, close, submit }) {
+function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
   const [a, setA] = useState(area),
     [error, setError] = useState("");
   const updateSub = (id, name) =>
@@ -679,7 +685,7 @@ function LifeAreaModal({ area, areas, goals, close, submit }) {
         </div>
         <div className="sub-area-editor">
           {a.subAreas.map((s, i) => {
-            const used = goals.some(
+            const used = [...goals, ...evidence].some(
               (g) => g.areaId === a.id && g.subAreaId === s.id,
             );
             return (
@@ -701,7 +707,7 @@ function LifeAreaModal({ area, areas, goals, close, submit }) {
                   disabled={used}
                   title={
                     used
-                      ? "Move the goals in this sub-area before removing it."
+                      ? "Move linked goals and Barns evidence before removing this sub-area."
                       : "Remove sub-area"
                   }
                   onClick={() =>

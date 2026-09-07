@@ -1,4 +1,5 @@
 import { migrateWorkspace, validateLifeArea } from "./life-areas.js";
+import { validateBarns } from "./barns.js";
 export { migrateWorkspace } from "./life-areas.js";
 
 export const COLORS = [
@@ -420,6 +421,7 @@ export function validateBackup(s) {
     new Set(a.map((x) => x.id)).size === a.length;
   if (![s.goals, s.concepts, s.sessions, s.notes, s.resources].every(unique))
     return false;
+  if (!validateBarns(s)) return false;
   if (s.version === 2) {
     if (
       !Array.isArray(s.lifeAreas) ||

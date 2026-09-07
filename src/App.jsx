@@ -68,6 +68,7 @@ import { putFile, getFile } from "./files";
 import Knowledge from "./Knowledge";
 import Resources from "./Resources";
 import Goals, { GoalModal } from "./Goals";
+import Barns, { CapacityPicker } from "./Barns.jsx";
 import { workspaceKey } from "./auth";
 const NAV = [
   ["Today", LayoutDashboard],
@@ -78,6 +79,7 @@ const NAV = [
   ["Resource library", Library],
   ["Reflection", NotebookPen],
   ["Growth", ChartNoAxesCombined],
+  ["Barns", Library],
 ];
 const KINDS = {
   deep: ["Deep study", "#00B7C7"],
@@ -494,38 +496,42 @@ export default function App({ user, onSignOut }) {
                 })}
               </div>
               <h1>
-                {page === "Today"
-                  ? "Make room for becoming."
-                  : page === "Knowledge tree"
-                    ? "A mind that keeps growing."
-                    : page === "Goals"
-                      ? "Give your growth direction."
-                      : page === "Study workspace"
-                        ? "Go a little deeper."
-                        : page === "Reflection"
-                          ? "Turn experience into wisdom."
-                          : page === "Growth"
-                            ? "Small steps. Lasting capacity."
-                            : page === "Resource library"
-                              ? "Good ideas belong together."
-                              : "Your day, with intention."}
+                {page === "Barns"
+                  ? "Room for greater capacity."
+                  : page === "Today"
+                    ? "Make room for becoming."
+                    : page === "Knowledge tree"
+                      ? "A mind that keeps growing."
+                      : page === "Goals"
+                        ? "Give your growth direction."
+                        : page === "Study workspace"
+                          ? "Go a little deeper."
+                          : page === "Reflection"
+                            ? "Turn experience into wisdom."
+                            : page === "Growth"
+                              ? "Small steps. Lasting capacity."
+                              : page === "Resource library"
+                                ? "Good ideas belong together."
+                                : "Your day, with intention."}
               </h1>
               <p>
-                {page === "Today"
-                  ? "A purposeful day. A focused mind. A stronger you."
-                  : page === "Knowledge tree"
-                    ? "Let ideas take root, branch out, and find unexpected connections."
-                    : page === "Goals"
-                      ? "Connect what you do today to who you are becoming."
-                      : page === "24-hour planner"
-                        ? "Protect your essentials. Find realistic space to learn and grow."
-                        : page === "Resource library"
-                          ? "Read, highlight, and give every insight a place in your knowledge."
-                          : page === "Growth"
-                            ? "Measure focused effort, connected knowledge, and the habits you are building."
-                            : page === "Reflection"
-                              ? "Pause, connect the dots, and carry one lesson into tomorrow."
-                              : "One objective. Your full attention. Meaningful progress."}
+                {page === "Barns"
+                  ? "Sixteen dimensions. Every life area. Evidence of becoming."
+                  : page === "Today"
+                    ? "A purposeful day. A focused mind. A stronger you."
+                    : page === "Knowledge tree"
+                      ? "Let ideas take root, branch out, and find unexpected connections."
+                      : page === "Goals"
+                        ? "Connect what you do today to who you are becoming."
+                        : page === "24-hour planner"
+                          ? "Protect your essentials. Find realistic space to learn and grow."
+                          : page === "Resource library"
+                            ? "Read, highlight, and give every insight a place in your knowledge."
+                            : page === "Growth"
+                              ? "Measure focused effort, connected knowledge, and the habits you are building."
+                              : page === "Reflection"
+                                ? "Pause, connect the dots, and carry one lesson into tomorrow."
+                                : "One objective. Your full attention. Meaningful progress."}
               </p>
             </div>
             <div className="heading-actions">
@@ -896,6 +902,7 @@ export default function App({ user, onSignOut }) {
             <Reflection data={data} save={save} date={date} notify={notify} />
           )}
           {page === "Growth" && <Growth data={data} />}
+          {page === "Barns" && <Barns data={data} save={save} />}
           <footer className="page-footer">
             <Sprout size={15} /> Time → goals → study → knowledge → reflection →
             growth <span>One connected life.</span>
@@ -1337,6 +1344,9 @@ function SessionModal({ block, data, close, submit }) {
     [topic, setTopic] = useState(block?.title || ""),
     [concept, setConcept] = useState(""),
     [resource, setResource] = useState("");
+  const [capacityIds, setCapacityIds] = useState(
+    data.goals.find((g) => g.id === block?.goalId)?.capacityIds || [],
+  );
   return (
     <Modal title="Begin with an intention" onClose={close}>
       <form
@@ -1350,6 +1360,9 @@ function SessionModal({ block, data, close, submit }) {
             topic,
             objective,
             goalId: goal,
+            capacityIds,
+            areaId: data.goals.find((g) => g.id === goal)?.areaId || "",
+            subAreaId: data.goals.find((g) => g.id === goal)?.subAreaId || "",
             conceptId: concept,
             resourceId: resource,
             planned: mins,
@@ -1381,10 +1394,16 @@ function SessionModal({ block, data, close, submit }) {
             required
             goals={data.goals}
             value={goal}
-            onChange={setGoal}
+            onChange={(id) => {
+              setGoal(id);
+              setCapacityIds(
+                data.goals.find((g) => g.id === id)?.capacityIds || [],
+              );
+            }}
           />
         </Field>
         <GoalTrail id={goal} goals={data.goals} />
+        <CapacityPicker value={capacityIds} onChange={setCapacityIds} />
         <div className="form-grid">
           <Field label="Planned focus (minutes)">
             <input
