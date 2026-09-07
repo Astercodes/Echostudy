@@ -44,20 +44,20 @@ const {
     });
     await enterWorkspace(page);
     await page.getByRole("button", { name: "Goals", exact: true }).click();
-    await page.getByText("291 sub-areas", { exact: true }).waitFor();
+    await page.getByText("428 sub-areas", { exact: true }).waitFor();
     const state = () =>
       page.evaluate((key) => JSON.parse(localStorage.getItem(key)), key);
     let saved = await state();
     assert.equal(saved.version, 2);
     assert.equal(saved.goals.find((g) => g.id === "g5").progress, 35);
     assert.equal(saved.goals.find((g) => g.id === "g5").parent, "g4");
-    assert.equal(saved.lifeAreas.length, 16);
+    assert.equal(saved.lifeAreas.length, 24);
     assert.ok(validateBackup(saved));
     console.log(
       "PASS existing account automatically migrates without losing goal progress or hierarchy",
     );
     await page.getByRole("button", { name: /^Life areas / }).click();
-    assert.equal(await page.locator(".life-area-card").count(), 16);
+    assert.equal(await page.locator(".life-area-card").count(), 24);
     await page.screenshot({
       path: "test-results/life-areas-desktop.png",
       fullPage: true,
@@ -81,7 +81,7 @@ const {
     await page
       .getByRole("button", { name: "Save life area", exact: true })
       .click();
-    assert.equal(await page.locator(".life-area-card").count(), 17);
+    assert.equal(await page.locator(".life-area-card").count(), 25);
     const levels = ["Year", "Quarter", "Month", "Week", "Day"];
     for (let index = 0; index < levels.length; index++)
       for (let chain = 1; chain <= 2; chain++) {
@@ -133,14 +133,12 @@ const {
     console.log(
       "PASS custom area, sub-areas, and two complete yearly-to-daily goal chains",
     );
-    const card = page
-      .locator(".life-area-card")
-      .filter({
-        has: page.getByRole("heading", {
-          name: "Creative scholarship",
-          exact: true,
-        }),
-      });
+    const card = page.locator(".life-area-card").filter({
+      has: page.getByRole("heading", {
+        name: "Creative scholarship",
+        exact: true,
+      }),
+    });
     await card.getByRole("button", { name: "Edit area & sub-areas" }).click();
     await page
       .getByLabel("Life area name", { exact: true })
@@ -171,7 +169,7 @@ const {
       ),
     );
     saved = await state();
-    assert.equal(saved.lifeAreas.length, 17);
+    assert.equal(saved.lifeAreas.length, 25);
     assert.ok(validateBackup(saved));
     console.log(
       "PASS renames preserve links, referenced sub-areas cannot be removed, and filters survive data reload",
@@ -193,7 +191,7 @@ const {
     const exported = JSON.parse(
       await fs.readFile(await download.path(), "utf8"),
     );
-    assert.equal(exported.lifeAreas.length, 17);
+    assert.equal(exported.lifeAreas.length, 25);
     assert.ok(validateBackup(exported));
     await page
       .getByRole("dialog")
@@ -207,7 +205,7 @@ const {
       .getByRole("button", { name: "Restore backup", exact: true })
       .click();
     await page.waitForFunction(
-      (key) => JSON.parse(localStorage.getItem(key)).lifeAreas.length === 17,
+      (key) => JSON.parse(localStorage.getItem(key)).lifeAreas.length === 25,
       key,
     );
     console.log(

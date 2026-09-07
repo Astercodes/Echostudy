@@ -177,7 +177,7 @@ export default function Goals({ data, save, edit, create, notify }) {
       {tab === "areas" ? (
         <>
           <p className="muted">
-            Your 16 starting areas are editable. Rename them, add your own, and
+            Your starting areas are editable. Rename them, add your own, and
             grow the sub-areas that matter to you.
           </p>
           <div className="life-area-grid">

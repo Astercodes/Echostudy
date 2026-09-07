@@ -13,12 +13,12 @@ import {
   validateLifeArea,
 } from "../src/life-areas.js";
 
-test("16 areas contain all 291 supplied sub-areas, preserving repeated names across areas", () => {
+test("24 areas contain the original catalog plus the expanded life coverage", () => {
   const areas = createDefaultLifeAreas();
-  assert.equal(areas.length, 16);
+  assert.equal(areas.length, 24);
   assert.equal(
     areas.reduce((n, a) => n + a.subAreas.length, 0),
-    291,
+    428,
   );
   assert.ok(
     areas.every(
@@ -74,7 +74,7 @@ test("custom areas and multiple goals at every horizon survive JSON backup round
   const state = initialState();
   const custom = {
     id: "custom-area",
-    name: "Leadership & influence",
+    name: "My custom leadership practice",
     color: "#B00C60",
     subAreas: [{ id: "sub-1", name: "Public service" }],
   };
@@ -101,7 +101,7 @@ test("custom areas and multiple goals at every horizon survive JSON backup round
     }
   const restored = migrateWorkspace(JSON.parse(JSON.stringify(state)));
   assert.equal(validateBackup(restored), true);
-  assert.equal(restored.lifeAreas.length, 17);
+  assert.equal(restored.lifeAreas.length, 25);
   assert.equal(restored.goals.filter((g) => g.areaId === custom.id).length, 10);
   assert.equal(goalProgress("goal-0-0", restored.goals), 20);
   assert.equal(goalProgress("goal-1-0", restored.goals), 80);

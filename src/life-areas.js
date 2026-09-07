@@ -1,4 +1,5 @@
-// The supplied list, grouped into 16 major areas. Repeated sub-area names
+import { expandLifeAreas } from "./life-area-expansion.js";
+// The original supplied list, grouped into 16 major areas. Repeated sub-area names
 // intentionally belong to different areas (for example, Communication).
 const catalog = [
   [
@@ -407,12 +408,17 @@ const catalog = [
 ];
 
 export function createDefaultLifeAreas() {
-  return catalog.map(([id, name, color, names]) => ({
-    id,
-    name,
-    color,
-    subAreas: names.map((name, index) => ({ id: `${id}-${index + 1}`, name })),
-  }));
+  return expandLifeAreas(
+    catalog.map(([id, name, color, names]) => ({
+      id,
+      name,
+      color,
+      subAreas: names.map((name, index) => ({
+        id: `${id}-${index + 1}`,
+        name,
+      })),
+    })),
+  );
 }
 
 export const LEGACY_GOAL_AREAS = [
@@ -427,11 +433,19 @@ export const LEGACY_GOAL_AREAS = [
 // Migration is additive: existing goals, relationships, progress and session
 // references retain their IDs. Existing version-2 areas are never reseeded.
 export function migrateWorkspace(state) {
-  if (state.version === 2) return state;
+  if (state.version === 2)
+    return state.lifeAreaCatalogRevision >= 2
+      ? state
+      : {
+          ...state,
+          lifeAreaCatalogRevision: 2,
+          lifeAreas: expandLifeAreas(state.lifeAreas),
+        };
   if (state.version !== 1) throw new Error("Unsupported workspace version.");
   return {
     ...state,
     version: 2,
+    lifeAreaCatalogRevision: 2,
     lifeAreas: createDefaultLifeAreas(),
     goals: state.goals.map(({ domain, ...goal }) => ({
       ...goal,
