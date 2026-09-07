@@ -2,7 +2,13 @@
 
 An intentional learning workspace that connects **time → goals → study objectives → knowledge → reflection → growth**.
 
-Built with React, Vite, Lucide icons, and PDF.js. Designed for Vercel, with citrus-inspired accents and an organic knowledge tree.
+Built with React, Vite, Lucide icons, PDF.js, and Supabase Auth. Designed for Vercel, with the supplied citrus palette and an organic knowledge tree.
+
+## Account access
+
+The public route is a landing page. The dashboard is gated behind email/password sign-in, signup, email confirmation, password reset, and sign-out. Supabase Auth is integrated with the browser client. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in Vercel project settings; never add a service-role key to the frontend. Configure your Supabase Auth redirect URLs for `/login` and `/reset-password`.
+
+When those variables are absent, the landing page and account screens remain available but show a setup notice and do not expose the dashboard.
 
 ## What works
 
@@ -14,7 +20,7 @@ Built with React, Vite, Lucide icons, and PDF.js. Designed for Vercel, with citr
 - **Knowledge suggestions:** transparent rules identify declared prerequisite gaps, developing concepts, missing cross-links, unapplied concepts, and overdue reviews.
 - **Resource library:** upload PDF, TXT, Markdown-as-text, audio, or video; save external URLs. PDF.js renders PDFs with selectable text. Selected PDF passages retain highlights across pages and reloads. Text selections can become connected notes. Audio/video play in the browser.
 - **Reflection and growth:** daily reflection, session history, focused versus planned minutes over the last seven days, and goal progress.
-- **Persistence and backups:** browser localStorage for workspace data, IndexedDB for uploaded files, JSON export/import with schema and cycle checks.
+- **Persistence and backups:** browser localStorage for workspace data, IndexedDB for uploaded files, JSON export/import with schema and cycle checks. Workspace and file storage are namespaced by the authenticated user ID.
 
 The initial day, goal hierarchy, and knowledge tree are **editable examples**, not claims about your habits or accomplishments. Progress starts at zero.
 
@@ -64,7 +70,7 @@ The checked-in `vercel.json` defines the build/output settings and SPA fallback.
 
 ## Storage and current boundaries
 
-This is a functional **single-device first version**, with no server, authentication, or cloud synchronization. Each browser/origin has its own workspace. Preview URLs and production URLs have separate storage.
+This is a functional **single-device first version** with account-gated access. EchoStudy uses Supabase only for authentication; study data and uploaded files remain in the browser and are not cloud-synchronized. Each browser/origin has its own workspace. Preview URLs and production URLs have separate storage.
 
 - Export backups regularly. Clearing site data removes your workspace.
 - JSON exports include notes, sessions, and resource metadata **but not uploaded file bytes**. Keep original files and reattach them from the reader after restoring on another device.

@@ -1,11 +1,19 @@
 export const COLORS = [
-  "#199181",
-  "#EB4E5E",
-  "#FB973B",
-  "#6BAF9B",
-  "#BF0034",
-  "#F97958",
+  "#00B7C7",
+  "#B00C60",
+  "#658D10",
+  "#D7E525",
+  "#BFF5F5",
+  "#FADF96",
 ];
+export const readableAccent = (color) =>
+  ({
+    "#00B7C7": "#006874",
+    "#658D10": "#49680B",
+    "#D7E525": "#52600A",
+    "#BFF5F5": "#17636B",
+    "#FADF96": "#745A15",
+  })[color] || color;
 export const DOMAINS = [
   "Mind & expertise",
   "Spirit & faith",

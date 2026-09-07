@@ -1,7 +1,14 @@
-const DB = "echostudy-files";
+let namespace = null;
+export function setFileNamespace(id) {
+  namespace = id;
+}
 function open() {
   return new Promise((resolve, reject) => {
-    const r = indexedDB.open(DB, 1);
+    if (!namespace) {
+      reject(new Error("Sign in to access resource files."));
+      return;
+    }
+    const r = indexedDB.open("echostudy-files:" + namespace, 1);
     r.onupgradeneeded = () => r.result.createObjectStore("files");
     r.onsuccess = () => resolve(r.result);
     r.onerror = () => reject(r.error);

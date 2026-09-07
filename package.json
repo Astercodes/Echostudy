@@ -12,6 +12,7 @@
     "format": "prettier --write src tests index.html package.json vercel.json README.md"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.115.0",
     "lucide-react": "^0.468.0",
     "pdfjs-dist": "^5.4.54",
     "react": "^19.1.1",

@@ -43,9 +43,11 @@ import {
   Heart,
   Save,
   Flag,
+  LogOut,
 } from "lucide-react";
 import {
   COLORS,
+  readableAccent,
   DOMAINS,
   LEVELS,
   uid,
@@ -65,6 +67,7 @@ import {
 import { putFile, getFile } from "./files";
 import Knowledge from "./Knowledge";
 import Resources from "./Resources";
+import { workspaceKey } from "./auth";
 const NAV = [
   ["Today", LayoutDashboard],
   ["24-hour planner", CalendarDays],
@@ -76,26 +79,25 @@ const NAV = [
   ["Growth", ChartNoAxesCombined],
 ];
 const KINDS = {
-  deep: ["Deep study", "#199181"],
-  light: ["Light study", "#6BAF9B"],
-  reflection: ["Reflection", "#EB4E5E"],
-  recovery: ["Recovery", "#babfae"],
-  life: ["Life", "#FB973B"],
-  fixed: ["Commitment", "#8b99a0"],
+  deep: ["Deep study", "#00B7C7"],
+  light: ["Light study", "#658D10"],
+  reflection: ["Reflection", "#B00C60"],
+  recovery: ["Recovery", "#ADCBCD"],
+  life: ["Life", "#D7E525"],
+  fixed: ["Commitment", "#5D787B"],
 };
-const KEY = "echostudy-v1";
-function read() {
+function read(key) {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(key);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (validateBackup(parsed)) return parsed;
+      if (validateBackup(parsed)) return { data: parsed, error: false };
       throw Error("Invalid saved data");
     }
-  } catch (e) {
-    window.echoLoadError = true;
+  } catch {
+    return { data: initialState(), error: true };
   }
-  return initialState();
+  return { data: initialState(), error: false };
 }
 export function Button({ children, primary = false, onClick, ...props }) {
   return (
@@ -112,7 +114,9 @@ export function Badge({ children, color }) {
   return (
     <span
       className="badge"
-      style={color ? { color, background: color + "15" } : {}}
+      style={
+        color ? { color: readableAccent(color), background: color + "25" } : {}
+      }
     >
       {children}
     </span>
@@ -219,8 +223,13 @@ export function GoalTrail({ id, goals }) {
     </div>
   );
 }
-export default function App() {
-  const [data, setData] = useState(read),
+export default function App({ user, onSignOut }) {
+  const KEY = workspaceKey(user.id);
+  const displayName =
+    user.user_metadata?.full_name || user.email?.split("@")[0] || "Your space";
+  const [loaded] = useState(() => read(KEY));
+  const [loadError, setLoadError] = useState(loaded.error);
+  const [data, setData] = useState(loaded.data),
     [page, setPage] = useState("Today"),
     [date, setDate] = useState(today()),
     [modal, setModal] = useState(null),
@@ -228,12 +237,35 @@ export default function App() {
     [mobile, setMobile] = useState(false),
     [query, setQuery] = useState(""),
     [tick, setTick] = useState(Date.now());
+  const latestData = useRef(data);
+  latestData.current = data;
+  useEffect(
+    () => () => {
+      const current = latestData.current;
+      if (current.timer?.started && !loadError) {
+        const timer = {
+          ...current.timer,
+          elapsed: focusedMs(current.timer),
+          started: null,
+          pauses: [
+            ...current.timer.pauses,
+            { start: Date.now(), end: null, reason: "account-exit" },
+          ],
+        };
+        try {
+          localStorage.setItem(KEY, JSON.stringify({ ...current, timer }));
+        } catch {
+          /* Existing data remains intact when storage is unavailable. */
+        }
+      }
+    },
+    [KEY, loadError],
+  );
   const save = (d) =>
     setData((prev) => (typeof d === "function" ? d(prev) : d));
   useEffect(() => {
     try {
-      if (!window.echoLoadError)
-        localStorage.setItem(KEY, JSON.stringify(data));
+      if (!loadError) localStorage.setItem(KEY, JSON.stringify(data));
     } catch (e) {
       setToast(
         "Storage is full or unavailable. Export a backup before leaving.",
@@ -241,7 +273,7 @@ export default function App() {
     }
   }, [data]);
   useEffect(() => {
-    if (window.echoLoadError)
+    if (loadError)
       setToast(
         "Saved data could not be loaded. Export or recover it in Settings before replacing it.",
       );
@@ -378,10 +410,23 @@ export default function App() {
             <Settings size={18} />
             Settings & backup
           </button>
+          <button
+            className="nav-item"
+            onClick={async () => {
+              try {
+                await onSignOut();
+              } catch (error) {
+                notify("Could not sign out: " + error.message);
+              }
+            }}
+          >
+            <LogOut size={18} />
+            Sign out
+          </button>
           <div className="profile">
-            <div className="avatar">Y</div>
+            <div className="avatar">{displayName[0].toUpperCase()}</div>
             <div>
-              <strong>Your personal space</strong>
+              <strong>{displayName}</strong>
               <small>Growing, one day at a time</small>
             </div>
             <Leaf size={16} />
@@ -431,7 +476,7 @@ export default function App() {
               <span />
               Saved on this device
             </span>
-            <div className="avatar small">Y</div>
+            <div className="avatar small">{displayName[0].toUpperCase()}</div>
           </div>
         </header>
         <main>
@@ -549,14 +594,14 @@ export default function App() {
                   label="Study planned"
                   value={duration(planned)}
                   foot={studyBlocks.length + " intentional study windows"}
-                  color="#199181"
+                  color="#00B7C7"
                 />
                 <Stat
                   icon={Flame}
                   label="Focused today"
                   value={duration(actual)}
                   foot={sessions.length + " completed sessions"}
-                  color="#FB973B"
+                  color="#D7E525"
                 />
                 <Stat
                   icon={Network}
@@ -568,14 +613,14 @@ export default function App() {
                       0,
                     ) + " cross-concept connections"
                   }
-                  color="#EB4E5E"
+                  color="#B00C60"
                 />
                 <Stat
                   icon={Target}
                   label="Goals in motion"
                   value={data.goals.filter((g) => g.level === "Week").length}
                   foot="Weekly priorities with a purpose"
-                  color="#6BAF9B"
+                  color="#658D10"
                 />
               </div>
               <div className="dashboard-grid">
@@ -659,7 +704,7 @@ export default function App() {
                           <Lightbulb size={19} /> A connection to explore
                         </h2>
                       </div>
-                      <Badge color="#d16a33">PREREQUISITE GAP</Badge>
+                      <Badge color="#7C5C14">PREREQUISITE GAP</Badge>
                       <h3>
                         {insights(data.concepts)[0]?.title ||
                           "Give an idea a new connection"}
@@ -978,7 +1023,7 @@ export default function App() {
               }}
             />
           </Field>
-          {window.echoLoadError && (
+          {loadError && (
             <Button
               onClick={() => {
                 const blob = new Blob([localStorage.getItem(KEY) || ""], {
@@ -1009,7 +1054,7 @@ export default function App() {
             <Button
               primary
               onClick={() => {
-                window.echoLoadError = false;
+                setLoadError(false);
                 save({
                   ...modal.data,
                   timer: null,
@@ -1101,7 +1146,7 @@ function Planner({ blocks, data, date, update, edit, start, notify }) {
       </div>
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
-        <Badge color="#d16a33">{duration(1440 - booked)} open</Badge>
+        <Badge color="#7C5C14">{duration(1440 - booked)} open</Badge>
         <span>
           Blocks run from midnight to midnight. Edit any block to make this day
           yours.
@@ -1284,7 +1329,10 @@ function Goals({ data, save, edit }) {
   const render = (g, depth = 0) => (
     <div className="goal-node" key={g.id} style={{ "--depth": depth }}>
       <div className="goal-row">
-        <span className="goal-type" style={{ color: COLORS[g.domain] }}>
+        <span
+          className="goal-type"
+          style={{ color: readableAccent(COLORS[g.domain]) }}
+        >
           {g.level}
         </span>
         <div className="goal-main">
@@ -1641,7 +1689,7 @@ function Study({ data, save, tick, start, finish, go }) {
   return (
     <div className={focus ? "study-area distraction-free" : "study-area"}>
       <div className="section-head">
-        <Badge color="#199181">
+        <Badge color="#00B7C7">
           {t.started ? "FOCUS IN PROGRESS" : "PAUSED · TAKE A BREATH"}
         </Badge>
         <button className="text-btn" onClick={() => setFocus(!focus)}>
@@ -1941,21 +1989,21 @@ function Growth({ data }) {
             duration(days.reduce((n, d) => n + d.planned, 0)) +
             " planned"
           }
-          color="#199181"
+          color="#00B7C7"
         />
         <Stat
           icon={CheckCircle2}
           label="Study sessions"
           value={data.sessions.length}
           foot="All-time completed sessions"
-          color="#FB973B"
+          color="#D7E525"
         />
         <Stat
           icon={Network}
           label="Confident concepts"
           value={data.concepts.filter((c) => c.status === "Confident").length}
           foot="Self-assessed understanding"
-          color="#EB4E5E"
+          color="#B00C60"
         />
         <Stat
           icon={NotebookPen}
@@ -1964,7 +2012,7 @@ function Growth({ data }) {
             Object.values(data.reflections).filter((r) => r.savedAt).length
           }
           foot="Learning carried forward"
-          color="#6BAF9B"
+          color="#658D10"
         />
       </div>
       <section className="card growth-chart">
@@ -1975,11 +2023,11 @@ function Growth({ data }) {
           </div>
           <div className="tree-legend">
             <span>
-              <i style={{ background: "#dce6df" }} />
+              <i style={{ background: "#F0FAF9" }} />
               Planned
             </span>
             <span>
-              <i style={{ background: "#199181" }} />
+              <i style={{ background: "#00B7C7" }} />
               Focused
             </span>
           </div>
@@ -1996,7 +2044,7 @@ function Growth({ data }) {
                 <div
                   style={{
                     height: (d.actual / max) * 180,
-                    background: "#199181",
+                    background: "#00B7C7",
                   }}
                   title={"Focused: " + Math.round(d.actual) + " minutes"}
                 />

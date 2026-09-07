@@ -12,7 +12,7 @@ import {
   Search,
   Sprout,
 } from "lucide-react";
-import { COLORS, DOMAINS, uid, insights } from "./model";
+import { COLORS, DOMAINS, uid, insights, readableAccent } from "./model";
 import { Button, Badge, Modal, Field } from "./App";
 function layout(nodes) {
   const map = new Map(),
@@ -220,7 +220,7 @@ export default function Knowledge({ data, save, compact = false, notify }) {
                             " " +
                             b.y
                           }
-                          stroke="#9cac9e"
+                          stroke="#5D787B"
                           strokeWidth="1.5"
                           strokeDasharray="5 7"
                           fill="none"
@@ -275,12 +275,12 @@ export default function Knowledge({ data, save, compact = false, notify }) {
                             width="156"
                             height="56"
                             rx="19"
-                            fill="#173f35"
+                            fill="#143F45"
                           />
                           <text
                             textAnchor="middle"
                             y="5"
-                            fill="#fff"
+                            fill="#FFFFFF"
                             fontSize="16"
                             fontWeight="600"
                           >
@@ -298,7 +298,7 @@ export default function Knowledge({ data, save, compact = false, notify }) {
                             fill={
                               selected === c.id
                                 ? COLORS[c.domain] + "25"
-                                : "#fafbf5"
+                                : "#F5FDFB"
                             }
                             stroke={
                               selected === c.id ? COLORS[c.domain] : "none"
@@ -307,7 +307,11 @@ export default function Knowledge({ data, save, compact = false, notify }) {
                           <text
                             textAnchor="middle"
                             y="4"
-                            fill={branch ? COLORS[c.domain] : "#39493e"}
+                            fill={
+                              branch
+                                ? readableAccent(COLORS[c.domain])
+                                : "#143F45"
+                            }
                             fontSize={
                               compact ? (branch ? 22 : 19) : branch ? 18 : 16
                             }
@@ -484,7 +488,7 @@ export default function Knowledge({ data, save, compact = false, notify }) {
           <div className="insight-grid">
             {suggestions.map((s) => (
               <section className="card insight-mini" key={s.id}>
-                <Badge color="#d16a33">{s.type}</Badge>
+                <Badge color="#7C5C14">{s.type}</Badge>
                 <h3>{s.title}</h3>
                 <p>{s.body}</p>
                 <button

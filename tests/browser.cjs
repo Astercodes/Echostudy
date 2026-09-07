@@ -1,3 +1,4 @@
+const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
 const { chromium } = require("playwright");
 const assert = require("node:assert/strict");
 const path = require("node:path");
@@ -13,7 +14,11 @@ const fs = require("node:fs/promises");
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto(process.env.ECHO_URL || "http://127.0.0.1:5173");
+  await installAuthMock(page);
+  await page.goto(process.env.ECHO_URL || "http://127.0.0.1:5180", {
+    waitUntil: "domcontentloaded",
+  });
+  await enterWorkspace(page);
   await page
     .getByRole("heading", { name: "Make room for becoming." })
     .waitFor();
@@ -53,7 +58,9 @@ const fs = require("node:fs/promises");
     .getByRole("button", { name: "Complete session", exact: true })
     .click();
   const state = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("echostudy-v1")),
+    JSON.parse(
+      localStorage.getItem("echostudy-v1:11111111-1111-4111-8111-111111111111"),
+    ),
   );
   assert.equal(state.sessions.length, 1);
   assert.ok(state.sessions[0].actualMs >= 1000);

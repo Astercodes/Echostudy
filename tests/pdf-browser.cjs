@@ -1,3 +1,4 @@
+const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
 const { chromium } = require("playwright");
 const { PDFDocument, StandardFonts } = require("pdf-lib");
 const assert = require("node:assert/strict");
@@ -30,7 +31,11 @@ const assert = require("node:assert/strict");
   });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto(process.env.ECHO_URL || "http://127.0.0.1:5173");
+  await installAuthMock(page);
+  await page.goto(process.env.ECHO_URL || "http://127.0.0.1:5180", {
+    waitUntil: "domcontentloaded",
+  });
+  await enterWorkspace(page);
   await page
     .getByRole("button", { name: "Resource library", exact: true })
     .click();
