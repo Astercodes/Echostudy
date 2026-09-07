@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { CAPACITIES, STAGES, capacitySummary } from "./barns.js";
+import {
+  CAPACITIES,
+  STAGES,
+  capacitySummary,
+  capacityProgress,
+} from "./barns.js";
 import { COLORS, readableAccent, uid, today } from "./model";
 import { Button, Modal, Field } from "./App";
 import "./barns.css";
@@ -33,34 +38,40 @@ export function CapacityPicker({ value = [], onChange }) {
     </fieldset>
   );
 }
-function Barn({ stage, color }) {
+function Barn({ percent, color }) {
   return (
-    <svg viewBox="0 0 120 110" className="barn-icon" aria-hidden="true">
-      <path
-        d="M12 45 60 8 108 45V102H12Z"
-        fill={color + "22"}
-        stroke={color}
-        strokeWidth="3"
-      />
-      <path
-        d="M2 47 60 2 118 47"
-        fill="none"
-        stroke={color}
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
-      {Array.from({ length: 5 }, (_, i) => (
-        <rect
-          key={i}
-          x="26"
-          y={86 - i * 13}
-          width="68"
-          height="9"
-          rx="3"
-          fill={i < stage ? color : "#dce9e6"}
-        />
-      ))}
-    </svg>
+    <div
+      className="capacity-cup"
+      style={{ "--water": color }}
+      aria-hidden="true"
+    >
+      <i className="water-drop" />
+      <i className="water-drop second" />
+      <div className="cup-glass">
+        <div className="cup-water" style={{ height: percent + "%" }}>
+          <i />
+        </div>
+        <span className="cup-shine" />
+      </div>
+      <span className="cup-handle" />
+    </div>
+  );
+}
+function ProgressVisual({ s, color }) {
+  return (
+    <div className="capacity-visual">
+      <Barn percent={s.percent} color={color} />
+      <div
+        className="capacity-pie"
+        role="img"
+        aria-label={`${s.percent}% milestone progress: ${s.study.toFixed(1)} percentage points from study, ${s.goal.toFixed(1)} from goals`}
+        style={{
+          background: `conic-gradient(${color} 0 ${s.study}%, #D7E525 ${s.study}% ${s.study + s.goal}%, #e6efeb ${s.study + s.goal}% 100%)`,
+        }}
+      >
+        <span>{s.percent}%</span>
+      </div>
+    </div>
   );
 }
 export default function Barns({ data, save }) {
@@ -69,7 +80,7 @@ export default function Barns({ data, save }) {
     [selected, setSelected] = useState(null),
     [editing, setEditing] = useState(null);
   const area = data.lifeAreas.find((a) => a.id === areaId);
-  const stats = (id) => capacitySummary(data, id, areaId, subAreaId);
+  const stats = (id) => capacityProgress(data, id, areaId, subAreaId);
   const add = (capacityId) =>
     setEditing({
       id: uid(),
@@ -92,10 +103,25 @@ export default function Barns({ data, save }) {
           emotional, relational, spiritual and communication capacity together.
         </p>
         <p className="muted">
-          Focused time measures investment. Evidence-backed self-assessments
-          describe capacity in a specific context; they are not objective scores
-          or measures of personal worth.
+          Watch your cups fill as you complete study and achieve goals. Each
+          percentage measures progress toward a capacity-building milestone.
         </p>
+        <details className="capacity-formula">
+          <summary>How your percentage grows</summary>
+          <p>
+            Study contributes up to 50%: ten completed sessions at their planned
+            duration. A half-length session earns half credit; extra time cannot
+            inflate one session. Goals contribute up to 50%: five completed
+            goals, with partial progress counted. Only the lowest-level goals
+            count, including capacities linked to their parents. Each cup fills
+            to 100% at this milestone. Self-assessment notes remain separate.
+          </p>
+          <p>
+            Tag goals and sessions with capacities to connect them. Filters show
+            progress within that life area. Correcting records or changing links
+            can change the percentage.
+          </p>
+        </details>
         <div className="form-grid">
           <Field label="Barn life area">
             <select
@@ -140,20 +166,22 @@ export default function Barns({ data, save }) {
               key={c.id}
               onClick={() => setSelected(c.id)}
             >
-              <Barn stage={latest?.stage || 0} color={color} />
+              <ProgressVisual s={s} color={color} />
               <h3>{c.name} Capacity</h3>
               <p>{c.question}</p>
-              <strong>
-                {latest ? STAGES[latest.stage - 1] : "Not yet assessed"}
-              </strong>
+              <strong>{s.percent}% of your growth milestone</strong>
               <small>
-                {latest
-                  ? "Latest contextual self-assessment · " + latest.date
-                  : "Record a baseline to start your story"}
+                {latest ? STAGES[latest.stage - 1] : "Not yet assessed"} ·
+                personal assessment
+              </small>
+              <small>
+                <span style={{ color }}>●</span> Study {s.study.toFixed(1)}% ·{" "}
+                <span style={{ color: "#658D10" }}>●</span> Goals{" "}
+                {s.goal.toFixed(1)}%
               </small>
               <div className="barn-stats">
                 <span>{s.minutes} min invested</span>
-                <span>{s.evidence.length} evidence records</span>
+                <span>{s.completedGoals} goals achieved</span>
               </div>
             </button>
           );
@@ -170,6 +198,23 @@ export default function Barns({ data, save }) {
           onClose={() => setSelected(null)}
         >
           <p>{CAPACITIES.find((c) => c.id === selected).question}</p>
+          <ProgressVisual s={stats(selected)} color="#00B7C7" />
+          <p>
+            {stats(selected).studyUnits.toFixed(1)} / 10 study credits ·{" "}
+            {stats(selected).goalUnits.toFixed(1)} / 5 goal credits
+          </p>
+          <h3>Goals growing this capacity</h3>
+          {stats(selected).goals.map((g) => (
+            <p key={g.id}>
+              {g.title} · {g.progress}%
+            </p>
+          ))}
+          {!stats(selected).goals.length && (
+            <p>
+              Choose this capacity in a goal to start tracking achievements
+              here.
+            </p>
+          )}
           <Button primary onClick={() => add(selected)}>
             Record capacity evidence
           </Button>

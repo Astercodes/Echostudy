@@ -67,6 +67,52 @@ export const validCapacityIds = (ids) =>
   Array.isArray(ids) &&
   new Set(ids).size === ids.length &&
   ids.every((id) => CAPACITIES.some((c) => c.id === id));
+// A consistent first milestone, independent of manual self-assessment stages.
+export function capacityProgress(data, id, areaId = "", subAreaId = "") {
+  const summary = capacitySummary(data, id, areaId, subAreaId);
+  const linked = (goal) => {
+    const seen = new Set();
+    while (goal && !seen.has(goal.id)) {
+      if (goal.capacityIds?.includes(id)) return true;
+      seen.add(goal.id);
+      goal = data.goals.find((g) => g.id === goal.parent);
+    }
+    return false;
+  };
+  // Count only actionable leaves so a completed daily goal and its parents
+  // cannot multiply the same achievement.
+  const goals = data.goals.filter(
+    (g) =>
+      linked(g) &&
+      !data.goals.some((child) => child.parent === g.id) &&
+      (!areaId || g.areaId === areaId) &&
+      (!subAreaId || g.subAreaId === subAreaId),
+  );
+  const goalUnits = goals.reduce(
+    (n, g) => n + Math.min(100, Math.max(0, g.progress || 0)) / 100,
+    0,
+  );
+  const studyUnits = summary.sessions.reduce(
+    (n, s) =>
+      n +
+      (s.planned > 0
+        ? Math.min(1, Math.max(0, s.actualMs || 0) / (s.planned * 60000))
+        : 0),
+    0,
+  );
+  const study = Math.min(50, (studyUnits / 10) * 50);
+  const goal = Math.min(50, (goalUnits / 5) * 50);
+  return {
+    ...summary,
+    goals,
+    goalUnits,
+    studyUnits,
+    study,
+    goal,
+    percent: Math.round(study + goal),
+    completedGoals: goals.filter((g) => g.progress >= 100).length,
+  };
+}
 export function capacitySummary(data, id, areaId = "", subAreaId = "") {
   const context = (item) => {
     const goal = data.goals.find((g) => g.id === item.goalId);
