@@ -1,26 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Sparkles, LoaderCircle } from "lucide-react";
 import { supabase } from "./auth";
-import { CAPACITIES } from "./barns.js";
-export default function StretchRefiner({ draft, data, onApply }) {
+export default function StretchRefiner({ draft, onApply }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [preview, setPreview] = useState(null);
   const controller = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
-  const area = data.lifeAreas.find((a) => a.id === draft.areaId);
   const payload = {
     title: draft.title,
     objective: draft.objective,
     success: draft.success,
-    goal: data.goals.find((g) => g.id === draft.goalId)?.title || "",
-    area: area?.name || "",
-    subArea: area?.subAreas.find((s) => s.id === draft.subAreaId)?.name || "",
-    capacities: draft.capacityIds
-      .map((id) => CAPACITIES.find((c) => c.id === id)?.name)
-      .filter(Boolean)
-      .join(", "),
-    planned: String(draft.planned),
   };
   const signature = JSON.stringify(payload);
   const stale = preview && preview.signature !== signature;
@@ -81,9 +71,9 @@ export default function StretchRefiner({ draft, data, onApply }) {
         <strong>A little help shaping your stretch</strong>
       </div>
       <p>
-        Refine with AI sends these three fields, your linked goal, life area,
-        sub-area, selected capacities and planned duration to OpenAI. Review the
-        suggestion before applying it.
+        AI refines only your practical activity, ability to stretch and
+        successful practice. Only those three answers are sent to OpenAI. Review
+        the suggestion before applying it.
       </p>
       <button
         className="btn"

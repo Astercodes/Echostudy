@@ -59,6 +59,11 @@ const assert = require("node:assert/strict");
       "Explain transformers",
     );
     assert.equal(requests[0].title, "Explain transformers");
+    assert.deepEqual(Object.keys(requests[0]).sort(), [
+      "objective",
+      "success",
+      "title",
+    ]);
     assert.equal(requests[0].outcome, undefined);
     await page
       .getByLabel("Practical activity", { exact: true })

@@ -17,6 +17,38 @@ const suggestion = {
   success: "Summarize each viewpoint and confirm one action",
   rationale: "A small observable practice",
 };
+test("provider rejection categories explain the next step without exposing raw secrets", async () => {
+  for (const [status, code, expected] of [
+    [429, "insufficient_quota", "billing"],
+    [401, "invalid_api_key", "API key"],
+    [404, "model_not_found", "model"],
+    [403, "permission_denied", "permission"],
+    [429, "rate_limit_exceeded", "too many"],
+    [400, "invalid_request_error", "format"],
+  ]) {
+    const handler = createHandler({
+      env: { OPENAI_API_KEY: "test" },
+      limits: new Map(),
+      fetcher: async (url) =>
+        url.endsWith("/user")
+          ? { ok: true, json: async () => ({ id: "user" }) }
+          : {
+              ok: false,
+              status,
+              json: async () => ({
+                error: { code, message: "sensitive raw details" },
+              }),
+            },
+    });
+    const res = response();
+    await handler(request(), res);
+    assert.ok(res.body.error.includes(expected));
+    assert.equal(
+      JSON.stringify(res.body).includes("sensitive raw details"),
+      false,
+    );
+  }
+});
 function response() {
   return {
     statusCode: 0,
@@ -91,6 +123,11 @@ test("verified users receive bounded structured suggestions without exposing cre
   assert.deepEqual(res.body.suggestion, suggestion);
   const sent = JSON.parse(calls[1].options.body);
   assert.equal(sent.store, false);
+  assert.deepEqual(Object.keys(JSON.parse(sent.input)).sort(), [
+    "objective",
+    "success",
+    "title",
+  ]);
   assert.equal(sent.text.format.strict, true);
   assert.equal(sent.max_output_tokens, 1200);
   assert.equal(JSON.stringify(res.body).includes("server-only-test"), false);

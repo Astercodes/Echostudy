@@ -31,16 +31,7 @@ export function createHandler({
     } catch {
       return reply(400, "Enter a valid stretch draft.");
     }
-    const fields = [
-      "title",
-      "objective",
-      "success",
-      "goal",
-      "area",
-      "subArea",
-      "capacities",
-      "planned",
-    ];
+    const fields = ["title", "objective", "success"];
     if (
       !body ||
       typeof body !== "object" ||
@@ -100,7 +91,7 @@ export function createHandler({
       const response = await fetcher("https://api.openai.com/v1/responses", {
         method: "POST",
         headers: {
-          Authorization: "Bearer " + env.OPENAI_API_KEY,
+          Authorization: "Bearer " + env.OPENAI_API_KEY.trim(),
           "Content-Type": "application/json",
         },
         signal: AbortSignal.timeout(25000),
@@ -121,11 +112,52 @@ export function createHandler({
           },
         }),
       });
-      if (!response.ok)
+      if (!response.ok) {
+        let details = {};
+        try {
+          details = await response.json();
+        } catch {}
+        const code = details?.error?.code || details?.error?.type;
+        // Return safe, actionable categories; never echo raw provider messages,
+        // which may contain credentials, request contents or account details.
+        if (
+          code === "insufficient_quota" ||
+          code === "billing_hard_limit_reached"
+        )
+          return reply(
+            503,
+            "AI cannot run because the OpenAI API account has no available quota. The app owner needs to check API billing, credits and spending limits. Your draft is safe.",
+          );
+        if (response.status === 401 || code === "invalid_api_key")
+          return reply(
+            503,
+            "OpenAI rejected the configured API key. The app owner needs to update OPENAI_API_KEY in Vercel and redeploy. Your draft is safe.",
+          );
+        if (code === "model_not_found" || response.status === 404)
+          return reply(
+            503,
+            "The configured AI model is unavailable to this API project. The app owner needs to check OPENAI_STRETCH_MODEL and model access. Your draft is safe.",
+          );
+        if (response.status === 403)
+          return reply(
+            503,
+            "The OpenAI API project does not have permission to run this request. The app owner needs to check API key permissions and model access. Your draft is safe.",
+          );
+        if (response.status === 429)
+          return reply(
+            429,
+            "OpenAI is receiving too many requests. Wait a minute and try again. Your draft is safe.",
+          );
+        if (response.status === 400 || response.status === 422)
+          return reply(
+            502,
+            "OpenAI rejected the AI request format or model settings. The app owner needs to check the configured model supports structured Responses output. Your draft is safe.",
+          );
         return reply(
-          response.status === 429 ? 429 : 502,
-          "AI refinement is temporarily unavailable. Your draft is safe; please try again later.",
+          502,
+          "OpenAI is temporarily unavailable. Please try again later. Your draft is safe.",
         );
+      }
       const result = await response.json();
       if (result.status !== "completed")
         return reply(
@@ -158,13 +190,11 @@ export function createHandler({
           502,
           "The suggestion could not be used. Please try again.",
         );
-      return res
-        .status(200)
-        .json({
-          suggestion: Object.fromEntries(
-            schema.required.map((k) => [k, suggestion[k]]),
-          ),
-        });
+      return res.status(200).json({
+        suggestion: Object.fromEntries(
+          schema.required.map((k) => [k, suggestion[k]]),
+        ),
+      });
     } catch {
       return reply(
         503,

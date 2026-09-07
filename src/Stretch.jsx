@@ -324,6 +324,15 @@ export default function Stretch({ data, save, go }) {
                 placeholder="Everyone contributes; we agree on one action and its owner."
               />
             </Field>
+            {!finishing && (
+              <StretchRefiner
+                key={editor.id}
+                draft={editor}
+                onApply={(suggestion) =>
+                  setEditor((current) => ({ ...current, ...suggestion }))
+                }
+              />
+            )}
             <Field label="Linked goal">
               <select
                 aria-label="Linked goal"
@@ -448,16 +457,6 @@ export default function Stretch({ data, save, go }) {
                   honestly.
                 </p>
               </>
-            )}
-            {!finishing && (
-              <StretchRefiner
-                key={editor.id}
-                draft={editor}
-                data={data}
-                onApply={(suggestion) =>
-                  setEditor((current) => ({ ...current, ...suggestion }))
-                }
-              />
             )}
             <div className="form-actions">
               <Button
