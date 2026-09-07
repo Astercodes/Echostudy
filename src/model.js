@@ -1,3 +1,6 @@
+import { migrateWorkspace, validateLifeArea } from "./life-areas.js";
+export { migrateWorkspace } from "./life-areas.js";
+
 export const COLORS = [
   "#00B7C7",
   "#B00C60",
@@ -387,7 +390,7 @@ export function initialState() {
     goalId,
     objective,
   }));
-  return {
+  return migrateWorkspace({
     version: 1,
     onboarded: false,
     goals,
@@ -398,12 +401,12 @@ export function initialState() {
     resources: [],
     reflections: {},
     timer: null,
-  };
+  });
 }
 export function validateBackup(s) {
   if (
     !s ||
-    s.version !== 1 ||
+    ![1, 2].includes(s.version) ||
     !Array.isArray(s.goals) ||
     !Array.isArray(s.concepts) ||
     !s.plans ||
@@ -417,14 +420,33 @@ export function validateBackup(s) {
     new Set(a.map((x) => x.id)).size === a.length;
   if (![s.goals, s.concepts, s.sessions, s.notes, s.resources].every(unique))
     return false;
+  if (s.version === 2) {
+    if (
+      !Array.isArray(s.lifeAreas) ||
+      !s.lifeAreas.length ||
+      !unique(s.lifeAreas)
+    )
+      return false;
+    for (const area of s.lifeAreas) {
+      if (
+        typeof area.name !== "string" ||
+        !Array.isArray(area.subAreas) ||
+        !unique(area.subAreas) ||
+        area.subAreas.some((sub) => typeof sub.name !== "string") ||
+        validateLifeArea(area, s.lifeAreas)
+      )
+        return false;
+    }
+  }
   if (
     s.goals.some(
       (g) =>
         typeof g.title !== "string" ||
         !LEVELS.includes(g.level) ||
-        !Number.isInteger(g.domain) ||
-        g.domain < 0 ||
-        g.domain > 5 ||
+        (s.version === 1 &&
+          (!Number.isInteger(g.domain) || g.domain < 0 || g.domain > 5)) ||
+        (s.version === 2 && validateGoal(g, s.goals, s.lifeAreas)) ||
+        !Number.isFinite(g.progress) ||
         g.progress < 0 ||
         g.progress > 100,
     )
@@ -461,4 +483,40 @@ export function validateBackup(s) {
       return false;
   }
   return true;
+}
+
+export function validateGoal(goal, goals, areas) {
+  if (typeof goal.title !== "string" || !goal.title.trim())
+    return "Give this goal a clear title.";
+  if (!LEVELS.includes(goal.level)) return "Choose a time horizon.";
+  const area = areas.find((a) => a.id === goal.areaId);
+  if (!area) return "Choose a life area.";
+  if (goal.subAreaId && !area.subAreas.some((s) => s.id === goal.subAreaId))
+    return "Choose a sub-area that belongs to this life area.";
+  if (
+    !Number.isFinite(goal.progress) ||
+    goal.progress < 0 ||
+    goal.progress > 100
+  )
+    return "Progress must be between 0 and 100.";
+  if (goal.parent) {
+    const parent = goals.find((g) => g.id === goal.parent);
+    if (
+      !parent ||
+      parent.id === goal.id ||
+      parent.areaId !== goal.areaId ||
+      LEVELS.indexOf(parent.level) >= LEVELS.indexOf(goal.level)
+    )
+      return "Link to a longer-horizon goal in the same life area.";
+  }
+  if (
+    goals.some(
+      (g) =>
+        g.parent === goal.id &&
+        (g.areaId !== goal.areaId ||
+          LEVELS.indexOf(g.level) <= LEVELS.indexOf(goal.level)),
+    )
+  )
+    return "Keep this goal in the same life area and at a longer horizon than its child goals.";
+  return "";
 }

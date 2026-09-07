@@ -152,10 +152,10 @@ const fs = require("node:fs/promises");
     .click();
   await page.locator(".resource-card").first().click();
   await page.locator(".text-document").waitFor();
-  assert.ok(
-    (await page.locator(".text-document").innerText()).includes(
-      "Deliberate reflection",
-    ),
+  await page.waitForFunction(() =>
+    document
+      .querySelector(".text-document")
+      ?.textContent.includes("Deliberate reflection"),
   );
   await page.locator(".reader-note").waitFor();
   console.log(

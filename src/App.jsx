@@ -49,7 +49,6 @@ import {
   COLORS,
   readableAccent,
   DOMAINS,
-  LEVELS,
   uid,
   today,
   minutes,
@@ -63,10 +62,12 @@ import {
   insights,
   initialState,
   validateBackup,
+  migrateWorkspace,
 } from "./model";
 import { putFile, getFile } from "./files";
 import Knowledge from "./Knowledge";
 import Resources from "./Resources";
+import Goals, { GoalModal } from "./Goals";
 import { workspaceKey } from "./auth";
 const NAV = [
   ["Today", LayoutDashboard],
@@ -91,7 +92,8 @@ function read(key) {
     const raw = localStorage.getItem(key);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (validateBackup(parsed)) return { data: parsed, error: false };
+      if (validateBackup(parsed))
+        return { data: migrateWorkspace(parsed), error: false };
       throw Error("Invalid saved data");
     }
   } catch {
@@ -870,6 +872,8 @@ export default function App({ user, onSignOut }) {
               data={data}
               save={save}
               edit={(g) => setModal({ type: "goal", goal: g })}
+              create={(defaults) => setModal({ type: "goal", defaults })}
+              notify={notify}
             />
           )}
           {page === "Study workspace" && (
@@ -935,6 +939,8 @@ export default function App({ user, onSignOut }) {
         <GoalModal
           goal={modal.goal}
           goals={data.goals}
+          areas={data.lifeAreas}
+          defaults={modal.defaults}
           close={() => setModal(null)}
           submit={(g) => {
             save((d) => ({
@@ -1016,7 +1022,7 @@ export default function App({ user, onSignOut }) {
                   const s = JSON.parse(await e.target.files[0].text());
                   if (!validateBackup(s))
                     throw Error("Invalid EchoStudy backup");
-                  setModal({ type: "import", data: s });
+                  setModal({ type: "import", data: migrateWorkspace(s) });
                 } catch (err) {
                   notify("Could not import: " + err.message);
                 }
@@ -1318,210 +1324,6 @@ function BlockModal({ block, blocks, goals, close, submit, remove }) {
           )}
           <Button primary type="submit">
             Save time block
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  );
-}
-function Goals({ data, save, edit }) {
-  const [domain, setDomain] = useState("all");
-  const render = (g, depth = 0) => (
-    <div className="goal-node" key={g.id} style={{ "--depth": depth }}>
-      <div className="goal-row">
-        <span
-          className="goal-type"
-          style={{ color: readableAccent(COLORS[g.domain]) }}
-        >
-          {g.level}
-        </span>
-        <div className="goal-main">
-          <strong>{g.title}</strong>
-          <small>
-            {DOMAINS[g.domain]}
-            {g.due ? " · Due " + g.due : ""}
-          </small>
-          <div className="progress">
-            <i
-              style={{
-                width: goalProgress(g.id, data.goals) + "%",
-                background: COLORS[g.domain],
-              }}
-            />
-          </div>
-        </div>
-        <span className="percent">{goalProgress(g.id, data.goals)}%</span>
-        <button className="text-btn" onClick={() => edit(g)}>
-          Edit
-        </button>
-      </div>
-      {data.goals
-        .filter((x) => x.parent === g.id)
-        .map((x) => render(x, depth + 1))}
-    </div>
-  );
-  return (
-    <>
-      <div className="filter-bar">
-        <button
-          className={domain === "all" ? "filter active" : "filter"}
-          onClick={() => setDomain("all")}
-        >
-          All life areas
-        </button>
-        {DOMAINS.map((d, i) => (
-          <button
-            key={d}
-            className={domain === i ? "filter active" : "filter"}
-            onClick={() => setDomain(i)}
-          >
-            <i style={{ background: COLORS[i] }} />
-            {d}
-          </button>
-        ))}
-      </div>
-      <div className="goal-explainer">
-        <span>Yearly capacity</span>
-        <ArrowRight />
-        <span>Quarterly outcome</span>
-        <ArrowRight />
-        <span>Monthly milestone</span>
-        <ArrowRight />
-        <span>Weekly priority</span>
-        <ArrowRight />
-        <span>Daily objective</span>
-      </div>
-      <section className="card goals-card">
-        {data.goals
-          .filter((g) => !g.parent && (domain === "all" || g.domain === domain))
-          .map((g) => render(g))}
-        {!data.goals.some((g) => domain === "all" || g.domain === domain) && (
-          <div className="empty">
-            <Target />
-            <h3>What do you want to become capable of?</h3>
-            <p>Add your first goal for this life area.</p>
-          </div>
-        )}
-      </section>
-      <p className="muted">
-        Parent progress is the average of its immediate children. Update leaf
-        goals after study or in the goal editor.
-      </p>
-    </>
-  );
-}
-function GoalModal({ goal, goals, close, submit }) {
-  const [g, setG] = useState(
-    goal || {
-      id: uid(),
-      title: "",
-      level: "Year",
-      domain: 0,
-      parent: "",
-      progress: 0,
-      due: "",
-    },
-  );
-  const change = (k, v) => setG({ ...g, [k]: v });
-  return (
-    <Modal
-      title={goal ? "Shape your goal" : "Plant a new goal"}
-      onClose={close}
-    >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          submit({ ...g, title: g.title.trim() });
-        }}
-      >
-        <Field label="What capacity or outcome are you building?">
-          <input
-            required
-            autoFocus
-            value={g.title}
-            onChange={(e) => change("title", e.target.value)}
-          />
-        </Field>
-        <div className="form-grid">
-          <Field label="Horizon">
-            <select
-              value={g.level}
-              disabled={goals.some((x) => x.parent === g.id)}
-              onChange={(e) =>
-                setG({ ...g, level: e.target.value, parent: "" })
-              }
-            >
-              {LEVELS.map((l) => (
-                <option key={l}>{l}</option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Life area">
-            <select
-              value={g.domain}
-              disabled={
-                Boolean(g.parent) || goals.some((x) => x.parent === g.id)
-              }
-              onChange={(e) => change("domain", Number(e.target.value))}
-            >
-              {DOMAINS.map((d, i) => (
-                <option value={i} key={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </Field>
-        </div>
-        {g.level !== "Year" && (
-          <Field label="Larger goal this contributes to">
-            <select
-              value={g.parent}
-              onChange={(e) => {
-                const p = goals.find((x) => x.id === e.target.value);
-                setG({
-                  ...g,
-                  parent: e.target.value,
-                  domain: p?.domain ?? g.domain,
-                });
-              }}
-            >
-              <option value="">Independent goal</option>
-              {goals
-                .filter(
-                  (x) =>
-                    x.id !== g.id &&
-                    LEVELS.indexOf(x.level) < LEVELS.indexOf(g.level),
-                )
-                .map((x) => (
-                  <option key={x.id} value={x.id}>
-                    {x.level} · {x.title}
-                  </option>
-                ))}
-            </select>
-          </Field>
-        )}
-        <Field label="Target date">
-          <input
-            type="date"
-            value={g.due || ""}
-            onChange={(e) => change("due", e.target.value)}
-          />
-        </Field>
-        {!goals.some((x) => x.parent === g.id) && (
-          <Field label={"Progress · " + g.progress + "%"}>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              step="5"
-              value={g.progress}
-              onChange={(e) => change("progress", Number(e.target.value))}
-            />
-          </Field>
-        )}
-        <div className="form-actions">
-          <Button primary type="submit">
-            Save goal
           </Button>
         </div>
       </form>

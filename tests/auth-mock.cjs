@@ -37,6 +37,10 @@ function session(u) {
 }
 async function installAuthMock(page) {
   const calls = [];
+  // Browser checks must not wait on external font services.
+  await page.route(/https:\/\/fonts\.(googleapis|gstatic)\.com\//, (route) =>
+    route.abort(),
+  );
   await page.route("https://auth.echostudy.test/auth/v1/**", async (route) => {
     const req = route.request(),
       url = new URL(req.url()),
@@ -49,8 +53,8 @@ async function installAuthMock(page) {
         headers: { "access-control-allow-origin": "*" },
         body: JSON.stringify(json),
       });
-  if (req.method() === "OPTIONS")
-    return route.fulfill({
+    if (req.method() === "OPTIONS")
+      return route.fulfill({
         status: 204,
         headers: {
           "access-control-allow-origin": "*",
@@ -58,15 +62,15 @@ async function installAuthMock(page) {
           "access-control-allow-methods": "GET,POST,PUT,DELETE,OPTIONS",
         },
       });
-  if (url.pathname.endsWith("/settings"))
-    return response(200, {
-      external: {},
-      disable_signup: false,
-      mailer_autoconfirm: true,
-      phone_autoconfirm: false,
-      sms_provider: "twilio",
-      jwt_exp: 3600,
-    });
+    if (url.pathname.endsWith("/settings"))
+      return response(200, {
+        external: {},
+        disable_signup: false,
+        mailer_autoconfirm: true,
+        phone_autoconfirm: false,
+        sms_provider: "twilio",
+        jwt_exp: 3600,
+      });
     if (url.pathname.endsWith("/token")) {
       if (body.password !== "Study123!")
         return response(400, {

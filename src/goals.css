@@ -1,0 +1,434 @@
+.goals-overview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 25px 28px;
+  margin-bottom: 24px;
+  border: 1px solid #95dfe2;
+  border-radius: 12px;
+  background: linear-gradient(120deg, #bff5f560, #f9fefc);
+}
+.goals-overview h2 {
+  font-size: 22px;
+  margin: 12px 0 8px;
+  font-weight: 600;
+}
+.goals-overview p {
+  font-size: 12px;
+  max-width: 650px;
+}
+.area-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 100px;
+}
+.area-total > strong {
+  font:
+    600 38px Manrope,
+    sans-serif;
+  color: #006874;
+  line-height: 1.2;
+}
+.area-total > span {
+  font-size: 12px;
+}
+.area-total > small {
+  font-size: 10px;
+}
+.life-area-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+.life-area-card {
+  border-top: 3px solid var(--area-color);
+  padding: 22px;
+}
+.life-area-card .section-head {
+  margin-bottom: 17px;
+}
+.area-number {
+  height: 34px;
+  min-width: 36px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+.life-area-card h3 {
+  font-size: 17px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.life-area-card > small {
+  font-size: 10px;
+}
+.life-area-card > .btn {
+  width: 100%;
+  margin-top: 18px;
+}
+.sub-area-details {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.sub-area-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 13px 0;
+  color: #3d6267;
+}
+.sub-area-details summary::-webkit-details-marker {
+  display: none;
+}
+.sub-area-details[open] summary svg {
+  transform: rotate(90deg);
+}
+.sub-area-details ul {
+  list-style: none;
+  padding: 0 0 10px;
+  margin: 0;
+  max-height: 280px;
+  overflow: auto;
+}
+.sub-area-details li button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+  font-size: 11px;
+  padding: 8px;
+  border-radius: 5px;
+  line-height: 1.5;
+}
+.sub-area-details li button:hover {
+  background: #bff5f550;
+}
+.sub-area-details li span {
+  color: #5d787b;
+  font-size: 10px;
+}
+.sub-area-details > p {
+  font-size: 11px;
+  padding: 0 0 15px;
+}
+.area-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  margin-top: 16px;
+}
+.area-card-actions .text-btn {
+  font-size: 10px;
+}
+.goal-filters {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+.goal-filters .field {
+  margin: 0 0 18px;
+  min-width: 0;
+}
+.goal-filters select {
+  font-size: 11px;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+.goal-filters .search {
+  background: white;
+  border: 1px solid #d4e9e8;
+  border-radius: 7px;
+  padding: 5px 12px;
+  height: 39px;
+}
+.goal-filters .search input {
+  width: 100%;
+  font-size: 11px;
+}
+.goal-horizons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.goal-horizons .filter {
+  padding: 9px 12px;
+  gap: 8px;
+}
+.goal-horizons .filter > span {
+  background: #e1f3f1;
+  border-radius: 4px;
+  min-width: 18px;
+  padding: 2px 4px;
+  font-size: 9px;
+  color: #3d6267;
+}
+.goal-results-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 24px 0 15px;
+  font-size: 12px;
+}
+.goal-results-head > span {
+  color: #5d787b;
+}
+.area-goal-group {
+  margin-bottom: 20px;
+  padding: 21px;
+}
+.area-goal-group > .section-head {
+  padding-bottom: 15px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--line);
+}
+.area-goal-group > .section-head h2 {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.area-goal-group > .section-head i {
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.goals-workspace .goal-type {
+  width: 69px;
+  font-size: 10px;
+}
+.goal-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.goals-workspace .goal-main .goal-trail {
+  margin: 11px 0 0;
+  padding: 9px;
+  background: #f4faf8;
+}
+.goals-workspace .goal-main .goal-trail small {
+  margin-top: 0;
+}
+.area-colors {
+  margin: 18px 0 25px;
+  padding: 0;
+  border: 0;
+  display: flex;
+  gap: 10px;
+}
+.area-colors legend {
+  font-size: 11px;
+  font-weight: 600;
+  color: #576d54;
+  margin-bottom: 12px;
+}
+.area-colors label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+.area-colors input {
+  position: absolute;
+  opacity: 0;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+}
+.area-colors label > span {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid #143f4520;
+}
+.area-colors input:checked + span {
+  outline: 2px solid #143f45;
+  outline-offset: 3px;
+}
+.area-colors input:focus-visible + span {
+  outline: 3px solid #b00c60;
+  outline-offset: 3px;
+}
+.sub-area-head {
+  margin-bottom: 14px;
+}
+.sub-area-head h3 {
+  font-size: 14px;
+}
+.sub-area-editor {
+  max-height: 340px;
+  overflow: auto;
+  padding-right: 5px;
+}
+.sub-area-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 9px;
+}
+.sub-area-input > label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+}
+.sub-area-input > label > span {
+  font-size: 10px;
+  min-width: 17px;
+  text-align: right;
+  color: #5d787b;
+}
+.sub-area-input input {
+  width: 100%;
+  font-size: 12px;
+  padding: 10px;
+}
+.sub-area-input .icon-btn {
+  flex-shrink: 0;
+}
+.goal-row .goal-main {
+  min-width: 0;
+}
+.goal-main > strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1150px) {
+  .life-area-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .goals-overview h2 {
+    font-size: 20px;
+  }
+  .goal-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .goal-filters > .field:last-child {
+    grid-column: 1/-1;
+  }
+  .goals-workspace .goal-row {
+    gap: 12px;
+  }
+  .area-goal-group {
+    padding: 17px;
+  }
+}
+@media (max-width: 650px) {
+  .goals-overview {
+    padding: 21px;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  .goals-overview .eyebrow {
+    font-size: 8px;
+    line-height: 1.6;
+  }
+  .goals-overview h2 {
+    font-size: 18px;
+  }
+  .goals-overview p {
+    font-size: 11px;
+  }
+  .area-total {
+    min-width: 60px;
+  }
+  .area-total > strong {
+    font-size: 30px;
+  }
+  .area-total > span {
+    font-size: 10px;
+  }
+  .area-total > small {
+    font-size: 8px;
+    white-space: nowrap;
+  }
+  .life-area-grid {
+    grid-template-columns: 1fr;
+  }
+  .goals-workspace .knowledge-toolbar {
+    align-items: stretch;
+  }
+  .goals-workspace .knowledge-toolbar > .btn {
+    width: 100%;
+  }
+  .goal-filters {
+    grid-template-columns: 1fr;
+  }
+  .goal-filters > .field:last-child {
+    grid-column: auto;
+  }
+  .goal-horizons {
+    gap: 6px;
+  }
+  .goal-horizons .filter {
+    padding: 8px 9px;
+    font-size: 9px;
+  }
+  .goal-results-head {
+    font-size: 11px;
+    align-items: flex-start;
+  }
+  .goal-results-head > .text-btn {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .area-goal-group {
+    padding: 13px;
+  }
+  .area-goal-group > .section-head h2 {
+    font-size: 13px;
+  }
+  .area-goal-group > .section-head > .text-btn {
+    font-size: 9px;
+    white-space: nowrap;
+  }
+  .goals-workspace .goal-type {
+    width: 49px;
+    font-size: 8px;
+    padding: 6px 3px;
+  }
+  .goals-workspace .goal-row {
+    gap: 7px;
+    flex-wrap: wrap;
+    padding: 17px 0;
+  }
+  .goals-workspace .goal-main {
+    flex-basis: calc(100% - 60px);
+  }
+  .goals-workspace .goal-row > .percent {
+    margin-left: auto;
+  }
+  .goals-workspace .goal-row-actions {
+    gap: 10px;
+  }
+  .goals-workspace .goal-node .goal-node {
+    margin-left: 4px;
+    padding-left: 7px;
+  }
+  .goals-workspace .goal-main .progress {
+    max-width: none;
+  }
+  .area-card-actions .text-btn {
+    font-size: 11px;
+  }
+  .life-area-card h3 {
+    font-size: 18px;
+  }
+}

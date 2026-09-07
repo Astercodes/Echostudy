@@ -13,7 +13,7 @@ When those variables are absent, the landing page and account screens remain ava
 ## What works
 
 - **24-hour planner:** edit daily blocks, reject overlaps, protect commitments, and find study windows between 06:00 and 23:00. Generated deep blocks are capped at 90 minutes, with 15-minute recovery breaks when room permits. Requests that cannot fit are reported.
-- **Goal architecture:** yearly, quarterly, monthly, weekly, and daily goals across six life areas. Goals can link to a longer horizon. Parent progress averages its children.
+- **Goal architecture:** multiple yearly, quarterly, monthly, weekly, and daily goals in every life area. The supplied catalog includes 16 editable areas and all 291 sub-areas. Add custom areas and sub-areas, rename them, filter by area/sub-area/horizon, and link goals to a longer horizon within the same area. Parent progress averages its children.
 - **Intentional study:** a topic, objective, and linked goal are required before starting. Optional concepts and resources attach to sessions.
 - **Focus timer:** tracks planned versus actual elapsed focus, pause history, notes, and post-session reflection. Active and paused sessions survive browser reloads. Finishing does not count as an interruption.
 - **Knowledge tree:** editable roots and branches, curved connections, cross-links, zoom and pan, confidence, applications, review dates, and concept-linked notes.
@@ -23,6 +23,14 @@ When those variables are absent, the landing page and account screens remain ava
 - **Persistence and backups:** browser localStorage for workspace data, IndexedDB for uploaded files, JSON export/import with schema and cycle checks. Workspace and file storage are namespaced by the authenticated user ID.
 
 The initial day, goal hierarchy, and knowledge tree are **editable examples**, not claims about your habits or accomplishments. Progress starts at zero.
+
+## Life areas and goal organization
+
+Open **Goals → Life areas** to explore or edit the starting catalog. **Add life area** creates another area, with optional sub-areas and a palette color. Each area has **Add a goal**, while **New goal** is available at the top of the page. There is no one-goal-per-horizon limit. Use the + beside a goal to create another child goal at a shorter horizon.
+
+The 16 groups are Faith & spirituality; Mind & intellectual capacity; Emotional wellbeing & identity; Physical health & vitality; Knowledge & education; Skills & competence; Career & professional life; Business & entrepreneurship; Personal finance & wealth; Relationships & social life; Marriage & romantic partnership; Parenting & family life; Home & lifestyle; Discipline & personal effectiveness; Recreation & creative expression; and Purpose, contribution & legacy. These headings organize the supplied flat list; its sub-area names, including repeated names in different groups, are preserved.
+
+Workspace schema 2 stores `lifeAreas` and stable goal `areaId` / `subAreaId` references. Version-1 account data and backups migrate automatically; existing goal IDs, progress, parent links, notes, sessions, and concepts are preserved. Renaming an area never changes its IDs. Sub-areas referenced by goals cannot be removed until those goals are moved. Exported backups include all custom areas and their sub-areas. Existing knowledge-tree branches remain intact and are independent from the goal catalog.
 
 ## Run locally
 
@@ -48,23 +56,24 @@ npm run build
 npm run preview
 ```
 
-Browser tests require Playwright's Chromium browser and a running development or preview server:
+Browser tests use a local server with explicitly mocked authentication. No live account credentials or signup emails are used:
 
 ```sh
 npx playwright install chromium
-npm run dev
+npm run dev:test
 # In another terminal:
 npm run test:browser
+npm run test:goals
 ```
 
-Set `ECHO_URL` to test a different local server, and optionally `ECHO_BROWSER=msedge` to use an installed Microsoft Edge browser. Tests cover timer pause/reload recovery, session completion, overlap rejection, goal and concept creation, resource persistence, notes, reflections, PDF selection/highlighting/navigation, and mobile layout. Screenshots are written to the ignored `test-results/` directory.
+The fixture server uses port 5180. Set `ECHO_URL` for another server using the same mock configuration, and optionally `ECHO_BROWSER=msedge` to use an installed Microsoft Edge browser. Tests cover timer pause/reload recovery, session completion, overlap rejection, goal and concept creation, resource persistence, notes, reflections, PDF selection/highlighting/navigation, and mobile layout. Goal tests also cover legacy migration, two full goal chains in a custom area, renames, filtering, export/restore, and mobile layouts. Screenshots are written to the ignored `test-results/` directory.
 
 ## Deploy on Vercel
 
 1. Import the GitHub repository **Astercodes/Echostudy** into Vercel.
 2. Select the **Vite** framework preset.
 3. Use `npm run build` as the build command and `dist` as the output directory.
-4. Deploy. No environment variables or API keys are required.
+4. Set the public Supabase variables described under Account access, then deploy. Without them, account access remains in setup mode.
 
 The checked-in `vercel.json` defines the build/output settings and SPA fallback. This repository does not create or use ChatGPT Sites infrastructure.
 
@@ -88,7 +97,9 @@ This is a functional **single-device first version** with account-gated access. 
 
 ## Code map
 
-- `src/App.jsx`: navigation, planner, goals, sessions, reflection, growth, and backup interface.
+- `src/App.jsx`: navigation, planner, sessions, reflection, growth, and backup interface.
+- `src/Goals.jsx` / `src/goals.css`: life-area management, goal editor, hierarchy and filters.
+- `src/life-areas.js`: the supplied catalog, stable IDs, migration, and life-area validation.
 - `src/model.js`: scheduling, goal ancestry/progress, timer accounting, gap rules, seed data, and backup validation.
 - `src/Knowledge.jsx`: tree layout, concept editor, and growth suggestions.
 - `src/Resources.jsx`: library, reader, highlighting, and permanent notes.

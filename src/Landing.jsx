@@ -352,7 +352,7 @@ export default function Landing({ navigate }) {
             {[
               [
                 "Is EchoStudy only for academic study?",
-                "No. Your workspace covers mind and expertise, spirit and faith, health, career, relationships, and finances. You decide what growth means in each area.",
+                "No. Goals start with 16 life areas and 291 sub-areas, from faith and intellectual growth to health, relationships, business, creativity, and legacy. Add your own areas and decide what growth means in each one.",
               ],
               [
                 "How does my knowledge tree grow?",
