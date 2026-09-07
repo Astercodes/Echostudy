@@ -64,9 +64,9 @@ function ProgressVisual({ s, color }) {
       <div
         className="capacity-pie"
         role="img"
-        aria-label={`${s.percent}% milestone progress: ${s.study.toFixed(1)} percentage points from study, ${s.goal.toFixed(1)} from goals`}
+        aria-label={`${s.percent}% milestone progress: ${s.practice.toFixed(1)} percentage points from practice, ${s.study.toFixed(1)} from study, ${s.goal.toFixed(1)} from goals`}
         style={{
-          background: `conic-gradient(${color} 0 ${s.study}%, #D7E525 ${s.study}% ${s.study + s.goal}%, #e6efeb ${s.study + s.goal}% 100%)`,
+          background: `conic-gradient(#B00C60 0 ${s.practice}%, ${color} ${s.practice}% ${s.practice + s.study}%, #D7E525 ${s.practice + s.study}% ${s.practice + s.study + s.goal}%, #e6efeb ${s.practice + s.study + s.goal}% 100%)`,
         }}
       >
         <span>{s.percent}%</span>
@@ -103,15 +103,18 @@ export default function Barns({ data, save }) {
           emotional, relational, spiritual and communication capacity together.
         </p>
         <p className="muted">
-          Watch your cups fill as you complete study and achieve goals. Each
-          percentage measures progress toward a capacity-building milestone.
+          Watch your cups fill as you practise abilities, complete study and
+          achieve goals. Each percentage measures progress toward a
+          capacity-building milestone.
         </p>
         <details className="capacity-formula">
           <summary>How your percentage grows</summary>
           <p>
-            Study contributes up to 50%: ten completed sessions at their planned
+            Practice contributes up to 60%: ten fully completed activities in
+            the Stretch workspace, with partial completion counted. Study
+            contributes up to 20%: ten completed sessions at their planned
             duration. A half-length session earns half credit; extra time cannot
-            inflate one session. Goals contribute up to 50%: five completed
+            inflate one session. Goals contribute up to 20%: five completed
             goals, with partial progress counted. Only the lowest-level goals
             count, including capacities linked to their parents. Each cup fills
             to 100% at this milestone. Self-assessment notes remain separate.
@@ -175,13 +178,19 @@ export default function Barns({ data, save }) {
                 personal assessment
               </small>
               <small>
-                <span style={{ color }}>●</span> Study {s.study.toFixed(1)}% ·{" "}
+                <span style={{ color: "#B00C60" }}>●</span> Practice{" "}
+                {s.practice.toFixed(1)}% · <span style={{ color }}>●</span>{" "}
+                Study {s.study.toFixed(1)}% ·{" "}
                 <span style={{ color: "#658D10" }}>●</span> Goals{" "}
                 {s.goal.toFixed(1)}%
               </small>
               <div className="barn-stats">
                 <span>{s.minutes} min invested</span>
                 <span>{s.completedGoals} goals achieved</span>
+                <span>
+                  {s.stretches.length} practice results · {s.practiceMinutes}{" "}
+                  min doing
+                </span>
               </div>
             </button>
           );
@@ -200,9 +209,26 @@ export default function Barns({ data, save }) {
           <p>{CAPACITIES.find((c) => c.id === selected).question}</p>
           <ProgressVisual s={stats(selected)} color="#00B7C7" />
           <p>
+            {stats(selected).practiceUnits.toFixed(1)} / 10 practice credits ·{" "}
             {stats(selected).studyUnits.toFixed(1)} / 10 study credits ·{" "}
             {stats(selected).goalUnits.toFixed(1)} / 5 goal credits
           </p>
+          <h3>Practical activities</h3>
+          {stats(selected).stretches.map((s) => (
+            <article className="barn-entry" key={s.id}>
+              <strong>{s.title}</strong>
+              <p>
+                {s.date} · {s.completion}% completed · {s.actualMinutes} minutes
+              </p>
+              <p>{s.outcome}</p>
+            </article>
+          ))}
+          {!stats(selected).stretches.length && (
+            <p>
+              Complete a linked activity in the Stretch workspace to add
+              practical growth here.
+            </p>
+          )}
           <h3>Goals growing this capacity</h3>
           {stats(selected).goals.map((g) => (
             <p key={g.id}>

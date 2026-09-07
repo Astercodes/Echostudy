@@ -1,0 +1,70 @@
+.stretch-intro,
+.stretch-record,
+.stretch-filters {
+  padding: 24px;
+  margin-bottom: 22px;
+}
+.stretch-intro h2 {
+  font-size: 28px;
+}
+.stretch-intro > .btn,
+.stretch-record > .btn {
+  margin: 6px 8px 6px 0;
+}
+.stretch-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.stretch-stats strong {
+  display: block;
+  font-size: 26px;
+  color: #008391;
+}
+.stretch-stats span {
+  font-size: 12px;
+}
+.stretch-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.stretch-filters .field {
+  min-width: 0;
+}
+.stretch-filters select {
+  width: 100%;
+  min-width: 0;
+}
+.stretch-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.stretch-record {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.stretch-record p {
+  white-space: pre-wrap;
+}
+.stretch-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+.stretch-tags span {
+  background: #bff5f5;
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: #245a60;
+  font-size: 12px;
+}
+@media (max-width: 800px) {
+  .stretch-list,
+  .stretch-filters {
+    grid-template-columns: 1fr;
+  }
+}

@@ -69,12 +69,14 @@ import Knowledge from "./Knowledge";
 import Resources from "./Resources";
 import Goals, { GoalModal } from "./Goals";
 import Barns, { CapacityPicker } from "./Barns.jsx";
+import Stretch from "./Stretch.jsx";
 import { workspaceKey } from "./auth";
 const NAV = [
   ["Today", LayoutDashboard],
   ["24-hour planner", CalendarDays],
   ["Goals", Target],
   ["Study workspace", BookOpen],
+  ["Stretch workspace", Flame],
   ["Knowledge tree", Network],
   ["Resource library", Library],
   ["Reflection", NotebookPen],
@@ -508,42 +510,46 @@ export default function App({ user, onSignOut }) {
                 })}
               </div>
               <h1>
-                {page === "Barns"
-                  ? "Room for greater capacity."
-                  : page === "Today"
-                    ? "Make room for becoming."
-                    : page === "Knowledge tree"
-                      ? "A mind that keeps growing."
-                      : page === "Goals"
-                        ? "Give your growth direction."
-                        : page === "Study workspace"
-                          ? "Go a little deeper."
-                          : page === "Reflection"
-                            ? "Turn experience into wisdom."
-                            : page === "Growth"
-                              ? "Small steps. Lasting capacity."
-                              : page === "Resource library"
-                                ? "Good ideas belong together."
-                                : "Your day, with intention."}
+                {page === "Stretch workspace"
+                  ? "Put your capacity into practice."
+                  : page === "Barns"
+                    ? "Room for greater capacity."
+                    : page === "Today"
+                      ? "Make room for becoming."
+                      : page === "Knowledge tree"
+                        ? "A mind that keeps growing."
+                        : page === "Goals"
+                          ? "Give your growth direction."
+                          : page === "Study workspace"
+                            ? "Go a little deeper."
+                            : page === "Reflection"
+                              ? "Turn experience into wisdom."
+                              : page === "Growth"
+                                ? "Small steps. Lasting capacity."
+                                : page === "Resource library"
+                                  ? "Good ideas belong together."
+                                  : "Your day, with intention."}
               </h1>
               <p>
-                {page === "Barns"
-                  ? "Sixteen dimensions. Every life area. Evidence of becoming."
-                  : page === "Today"
-                    ? "A purposeful day. A focused mind. A stronger you."
-                    : page === "Knowledge tree"
-                      ? "Let ideas take root, branch out, and find unexpected connections."
-                      : page === "Goals"
-                        ? "Connect what you do today to who you are becoming."
-                        : page === "24-hour planner"
-                          ? "Protect your essentials. Find realistic space to learn and grow."
-                          : page === "Resource library"
-                            ? "Read, highlight, and give every insight a place in your knowledge."
-                            : page === "Growth"
-                              ? "Measure focused effort, connected knowledge, and the habits you are building."
-                              : page === "Reflection"
-                                ? "Pause, connect the dots, and carry one lesson into tomorrow."
-                                : "One objective. Your full attention. Meaningful progress."}
+                {page === "Stretch workspace"
+                  ? "Practical challenges. Real outcomes. Stronger abilities."
+                  : page === "Barns"
+                    ? "Sixteen dimensions. Every life area. Evidence of becoming."
+                    : page === "Today"
+                      ? "A purposeful day. A focused mind. A stronger you."
+                      : page === "Knowledge tree"
+                        ? "Let ideas take root, branch out, and find unexpected connections."
+                        : page === "Goals"
+                          ? "Connect what you do today to who you are becoming."
+                          : page === "24-hour planner"
+                            ? "Protect your essentials. Find realistic space to learn and grow."
+                            : page === "Resource library"
+                              ? "Read, highlight, and give every insight a place in your knowledge."
+                              : page === "Growth"
+                                ? "Measure focused effort, connected knowledge, and the habits you are building."
+                                : page === "Reflection"
+                                  ? "Pause, connect the dots, and carry one lesson into tomorrow."
+                                  : "One objective. Your full attention. Meaningful progress."}
               </p>
             </div>
             <div className="heading-actions">
@@ -555,29 +561,31 @@ export default function App({ user, onSignOut }) {
                   onChange={(e) => e.target.value && setDate(e.target.value)}
                 />
               )}
-              <Button
-                primary
-                onClick={() =>
-                  page === "Goals"
-                    ? setModal({ type: "goal" })
+              {page !== "Stretch workspace" && (
+                <Button
+                  primary
+                  onClick={() =>
+                    page === "Goals"
+                      ? setModal({ type: "goal" })
+                      : page === "24-hour planner"
+                        ? setModal({ type: "block" })
+                        : start(first)
+                  }
+                >
+                  {page === "Goals" || page === "24-hour planner" ? (
+                    <Plus size={17} />
+                  ) : (
+                    <Play size={15} fill="currentColor" />
+                  )}
+                  {page === "Goals"
+                    ? "New goal"
                     : page === "24-hour planner"
-                      ? setModal({ type: "block" })
-                      : start(first)
-                }
-              >
-                {page === "Goals" || page === "24-hour planner" ? (
-                  <Plus size={17} />
-                ) : (
-                  <Play size={15} fill="currentColor" />
-                )}
-                {page === "Goals"
-                  ? "New goal"
-                  : page === "24-hour planner"
-                    ? "Add time block"
-                    : data.timer
-                      ? "Return to session"
-                      : "Begin a session"}
-              </Button>
+                      ? "Add time block"
+                      : data.timer
+                        ? "Return to session"
+                        : "Begin a session"}
+                </Button>
+              )}
             </div>
           </div>
           {!data.onboarded && (
@@ -915,6 +923,9 @@ export default function App({ user, onSignOut }) {
           )}
           {page === "Growth" && <Growth data={data} />}
           {page === "Barns" && <Barns data={data} save={save} />}
+          {page === "Stretch workspace" && (
+            <Stretch data={data} save={save} go={go} />
+          )}
           <footer className="page-footer">
             <Sprout size={15} /> Time → goals → study → knowledge → reflection →
             growth <span>One connected life.</span>

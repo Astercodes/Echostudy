@@ -410,7 +410,10 @@ export default function Goals({ data, save, edit, create, notify }) {
           area={areaEditor}
           areas={areas}
           goals={data.goals}
-          evidence={data.capacityEvidence || []}
+          evidence={[
+            ...(data.capacityEvidence || []),
+            ...(data.stretches || []),
+          ]}
           close={() => setAreaEditor(null)}
           submit={(a) => {
             save((d) => ({
@@ -707,7 +710,7 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
                   disabled={used}
                   title={
                     used
-                      ? "Move linked goals and Barns evidence before removing this sub-area."
+                      ? "Move linked goals, Barns evidence and stretch activities before removing this sub-area."
                       : "Remove sub-area"
                   }
                   onClick={() =>

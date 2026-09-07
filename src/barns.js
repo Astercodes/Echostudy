@@ -100,8 +100,17 @@ export function capacityProgress(data, id, areaId = "", subAreaId = "") {
         : 0),
     0,
   );
-  const study = Math.min(50, (studyUnits / 10) * 50);
-  const goal = Math.min(50, (goalUnits / 5) * 50);
+  const stretches = (data.stretches || []).filter(
+    (s) =>
+      s.status === "completed" &&
+      s.capacityIds.includes(id) &&
+      (!areaId || s.areaId === areaId) &&
+      (!subAreaId || s.subAreaId === subAreaId),
+  );
+  const practiceUnits = stretches.reduce((n, s) => n + s.completion / 100, 0);
+  const practice = Math.min(60, (practiceUnits / 10) * 60);
+  const study = Math.min(20, (studyUnits / 10) * 20);
+  const goal = Math.min(20, (goalUnits / 5) * 20);
   return {
     ...summary,
     goals,
@@ -109,7 +118,11 @@ export function capacityProgress(data, id, areaId = "", subAreaId = "") {
     studyUnits,
     study,
     goal,
-    percent: Math.round(study + goal),
+    stretches,
+    practiceUnits,
+    practice,
+    practiceMinutes: stretches.reduce((n, s) => n + s.actualMinutes, 0),
+    percent: Math.round(study + goal + practice),
     completedGoals: goals.filter((g) => g.progress >= 100).length,
   };
 }
@@ -140,6 +153,49 @@ export function capacitySummary(data, id, areaId = "", subAreaId = "") {
   };
 }
 export function validateBarns(data) {
+  if (data.stretches !== undefined) {
+    if (
+      !Array.isArray(data.stretches) ||
+      new Set(data.stretches.map((s) => s?.id)).size !== data.stretches.length
+    )
+      return false;
+    if (
+      !data.stretches.every(
+        (s) =>
+          s &&
+          typeof s.id === "string" &&
+          ["planned", "active", "completed"].includes(s.status) &&
+          typeof s.title === "string" &&
+          s.title.trim() &&
+          typeof s.objective === "string" &&
+          s.objective.trim() &&
+          typeof s.success === "string" &&
+          s.success.trim() &&
+          validCapacityIds(s.capacityIds) &&
+          s.capacityIds.length &&
+          data.goals.some((g) => g.id === s.goalId) &&
+          data.lifeAreas?.some(
+            (a) =>
+              a.id === s.areaId &&
+              (!s.subAreaId ||
+                a.subAreas.some((sub) => sub.id === s.subAreaId)),
+          ) &&
+          /^\d{4}-\d{2}-\d{2}$/.test(s.date) &&
+          Number.isFinite(s.planned) &&
+          s.planned > 0 &&
+          s.planned <= 1440 &&
+          Number.isFinite(s.actualMinutes) &&
+          s.actualMinutes >= 0 &&
+          s.actualMinutes <= 1440 &&
+          Number.isFinite(s.completion) &&
+          s.completion >= 0 &&
+          s.completion <= 100 &&
+          typeof s.outcome === "string" &&
+          (s.status !== "completed" || s.outcome.trim()),
+      )
+    )
+      return false;
+  }
   if (
     [...data.goals, ...data.sessions, ...(data.timer ? [data.timer] : [])].some(
       (x) => x.capacityIds !== undefined && !validCapacityIds(x.capacityIds),
