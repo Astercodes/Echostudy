@@ -104,6 +104,7 @@ hr {
   min-height: 100vh;
 }
 .sidebar {
+  overflow-y: auto;
   width: 238px;
   background: var(--green);
   color: #d6eeee;
@@ -194,6 +195,29 @@ hr {
   font-size: 8px;
   letter-spacing: 1.8px;
   color: #5d787b;
+}
+.profile-button {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.profile-trigger {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.avatar.small.profile-trigger { display: flex; }
+.profile-trigger:focus-visible,
+.profile-button:focus-visible {
+  outline: 3px solid #b00c60;
+  outline-offset: 3px;
+}
+.account-details {
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.account-details .avatar {
+  margin: 0 auto;
 }
 .profile {
   border-top: 1px solid #143f45;

@@ -228,6 +228,7 @@ export function GoalTrail({ id, goals }) {
   );
 }
 export default function App({ user, onSignOut }) {
+  const [signingOut, setSigningOut] = useState(false);
   const KEY = workspaceKey(user.id);
   const displayName =
     user.user_metadata?.full_name || user.email?.split("@")[0] || "Your space";
@@ -427,14 +428,18 @@ export default function App({ user, onSignOut }) {
             <LogOut size={18} />
             Sign out
           </button>
-          <div className="profile">
+          <button
+            className="profile profile-button"
+            aria-label="Open your profile"
+            onClick={() => setModal({ type: "profile" })}
+          >
             <div className="avatar">{displayName[0].toUpperCase()}</div>
             <div>
               <strong>{displayName}</strong>
               <small>Growing, one day at a time</small>
             </div>
-            <Leaf size={16} />
-          </div>
+            <ChevronRight size={16} />
+          </button>
         </div>
       </aside>
       <div className="shell">
@@ -480,7 +485,14 @@ export default function App({ user, onSignOut }) {
               <span />
               Saved on this device
             </span>
-            <div className="avatar small">{displayName[0].toUpperCase()}</div>
+            <button
+              className="avatar small profile-trigger"
+              aria-label="Open account menu"
+              title="Profile & log out"
+              onClick={() => setModal({ type: "profile" })}
+            >
+              {displayName[0].toUpperCase()}
+            </button>
           </div>
         </header>
         <main>
@@ -958,6 +970,36 @@ export default function App({ user, onSignOut }) {
             notify("Goal saved.");
           }}
         />
+      )}
+      {modal?.type === "profile" && (
+        <Modal title="Your profile" onClose={() => setModal(null)}>
+          <div className="account-details">
+            <div className="avatar">{displayName[0].toUpperCase()}</div>
+            <h3>{displayName}</h3>
+            <p>{user.email}</p>
+          </div>
+          <p className="muted">
+            Your study data stays saved in this browser when you log out.
+          </p>
+          <div className="form-actions">
+            <Button
+              primary
+              disabled={signingOut}
+              onClick={async () => {
+                setSigningOut(true);
+                try {
+                  await onSignOut();
+                } catch (error) {
+                  notify("Could not log out: " + error.message);
+                  setSigningOut(false);
+                }
+              }}
+            >
+              <LogOut size={18} />
+              {signingOut ? "Logging out…" : "Log out"}
+            </Button>
+          </div>
+        </Modal>
       )}
       {modal?.type === "session" && (
         <SessionModal
