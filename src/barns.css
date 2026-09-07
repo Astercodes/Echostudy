@@ -172,7 +172,7 @@
 .barn-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-  gap: 18px;
+  gap: 24px;
 }
 .barn-card {
   text-align: left;
@@ -180,13 +180,41 @@
   cursor: pointer;
   color: inherit;
   font: inherit;
-  transition: transform 0.2s;
+  border: 1px solid #ffffff;
+  border-radius: 22px;
+  background: linear-gradient(150deg, #ffffff 65%, #f2fbf9);
+  box-shadow:
+    0 3px 6px #143f4508,
+    0 12px 28px -8px #143f4526,
+    inset 0 1px 0 #ffffff;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
-.barn-card:hover {
-  transform: translateY(-3px);
+@media (hover: hover) {
+  .barn-card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 5px 10px #143f450a,
+      0 20px 38px -10px #143f4536,
+      inset 0 1px 0 #ffffff;
+  }
+}
+.barn-card:active {
+  transform: translateY(-1px);
 }
 .barn-card:focus-visible {
   outline: 3px solid #b00c60;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .barn-card {
+    transition: none;
+  }
+  .barn-card:hover,
+  .barn-card:active {
+    transform: none;
+  }
 }
 .barn-icon {
   width: 86px;
