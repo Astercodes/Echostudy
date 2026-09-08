@@ -94,16 +94,14 @@ const fs = require("node:fs/promises");
     .getByRole("button", { name: "Knowledge tree", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Concept: Transformers", exact: true })
+    .getByRole("button", { name: "Leaf: Transformers", exact: true })
     .click();
+  await page.getByRole("button", { name: "Grow a fruit", exact: true }).click();
+  await page.getByLabel("Fruit name", { exact: true }).fill("Turns ratio");
   await page
-    .getByRole("button", { name: "Grow a sub-concept", exact: true })
-    .click();
-  await page.getByLabel("Concept name", { exact: true }).fill("Turns ratio");
-  await page
-    .getByLabel("Your explanation, examples & questions")
+    .getByLabel("Fruit content", { exact: true })
     .fill("Voltage ratio follows winding turns ratio.");
-  await page.getByRole("button", { name: "Save concept", exact: true }).click();
+  await page.getByRole("button", { name: "Save fruit", exact: true }).click();
   await page
     .getByRole("heading", { name: "Turns ratio", exact: true })
     .waitFor();

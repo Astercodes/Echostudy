@@ -15,15 +15,20 @@ const assert = require("node:assert/strict");
     await page
       .getByRole("combobox", { name: "Life-area tree", exact: true })
       .selectOption("faith");
+    await page.getByRole("button", { name: "Add branch", exact: true }).click();
     await page
-      .getByRole("button", { name: "Add concept", exact: true })
-      .click();
-    await page
-      .getByLabel("Concept name", { exact: true })
+      .getByLabel("Branch name", { exact: true })
       .fill("Understanding wisdom");
     await page
-      .getByRole("button", { name: "Save concept", exact: true })
+      .getByRole("button", { name: "Save branch", exact: true })
       .click();
+    await page
+      .getByRole("button", { name: "Grow a leaf", exact: true })
+      .click();
+    await page
+      .getByLabel("Leaf name", { exact: true })
+      .fill("Wisdom principle");
+    await page.getByRole("button", { name: "Save leaf", exact: true }).click();
     await page
       .getByRole("button", { name: "Grow a fruit", exact: true })
       .click();

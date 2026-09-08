@@ -114,6 +114,10 @@ export function saveTreeNode(data, node) {
     throw new Error("Choose a concept outside this idea’s descendants.");
   if (node.kind === "fruit" && !parent)
     throw new Error("A fruit must grow on a concept.");
+  if (parent?.kind === "seed")
+    throw new Error(
+      "Grow this seed into a branch before adding knowledge beneath it.",
+    );
   const loc = parent
     ? locationOf(parent, data.concepts, data.lifeAreas)
     : { areaId: node.areaId, subAreaId: node.subAreaId };
@@ -123,6 +127,18 @@ export function saveTreeNode(data, node) {
     standalone: Boolean(node.standalone && !node.parent && !loc.subAreaId),
     title: node.title.trim(),
   };
+  if (
+    data.concepts.some(
+      (n) =>
+        n.trashedAt &&
+        isScopeNode(n) &&
+        n.areaId === loc.areaId &&
+        (!n.subAreaId || n.subAreaId === loc.subAreaId),
+    )
+  )
+    throw new Error(
+      "Restore the destination tree or stem before growing knowledge there.",
+    );
   const children = descendants(node.id, data.concepts);
   return {
     ...data,
@@ -191,7 +207,147 @@ export function connectNodes(data, id, ids, details = {}) {
     ),
   };
 }
-export function pluckNode(data, id) {
+export function knowledgeLabel(node, nodes) {
+  if (node.kind === "life-area") return "Tree";
+  if (node.kind === "sub-area") return "Stem";
+  if (node.kind === "seed") return "Seed";
+  if (node.kind === "fruit") return "Fruit";
+  if (node.kind === "leaf") return "Leaf";
+  const parent = nodes.find((n) => n.id === node.parent);
+  return parent && !isScaffold(parent) && !isScopeNode(parent)
+    ? "Leaf"
+    : "Branch";
+}
+export function knowledgeLineage(data, node) {
+  const home = locationOf(node, data.concepts, data.lifeAreas);
+  const area = data.lifeAreas.find((a) => a.id === home.areaId);
+  const chain = [],
+    seen = new Set();
+  let current = node;
+  while (current && !seen.has(current.id)) {
+    seen.add(current.id);
+    if (!isScaffold(current) && !isScopeNode(current))
+      chain.unshift(current.title);
+    current = data.concepts.find((n) => n.id === current.parent);
+  }
+  return {
+    sourceId: node.id,
+    path: [
+      area?.name,
+      area?.subAreas.find((s) => s.id === home.subAreaId)?.name,
+      ...chain,
+    ]
+      .filter(Boolean)
+      .join(" → "),
+    at: new Date().toISOString(),
+  };
+}
+export function plantSeed(data, sourceId, draft) {
+  const source = knowledgeEntries(data).find(
+    (n) => n.id === sourceId && !n.trashedAt,
+  );
+  if (!source || !draft.title?.trim())
+    throw new Error("Name the question or idea you want to plant.");
+  const seed = {
+    id: crypto.randomUUID(),
+    title: draft.title.trim(),
+    description: draft.description || "",
+    kind: "seed",
+    parent: "",
+    ...locationOf(source, data.concepts, data.lifeAreas),
+    subAreaId: "",
+    standalone: true,
+    status: "Growing",
+    links: [],
+    prerequisites: [],
+    lineage: {
+      ...knowledgeLineage(data, source),
+      action: "plant",
+      excerpt: draft.excerpt || "",
+    },
+  };
+  return saveKnowledgeEntry(data, seed);
+}
+export function growSeed(
+  data,
+  id,
+  { areaId, subAreaId = "", newTreeName = "" },
+) {
+  const seed = data.concepts.find(
+    (n) => n.id === id && n.kind === "seed" && !n.trashedAt,
+  );
+  if (!seed) throw new Error("Choose an active seed.");
+  let next = data;
+  if (newTreeName.trim()) {
+    if (
+      data.lifeAreas.some(
+        (a) => a.name.trim().toLowerCase() === newTreeName.trim().toLowerCase(),
+      )
+    )
+      throw new Error(
+        "A tree with this name already exists. Choose it as the destination.",
+      );
+    areaId = crypto.randomUUID();
+    next = {
+      ...data,
+      lifeAreas: [
+        ...data.lifeAreas,
+        {
+          id: areaId,
+          name: newTreeName.trim(),
+          color: "#009cde",
+          subAreas: [],
+        },
+      ],
+    };
+    subAreaId = "";
+  }
+  return saveTreeNode(next, {
+    ...seed,
+    kind: "concept",
+    areaId,
+    subAreaId,
+    standalone: !subAreaId,
+    history: [
+      ...(seed.history || []),
+      { action: "grow", at: new Date().toISOString() },
+    ],
+  });
+}
+export function pluckNode(data, id, { move = false } = {}) {
+  const source = knowledgeEntries(data).find(
+    (n) => n.id === id && !n.trashedAt,
+  );
+  if (!source || isScaffold(source))
+    throw new Error("Choose an active idea to pluck.");
+  if (!move || isScopeNode(source)) {
+    const copy = {
+      ...structuredClone(source),
+      id: crypto.randomUUID(),
+      kind: "concept",
+      parent: "",
+      subAreaId: "",
+      standalone: true,
+      trashedAt: null,
+      compostBatch: null,
+      lineage: { ...knowledgeLineage(data, source), action: "pluck" },
+      ...(isScopeNode(source) ? { sourceScopeId: source.id } : {}),
+      history: [
+        ...(source.history || []),
+        { action: "pluck-copy", at: new Date().toISOString() },
+      ],
+    };
+    // Keep the original and its descendants intact; grafts on the copy are reciprocal.
+    return graftKnowledge(
+      saveKnowledgeEntry(data, copy),
+      copy.id,
+      source.links || [],
+      source.grafts || {},
+    );
+  }
+  return movePluckedNode(data, id);
+}
+function movePluckedNode(data, id) {
   const scope = knowledgeEntries(data).find(
     (n) => n.id === id && isScopeNode(n),
   );
@@ -229,6 +385,7 @@ export function pluckNode(data, id) {
     parent: "",
     subAreaId: "",
     standalone: true,
+    lineage: { ...knowledgeLineage(data, node), action: "pluck-move" },
     history: [
       ...(node.history || []),
       {

@@ -17,14 +17,12 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
     await p
       .getByRole("combobox", { name: "Life-area tree", exact: true })
       .selectOption({ label: "Leadership & influence" });
-    await p.getByRole("button", { name: "Add concept", exact: true }).click();
-    await p.getByLabel("Concept name", { exact: true }).fill("Leading teams");
-    await p.getByRole("button", { name: "Save concept", exact: true }).click();
-    await p
-      .getByRole("button", { name: "Grow a sub-concept", exact: true })
-      .click();
-    await p.getByLabel("Concept name", { exact: true }).fill("Delegation");
-    await p.getByRole("button", { name: "Save concept", exact: true }).click();
+    await p.getByRole("button", { name: "Add branch", exact: true }).click();
+    await p.getByLabel("Branch name", { exact: true }).fill("Leading teams");
+    await p.getByRole("button", { name: "Save branch", exact: true }).click();
+    await p.getByRole("button", { name: "Grow a leaf", exact: true }).click();
+    await p.getByLabel("Leaf name", { exact: true }).fill("Delegation");
+    await p.getByRole("button", { name: "Save leaf", exact: true }).click();
     await p.getByRole("button", { name: "Grow a fruit", exact: true }).click();
     await p.getByLabel("Fruit name", { exact: true }).fill("Clear ownership");
     await p.getByRole("button", { name: "Save fruit", exact: true }).click();
@@ -50,16 +48,14 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
         }),
     );
     console.log(
-      await p
-        .locator(".orchard-scroll")
-        .evaluate((e) => ({
-          w: e.clientWidth,
-          offset: e.offsetWidth,
-          h: e.clientHeight,
-          sh: e.scrollHeight,
-          svg: e.firstElementChild.getBoundingClientRect().height,
-          overflow: getComputedStyle(e).overflow,
-        })),
+      await p.locator(".orchard-scroll").evaluate((e) => ({
+        w: e.clientWidth,
+        offset: e.offsetWidth,
+        h: e.clientHeight,
+        sh: e.scrollHeight,
+        svg: e.firstElementChild.getBoundingClientRect().height,
+        overflow: getComputedStyle(e).overflow,
+      })),
     );
     console.log(
       JSON.stringify({

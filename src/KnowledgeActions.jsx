@@ -107,7 +107,10 @@ function Layers({ node, mode, persist, close }) {
 function Content({ node, mode, data, persist, close }) {
   return (
     <Modal
-      title={(mode === "isolate" ? "Isolate · " : "Content · ") + node.title}
+      title={
+        (mode === "isolate" ? "Pluck · Independent study · " : "Content · ") +
+        node.title
+      }
       onClose={close}
     >
       <div

@@ -29,8 +29,8 @@ const assert = require("node:assert/strict");
       "Apply",
       "Pluck",
       "Graft",
-      "Isolate",
-      "Compost",
+      "Plant",
+      "Prune",
     ])
       assert(
         await page
@@ -47,12 +47,12 @@ const assert = require("node:assert/strict");
       .waitFor();
     await page.getByRole("button", { name: "Done", exact: true }).click();
     const branch = await page
-      .getByRole("combobox", { name: "Sub-area branch", exact: true })
+      .getByRole("combobox", { name: "Stem (sub-area)", exact: true })
       .locator("option")
       .nth(1)
       .textContent();
     await page
-      .getByRole("button", { name: "Branch: " + branch, exact: true })
+      .getByRole("button", { name: "Stem: " + branch, exact: true })
       .click();
     await page.getByRole("button", { name: "Peel", exact: true }).click();
     assert.equal(
@@ -76,7 +76,7 @@ const assert = require("node:assert/strict");
     );
     await page.getByRole("button", { name: "Done", exact: true }).click();
     await page
-      .getByRole("button", { name: "Branch: " + branch, exact: true })
+      .getByRole("button", { name: "Stem: " + branch, exact: true })
       .click();
     await page.getByRole("button", { name: "Peel", exact: true }).click();
     assert.equal(
@@ -91,14 +91,14 @@ const assert = require("node:assert/strict");
       .click();
     await page
       .locator(".orchard-detail")
-      .getByRole("button", { name: "Compost", exact: true })
+      .getByRole("button", { name: "Prune", exact: true })
       .click();
     await page
-      .getByRole("button", { name: "Move to Compost", exact: true })
+      .getByRole("button", { name: "Prune & preserve", exact: true })
       .click();
     assert.equal(
       await page
-        .getByRole("button", { name: "Concept: Transformers", exact: true })
+        .getByRole("button", { name: "Leaf: Transformers", exact: true })
         .count(),
       0,
     );
@@ -109,7 +109,7 @@ const assert = require("node:assert/strict");
       .getByRole("button", { name: "Restore workspace", exact: true })
       .click();
     await page
-      .getByRole("button", { name: "Concept: Transformers", exact: true })
+      .getByRole("button", { name: "Leaf: Transformers", exact: true })
       .waitFor();
     console.log(
       "PASS clickable roots/branches, all actions, audio controls, independent persistence, archive and restore",

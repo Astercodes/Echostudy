@@ -27,9 +27,13 @@ import {
   scopeId,
   saveKnowledgeEntry,
   graftKnowledge,
+  knowledgeLabel,
+  plantSeed,
+  growSeed,
 } from "./knowledge-tree";
 import "./knowledge-tree.css";
 import KnowledgeActions from "./KnowledgeActions";
+import KnowledgePlant from "./KnowledgePlant";
 import { VoiceField } from "./VoiceField";
 
 function growLayout(nodes, branches) {
@@ -116,7 +120,7 @@ export default function Knowledge({
     groups.unshift({
       id: "branch:independent",
       subAreaId: "",
-      title: "Independent concepts",
+      title: "Independent knowledge & seeds",
       independent: true,
     });
     if (nodes.some((n) => !loc(n).subAreaId && !n.standalone))
@@ -182,7 +186,8 @@ export default function Knowledge({
     }
     setEditor({
       id: uid(),
-      kind,
+      kind:
+        kind === "concept" && parent && !isScopeNode(parent) ? "leaf" : kind,
       title: "",
       description: "",
       summary: "",
@@ -226,12 +231,12 @@ export default function Knowledge({
       </div>
       {!compact && (
         <div className="orchard-toolbar">
-          <Field label="Sub-area branch">
+          <Field label="Stem (sub-area)">
             <select
               value={branchId}
               onChange={(e) => setBranch(e.target.value)}
             >
-              <option value="">Select a branch to grow</option>
+              <option value="">Select a stem to grow</option>
               {area.subAreas.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -241,20 +246,20 @@ export default function Knowledge({
           </Field>
           <Button primary onClick={() => create("concept")}>
             <Plus size={16} />
-            Add concept
+            Add branch
           </Button>
           <Button onClick={() => setAction("suggestions")}>
             Growth suggestions
           </Button>
           <Button onClick={() => setAction("trash")}>
             <Trash2 size={16} />
-            Compost
+            Pruned knowledge
           </Button>
           <label className="orchard-search">
             <Search size={16} />
             <input
               aria-label="Search this tree"
-              placeholder="Find a concept or fruit"
+              placeholder="Find a branch, leaf, fruit or seed"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -267,7 +272,7 @@ export default function Knowledge({
             .filter((n) => n.title.toLowerCase().includes(search.toLowerCase()))
             .map((n) => (
               <button key={n.id} onClick={() => open(n)}>
-                {n.kind === "fruit" ? "Fruit" : "Concept"} · {n.title}
+                {knowledgeLabel(n, data.concepts)} · {n.title}
               </button>
             ))}
         </div>
@@ -276,11 +281,11 @@ export default function Knowledge({
         <section className="card orchard-stage">
           <div className="orchard-legend">
             <span>
-              <Sprout size={16} /> Root → sub-area → concept → fruit
+              <Sprout size={16} /> Tree → stem → branch → leaf → fruit → seed
             </span>
             <span>
-              {nodes.filter((n) => n.kind !== "fruit").length} concepts ·{" "}
-              {nodes.filter((n) => n.kind === "fruit").length} fruits
+              {nodes.filter((n) => n.kind !== "fruit").length} knowledge objects
+              · {nodes.filter((n) => n.kind === "fruit").length} fruits
             </span>
           </div>
           <div className="orchard-scroll" ref={canvas}>
@@ -352,8 +357,8 @@ export default function Knowledge({
                       p.root
                         ? area.name
                         : p.branch
-                          ? "Branch: " + n.title
-                          : (fruit ? "Fruit: " : "Concept: ") + n.title
+                          ? "Stem: " + n.title
+                          : knowledgeLabel(n, data.concepts) + ": " + n.title
                     }
                     className={"orchard-node " + (active ? "is-selected" : "")}
                     opacity={
@@ -479,7 +484,9 @@ export default function Knowledge({
                           fill="#586e8a"
                           letterSpacing="1"
                         >
-                          {p.branch ? "SUB-AREA" : "CONCEPT"}
+                          {p.branch
+                            ? "STEM"
+                            : knowledgeLabel(n, data.concepts).toUpperCase()}
                         </text>
                         <text
                           textAnchor="middle"
@@ -540,12 +547,37 @@ export default function Knowledge({
                   {sel.kind === "life-area"
                     ? "LIFE-AREA ROOT"
                     : sel.kind === "sub-area"
-                      ? "SUB-AREA BRANCH"
+                      ? "STEM"
                       : sel.kind === "fruit"
                         ? "KNOWLEDGE FRUIT"
-                        : "CONCEPT BRANCH"}
+                        : knowledgeLabel(sel, data.concepts).toUpperCase()}
                 </div>
                 <h2>{sel.title}</h2>
+                {sel.lineage && (
+                  <p className="muted">
+                    {sel.lineage.action === "plant"
+                      ? "Planted from"
+                      : "Plucked from"}
+                    : {sel.lineage.path}
+                  </p>
+                )}
+                {sel.lineage &&
+                  entries.some(
+                    (n) => n.id === sel.lineage.sourceId && !n.trashedAt,
+                  ) && (
+                    <Button
+                      onClick={() =>
+                        open(entries.find((n) => n.id === sel.lineage.sourceId))
+                      }
+                    >
+                      Open original source
+                    </Button>
+                  )}
+                {sel.kind === "seed" && (
+                  <Button primary onClick={() => setAction("grow-seed")}>
+                    Grow seed
+                  </Button>
+                )}
                 <p className="muted">
                   {area.name} /{" "}
                   {area.subAreas.find((s) => s.id === loc(sel).subAreaId)
@@ -553,14 +585,14 @@ export default function Knowledge({
                     (sel.kind === "life-area"
                       ? "Root workspace"
                       : sel.standalone
-                        ? "Independent concepts"
+                        ? "Independent knowledge & seeds"
                         : "Choose a sub-area")}
                 </p>
                 {isScopeNode(sel) ? (
                   <>
                     {sel.trashedAt ? (
                       <>
-                        <p>This knowledge workspace is in Compost.</p>
+                        <p>This knowledge workspace has been pruned.</p>
                         <Button
                           onClick={() => save((d) => restoreNode(d, sel.id))}
                         >
@@ -577,7 +609,7 @@ export default function Knowledge({
                           Open content
                         </Button>
                         <Button onClick={() => create("concept", sel)}>
-                          Grow a concept
+                          Grow a branch
                         </Button>
                       </>
                     )}
@@ -601,14 +633,25 @@ export default function Knowledge({
                       {sel.description ||
                         "Grow this concept with explanations, examples and knowledge fruits."}
                     </p>
-                    <Button onClick={() => create("fruit", sel)}>
-                      <Cherry size={16} />
-                      Grow a fruit
-                    </Button>
-                    <Button onClick={() => create("concept", sel)}>
-                      <Plus size={16} />
-                      Grow a sub-concept
-                    </Button>
+                    {knowledgeLabel(sel, data.concepts) === "Leaf" && (
+                      <Button onClick={() => create("fruit", sel)}>
+                        <Cherry size={16} />
+                        Grow a fruit
+                      </Button>
+                    )}
+                    {knowledgeLabel(sel, data.concepts) === "Branch" && (
+                      <Button onClick={() => create("concept", sel)}>
+                        <Plus size={16} />
+                        Grow a leaf
+                      </Button>
+                    )}
+                    {knowledgeLabel(sel, data.concepts) === "Leaf" && (
+                      <p className="muted">
+                        Atomic knowledge: a definition, fact, formula,
+                        principle, term, example or distinction. Grow fruits to
+                        explore what follows from it.
+                      </p>
+                    )}
                     <Button
                       onClick={() =>
                         setEditor({
@@ -623,7 +666,7 @@ export default function Knowledge({
                         })
                       }
                     >
-                      Edit concept & placement
+                      Edit knowledge & placement
                     </Button>
 
                     <Field label="Understanding">
@@ -666,10 +709,10 @@ export default function Knowledge({
                     ["absorb", "Absorb / Take Root"],
                     ["taste", "Taste"],
                     ["apply", "Apply"],
+                    ["plant", "Plant"],
                     ["pluck", "Pluck"],
                     ["connect", "Graft"],
-                    ["isolate", "Isolate"],
-                    ["compost", "Compost"],
+                    ["compost", "Prune"],
                   ].map(([key, label]) => (
                     <Button
                       key={key}
@@ -708,8 +751,8 @@ export default function Knowledge({
                   ))
                 ) : (
                   <p className="muted">
-                    No connections yet. Connect ideas within this tree or across
-                    your orchard.
+                    No grafts yet. Graft ideas within this tree or across your
+                    orchard.
                   </p>
                 )}
                 {sel.kind !== "fruit" && (
@@ -731,8 +774,9 @@ export default function Knowledge({
                 <Sprout size={42} />
                 <h2>A place for every idea.</h2>
                 <p>
-                  Your life area is the root. Choose a sub-area branch and plant
-                  a concept. Then grow fruits filled with your own knowledge.
+                  Each life area has a tree. Choose a stem (sub-area), grow a
+                  branch, and add leaves of atomic knowledge. Fruits explore
+                  what follows; seeds hold the next questions.
                 </p>
                 <p>
                   Click a fruit for its actions. Its text stays tucked away
@@ -758,7 +802,7 @@ export default function Knowledge({
             setSelected(n.id);
             setArea(n.areaId);
             setBranch(n.subAreaId);
-            notify(n.kind === "fruit" ? "Fruit saved." : "Concept planted.");
+            notify(knowledgeLabel(n, data.concepts) + " saved.");
           }}
         />
       )}
@@ -783,13 +827,13 @@ export default function Knowledge({
                     setAction(null);
                   }}
                 >
-                  Explore concept
+                  Explore knowledge
                 </Button>
               </section>
             ))}
             {!insights(nodes).length && (
               <p>
-                Plant concepts and connect ideas to start finding growth
+                Grow branches and graft ideas to start finding growth
                 opportunities.
               </p>
             )}
@@ -797,9 +841,9 @@ export default function Knowledge({
         </Modal>
       )}
       {action === "trash" && (
-        <Modal title="Compost" onClose={() => setAction(null)}>
+        <Modal title="Pruned knowledge" onClose={() => setAction(null)}>
           <p>
-            Composted ideas are hidden from trees. Restoring keeps their text,
+            Pruned ideas are hidden from trees. Restoring keeps their text,
             learning history and connections.
           </p>
           {data.concepts
@@ -845,33 +889,81 @@ export default function Knowledge({
         )}
       {sel && action === "pluck" && (
         <Modal title={"Pluck · " + sel.title} onClose={() => setAction(null)}>
-          {isScopeNode(sel) ? (
-            <p>
-              Create an independent concept from this workspace’s text and
-              learning history. Its life-area or sub-area home remains in the
-              catalog.
-            </p>
-          ) : (
-            <p>
-              This idea will become an independent concept in {area.name}, ready
-              to grow its own branches and fruits. Its text, history, links and
-              ID stay intact.
-            </p>
-          )}
+          <p>
+            Create an independent copy to study by itself. The original, its
+            descendants and its home remain intact. The copy keeps its text,
+            learning history, grafts and source lineage.
+          </p>
           <Button
             primary
             onClick={() => {
-              save((d) => pluckNode(d, sel.id));
-              setAction(null);
-              notify("Idea plucked into an independent concept.");
+              const next = pluckNode(data, sel.id);
+              const copy = next.concepts.find(
+                (n) => !data.concepts.some((old) => old.id === n.id),
+              );
+              save(next);
+              setSelected(copy.id);
+              setAction("isolate");
+              notify("Independent copy created. The original is preserved.");
             }}
           >
-            Make independent
+            Copy & study independently
           </Button>
+          {!isScopeNode(sel) && (
+            <details>
+              <summary>Move instead of copy</summary>
+              <p>
+                This relocates the original and its descendants into independent
+                knowledge. Its lineage is retained.
+              </p>
+              <Button
+                onClick={() => {
+                  save((d) => pluckNode(d, sel.id, { move: true }));
+                  setAction("isolate");
+                }}
+              >
+                Move original & study independently
+              </Button>
+            </details>
+          )}
         </Modal>
       )}
+      {sel && ["plant", "grow-seed"].includes(action) && (
+        <KnowledgePlant
+          key={sel.id + action}
+          node={sel}
+          data={data}
+          grow={action === "grow-seed"}
+          close={() => setAction(null)}
+          submit={(draft) => {
+            const next =
+              action === "plant"
+                ? plantSeed(data, sel.id, draft)
+                : growSeed(data, sel.id, draft);
+            const target =
+              action === "plant"
+                ? next.concepts.find(
+                    (n) => !data.concepts.some((old) => old.id === n.id),
+                  )
+                : next.concepts.find((n) => n.id === sel.id);
+            save(next);
+            setArea(target.areaId);
+            setSelected(target.id);
+            setAction(null);
+            notify(
+              action === "plant"
+                ? "Seed planted with its source preserved."
+                : "Your seed has grown into a branch.",
+            );
+          }}
+        />
+      )}
       {sel && action === "compost" && (
-        <Modal title={"Compost · " + sel.title} onClose={() => setAction(null)}>
+        <Modal title={"Prune · " + sel.title} onClose={() => setAction(null)}>
+          <p>
+            Remove knowledge that does not belong, is redundant, incorrect, or
+            no longer useful. Pruning is recoverable.
+          </p>
           {isScopeNode(sel) ? (
             <p>
               Archive this knowledge workspace and its knowledge branches.
@@ -884,7 +976,7 @@ export default function Knowledge({
               {Math.max(0, descendants(sel.id, data.concepts).size - 1)}{" "}
               descendants out of the active tree. Text, notes, learning history
               and connections will be preserved. You can restore them from
-              Compost.
+              Pruned knowledge.
             </p>
           )}
           <Button
@@ -892,10 +984,10 @@ export default function Knowledge({
               save((d) => compostNode(d, sel.id));
               setSelected(null);
               setAction(null);
-              notify("Idea preserved in Compost.");
+              notify("Idea preserved in Pruned knowledge.");
             }}
           >
-            Move to Compost
+            Prune & preserve
           </Button>
         </Modal>
       )}
@@ -922,7 +1014,7 @@ function NodeEditor({ node, data, close, submit }) {
   const excluded = descendants(v.id, data.concepts);
   return (
     <Modal
-      title={v.kind === "fruit" ? "Grow a knowledge fruit" : "Plant a concept"}
+      title={"Grow a " + knowledgeLabel(v, data.concepts).toLowerCase()}
       onClose={close}
     >
       <form
@@ -936,7 +1028,7 @@ function NodeEditor({ node, data, close, submit }) {
           }
         }}
       >
-        <Field label={v.kind === "fruit" ? "Fruit name" : "Concept name"}>
+        <Field label={knowledgeLabel(v, data.concepts) + " name"}>
           <input
             autoFocus
             required
@@ -965,7 +1057,7 @@ function NodeEditor({ node, data, close, submit }) {
                 ))}
               </select>
             </Field>
-            <Field label="Sub-area">
+            <Field label="Stem (sub-area)">
               <select
                 value={v.subAreaId}
                 onChange={(e) =>
@@ -996,7 +1088,7 @@ function NodeEditor({ node, data, close, submit }) {
             }}
           >
             {v.kind !== "fruit" && (
-              <option value="">Directly from the sub-area branch</option>
+              <option value="">Directly from the stem</option>
             )}
             {data.concepts
               .filter(
@@ -1043,7 +1135,7 @@ function NodeEditor({ node, data, close, submit }) {
         {error && <p role="alert">{error}</p>}
         <div className="form-actions">
           <Button primary type="submit">
-            {v.kind === "fruit" ? "Save fruit" : "Save concept"}
+            {"Save " + knowledgeLabel(v, data.concepts).toLowerCase()}
           </Button>
         </div>
       </form>

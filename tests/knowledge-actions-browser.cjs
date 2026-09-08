@@ -16,15 +16,20 @@ const assert = require("node:assert/strict");
     await page
       .getByRole("combobox", { name: "Life-area tree", exact: true })
       .selectOption("faith");
+    await page.getByRole("button", { name: "Add branch", exact: true }).click();
     await page
-      .getByRole("button", { name: "Add concept", exact: true })
-      .click();
-    await page
-      .getByLabel("Concept name", { exact: true })
+      .getByLabel("Branch name", { exact: true })
       .fill("Wisdom practice");
     await page
-      .getByRole("button", { name: "Save concept", exact: true })
+      .getByRole("button", { name: "Save branch", exact: true })
       .click();
+    await page
+      .getByRole("button", { name: "Grow a leaf", exact: true })
+      .click();
+    await page
+      .getByLabel("Leaf name", { exact: true })
+      .fill("Wisdom principle");
+    await page.getByRole("button", { name: "Save leaf", exact: true }).click();
     await page
       .getByRole("button", { name: "Grow a fruit", exact: true })
       .click();
@@ -99,9 +104,15 @@ const assert = require("node:assert/strict");
       await page.locator(".orchard-detail").innerText(),
       /Transformers/,
     );
-    await page.getByRole("button", { name: "Isolate", exact: true }).click();
+    await page.getByRole("button", { name: "Pluck", exact: true }).click();
     await page
-      .getByRole("dialog", { name: "Isolate · Sound judgment", exact: true })
+      .getByRole("button", { name: "Copy & study independently", exact: true })
+      .click();
+    await page
+      .getByRole("dialog", {
+        name: "Pluck · Independent study · Sound judgment",
+        exact: true,
+      })
       .waitFor();
     assert.equal(
       await page
@@ -113,32 +124,28 @@ const assert = require("node:assert/strict");
     await page
       .getByRole("button", { name: "Return to tree", exact: true })
       .click();
-    await page.getByRole("button", { name: "Pluck", exact: true }).click();
     await page
-      .getByRole("button", { name: "Make independent", exact: true })
-      .click();
-    await page
-      .getByRole("button", { name: "Concept: Sound judgment", exact: true })
+      .getByRole("button", { name: "Branch: Sound judgment", exact: true })
       .waitFor();
     await page
-      .getByRole("button", { name: "Grow a fruit", exact: true })
+      .getByRole("button", { name: "Grow a leaf", exact: true })
       .waitFor();
     await page
       .locator(".orchard-detail")
-      .getByRole("button", { name: "Compost", exact: true })
+      .getByRole("button", { name: "Prune", exact: true })
       .click();
     await page
-      .getByRole("button", { name: "Move to Compost", exact: true })
+      .getByRole("button", { name: "Prune & preserve", exact: true })
       .click();
     assert.equal(
       await page
-        .getByRole("button", { name: "Concept: Sound judgment", exact: true })
+        .getByRole("button", { name: "Branch: Sound judgment", exact: true })
         .count(),
       0,
     );
     await page
       .locator(".orchard-toolbar")
-      .getByRole("button", { name: "Compost", exact: true })
+      .getByRole("button", { name: "Pruned knowledge", exact: true })
       .click();
     await page.getByRole("button", { name: "Restore", exact: true }).click();
     await page
@@ -152,7 +159,7 @@ const assert = require("node:assert/strict");
       .getByRole("combobox", { name: "Life-area tree", exact: true })
       .selectOption("faith");
     await page
-      .getByRole("button", { name: "Concept: Sound judgment", exact: true })
+      .getByRole("button", { name: "Branch: Sound judgment", exact: true })
       .click();
     await page.getByRole("button", { name: "Taste", exact: true }).click();
     await page

@@ -46,7 +46,7 @@ const assert = require("node:assert/strict");
         .getByRole("button", { name: "Knowledge tree", exact: true })
         .click();
       await page
-        .getByRole("button", { name: "Concept: Transformers", exact: true })
+        .getByRole("button", { name: "Leaf: Transformers", exact: true })
         .click();
     };
     await openTree();

@@ -151,13 +151,54 @@ test("pluck preserves learning and references while giving a fruit an independen
     learning: { peel: { definitions: "A definition" } },
   });
   d = pluckNode(d, "fruit");
-  const n = d.concepts.find((n) => n.id === "fruit");
+  const n = d.concepts.find((n) => n.lineage?.sourceId === "fruit");
+  assert.equal(d.concepts.find((n) => n.id === "fruit").parent, "c3");
   assert.equal(n.parent, "");
   assert.equal(n.kind, "concept");
   assert.equal(n.standalone, true);
   assert.equal(n.description, "Keep this");
   assert.equal(n.learning.peel.definitions, "A definition");
   assert.deepEqual(n.links, ["c4"]);
+  assert(validateBackup(d));
+});
+import { plantSeed, growSeed, knowledgeLabel } from "../src/knowledge-tree.js";
+test("seeds preserve the source and grow into existing or new trees without losing lineage", () => {
+  const original = initialState();
+  let d = plantSeed(original, "c3", {
+    title: "What is Bayes' theorem?",
+    excerpt: "Bayes",
+    description: "A question to explore",
+  });
+  assert.deepEqual(
+    d.concepts.slice(0, original.concepts.length),
+    original.concepts,
+  );
+  const seed = d.concepts.at(-1);
+  assert.equal(seed.kind, "seed");
+  assert.equal(seed.lineage.sourceId, "c3");
+  assert(seed.lineage.path.includes("Transformers"));
+  const stem = d.lifeAreas
+    .find((a) => a.id === "leadership")
+    .subAreas.find((s) => s.name === "Management");
+  d = growSeed(d, seed.id, { areaId: "leadership", subAreaId: stem.id });
+  assert(treeNodes(d, "leadership").some((n) => n.id === seed.id));
+  assert.equal(
+    d.concepts.find((n) => n.id === seed.id).lineage.excerpt,
+    "Bayes",
+  );
+  d = plantSeed(d, seed.id, { title: "A new field" });
+  const second = d.concepts.at(-1).id;
+  d = growSeed(d, second, { newTreeName: "My new field" });
+  const tree = d.lifeAreas.find((a) => a.name === "My new field");
+  assert(treeNodes(d, tree.id).some((n) => n.id === second));
+  assert(validateBackup(JSON.parse(JSON.stringify(d))));
+  assert.equal(knowledgeLabel({ kind: "leaf" }, []), "Leaf");
+});
+test("explicit pluck move preserves the ID and records its original path", () => {
+  const d = pluckNode(initialState(), "c3", { move: true });
+  const n = d.concepts.find((n) => n.id === "c3");
+  assert.equal(n.parent, "");
+  assert(n.lineage.path.includes("Transformers"));
   assert(validateBackup(d));
 });
 test("compost and restore preserve a full branch and its histories", () => {
