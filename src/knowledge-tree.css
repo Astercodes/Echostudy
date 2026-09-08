@@ -84,6 +84,9 @@
 }
 .orchard-scroll {
   overflow: auto;
+  /* Reserve scrollbar width: fitted SVG height must not toggle its own viewport. */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
   height: 620px;
   background:
     radial-gradient(#a9c5e54d 0.8px, transparent 0.8px) 0 0/20px 20px,
