@@ -136,6 +136,10 @@ A future synchronized edition can replace the persistence boundary with authenti
 
 ## Knowledge orchard
 
+Knowledge text fields also support **Record audio → Stop → Review transcript → Append transcript**. This includes the layer workspaces, recall answers, applications, Graft explanations and fruit content. Existing writing is preserved when a transcript is appended. Audio can be played back and downloaded, and clips/draft transcripts are stored by account and field in browser IndexedDB. Audio files are not part of the JSON workspace backup; inserted transcripts are ordinary workspace text and are included.
+
+Transcription uses the browser's SpeechRecognition service, which has limited browser support and may process speech online. No OpenAI key is used. A browser can expose the API while its speech service is unavailable; in that case the UI explains the failure and preserves recorded audio. Microphone denial is handled separately. Continuous recognition restarts when the service ends a segment, and leaving a field/action stops its microphone. Browser integration tests use a synthetic microphone with native MediaRecorder and mocked speech-service responses; they verify recording, insertion, persistence and failures, not third-party transcription accuracy.
+
 Each life area has its own tree. Sub-areas form branches, concepts can grow smaller concept branches, and fruits hold text hidden from the canvas. Choose a life-area tree, select a sub-area and add a concept, then use **Grow a fruit**. Existing notes stay linked by their original concept IDs. Built-in legacy grouping nodes remain stored for backup compatibility.
 
 - **Peel:** eight saved sections for foundations, prerequisites, definitions, mechanisms, components, assumptions, examples and advanced layers.

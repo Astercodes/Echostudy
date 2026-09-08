@@ -2,6 +2,9 @@ let namespace = null;
 export function setFileNamespace(id) {
   namespace = id;
 }
+export function getFileNamespace() {
+  return namespace;
+}
 function open() {
   return new Promise((resolve, reject) => {
     if (!namespace) {

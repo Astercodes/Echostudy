@@ -25,6 +25,7 @@ import {
 } from "./knowledge-tree";
 import "./knowledge-tree.css";
 import KnowledgeActions from "./KnowledgeActions";
+import { VoiceField } from "./VoiceField";
 
 function growLayout(nodes, branches) {
   const points = new Map(),
@@ -934,7 +935,8 @@ function NodeEditor({ node, data, close, submit }) {
               ))}
           </select>
         </Field>
-        <Field
+        <VoiceField
+          scope={v.id + ":editor"}
           label={
             v.kind === "fruit"
               ? "Fruit content"
@@ -946,7 +948,7 @@ function NodeEditor({ node, data, close, submit }) {
             value={v.description || ""}
             onChange={(e) => setV({ ...v, description: e.target.value })}
           />
-        </Field>
+        </VoiceField>
         {v.kind !== "fruit" && (
           <Field label="Prerequisites (comma-separated concept names)">
             <input
@@ -1058,7 +1060,9 @@ function Connections({ node, data, close, submit }) {
                 ))}
               </select>
             </Field>
-            <Field
+            <VoiceField
+              scope={node.id + ":graft:" + id}
+              slot="explanation"
               label={
                 "Why connect to " +
                 data.concepts.find((n) => n.id === id)?.title +
@@ -1079,7 +1083,7 @@ function Connections({ node, data, close, submit }) {
                   })
                 }
               />
-            </Field>
+            </VoiceField>
           </section>
         ))}
       </div>

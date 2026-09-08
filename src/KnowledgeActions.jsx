@@ -2,7 +2,21 @@ import React, { useState } from "react";
 import { Modal, Field, Button } from "./App";
 import { LEARNING_MODES, defaultQuestions } from "./knowledge-learning";
 import { uid } from "./model";
+import { VoiceField, VoiceScope } from "./VoiceField";
 export default function KnowledgeActions({ node, mode, data, persist, close }) {
+  return (
+    <VoiceScope.Provider value={node.id + ":" + mode}>
+      <ActionContent
+        node={node}
+        mode={mode}
+        data={data}
+        persist={persist}
+        close={close}
+      />
+    </VoiceScope.Provider>
+  );
+}
+function ActionContent({ node, mode, data, persist, close }) {
   if (LEARNING_MODES[mode])
     return <Layers node={node} mode={mode} persist={persist} close={close} />;
   if (mode === "regurgitate")
@@ -57,7 +71,7 @@ function Layers({ node, mode, persist, close }) {
           <div role="tabpanel" aria-label={field[1]}>
             <h3>{field[1]}</h3>
             <p>{field[2]}</p>
-            <Field label={field[1]}>
+            <VoiceField label={field[1]}>
               <textarea
                 rows={12}
                 value={values[active] || ""}
@@ -71,7 +85,7 @@ function Layers({ node, mode, persist, close }) {
                   })
                 }
               />
-            </Field>
+            </VoiceField>
             <details>
               <summary>Read source content</summary>
               <p className="orchard-text">
@@ -107,13 +121,13 @@ function Content({ node, mode, data, persist, close }) {
             : "The text held inside this idea."}
         </p>
         <p className="muted">Saved as you write.</p>
-        <Field label="Fruit content">
+        <VoiceField label="Fruit content">
           <textarea
             rows={12}
             value={node.description || ""}
             onChange={(e) => persist({ description: e.target.value })}
           />
-        </Field>
+        </VoiceField>
         {mode === "isolate" && (
           <>
             <h3>Your investigation</h3>
@@ -214,7 +228,10 @@ function Taste({ node, persist, close }) {
               </select>
             </Field>
             <h3>{q.prompt}</h3>
-            <Field label="Your answer from memory">
+            <VoiceField
+              scope={node.id + ":taste:" + q.id}
+              label="Your answer from memory"
+            >
               <textarea
                 rows={7}
                 value={answer}
@@ -225,7 +242,7 @@ function Taste({ node, persist, close }) {
                   setRecorded(false);
                 }}
               />
-            </Field>
+            </VoiceField>
             {!revealed ? (
               <Button
                 primary
@@ -288,7 +305,7 @@ function Taste({ node, persist, close }) {
             </p>
             {questions.map((q, i) => (
               <section className="taste-question" key={q.id}>
-                <Field label={`Question ${i + 1}`}>
+                <VoiceField label={`Question ${i + 1}`}>
                   <textarea
                     value={q.prompt}
                     onChange={(e) =>
@@ -299,8 +316,8 @@ function Taste({ node, persist, close }) {
                       })
                     }
                   />
-                </Field>
-                <Field label={`Reference answer ${i + 1}`}>
+                </VoiceField>
+                <VoiceField label={`Reference answer ${i + 1}`}>
                   <textarea
                     value={q.answer}
                     onChange={(e) =>
@@ -311,7 +328,7 @@ function Taste({ node, persist, close }) {
                       })
                     }
                   />
-                </Field>
+                </VoiceField>
               </section>
             ))}
             <Button
@@ -427,7 +444,7 @@ function Apply({ node, persist, close }) {
             ],
             ["next", "Next application", "What will you change or try next?"],
           ].map(([key, label, hint]) => (
-            <Field key={key} label={label}>
+            <VoiceField key={key} label={label}>
               <textarea
                 required={["context", "evidence", "outcome"].includes(key)}
                 placeholder={hint}
@@ -436,7 +453,7 @@ function Apply({ node, persist, close }) {
                   write({ draft: { ...draft, [key]: e.target.value } })
                 }
               />
-            </Field>
+            </VoiceField>
           ))}
           <p className="muted">
             Your draft saves as you write. Record an application after doing the
@@ -486,13 +503,13 @@ function Regurgitate({ node, persist, close }) {
           Without opening your notes, reconstruct the idea: its meaning,
           reasoning, examples, and connections. Your draft saves as you write.
         </p>
-        <Field label="Recall from memory">
+        <VoiceField label="Recall from memory">
           <textarea
             rows={10}
             value={values.draft || ""}
             onChange={(e) => write({ draft: e.target.value })}
           />
-        </Field>
+        </VoiceField>
         {!reveal ? (
           <Button
             primary
@@ -523,7 +540,7 @@ function Regurgitate({ node, persist, close }) {
                 {node.description || "No source text saved yet."}
               </p>
             </details>
-            <Field label="Gaps and corrections">
+            <VoiceField label="Gaps and corrections">
               <textarea
                 rows={5}
                 value={values.corrections || ""}
@@ -540,7 +557,7 @@ function Regurgitate({ node, persist, close }) {
                   });
                 }}
               />
-            </Field>
+            </VoiceField>
             <Button
               onClick={() => {
                 write({ draft: "", corrections: "" });
