@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useEffect } from "react";
+import React, { useMemo, useState, useRef, useEffect, useId } from "react";
 import {
   Plus,
   Sprout,
@@ -174,6 +174,7 @@ function KnowledgeView({
   onFocus,
   focusNode,
 }) {
+  const barkId = "bark-" + useId().replace(/:/g, "");
   const [areaId, setArea] = useState(
     data.lifeAreas.find((a) => a.id === "knowledge")?.id ||
       data.lifeAreas[0]?.id,
@@ -207,7 +208,20 @@ function KnowledgeView({
       n.id === (focusNode?.kind === "tree" ? focusNode.id : treeId) &&
       n.kind === "tree",
   );
-  const treeIds = focusTree ? descendants(focusTree.id, groveNodes) : null;
+  const focusedKnowledge =
+    focusNode && !isScopeNode(focusNode) ? focusNode : focusTree;
+  const treeIds = focusedKnowledge
+    ? descendants(focusedKnowledge.id, groveNodes)
+    : null;
+  // Keep the path to the focused object so even an atomic leaf or fruit
+  // remains attached by visible blue connections, without sibling subtrees.
+  if (treeIds && focusNode) {
+    let parent = groveNodes.find((n) => n.id === focusedKnowledge.parent);
+    while (parent && !treeIds.has(parent.id)) {
+      treeIds.add(parent.id);
+      parent = groveNodes.find((n) => n.id === parent.parent);
+    }
+  }
   const displayedGrove =
     effectiveGrove ||
     (focusTree
@@ -388,7 +402,7 @@ function KnowledgeView({
               </select>
             </Field>
           )}
-          {focusNode?.kind !== "tree" && (
+          {(!focusNode || isScopeNode(focusNode)) && (
             <Field label="Knowledge tree">
               <select
                 value={focusTree?.id || ""}
@@ -412,7 +426,7 @@ function KnowledgeView({
               </select>
             </Field>
           )}
-          {focusNode?.kind !== "tree" && (
+          {(!focusNode || isScopeNode(focusNode)) && (
             <Button
               primary
               onClick={() => {
@@ -476,7 +490,7 @@ function KnowledgeView({
               }}
             >
               <defs>
-                <linearGradient id={"bark-" + (compact ? "mini" : "full")}>
+                <linearGradient id={barkId}>
                   <stop stopColor="#082b96" />
                   <stop offset="1" stopColor="#009cde" />
                 </linearGradient>
@@ -489,10 +503,9 @@ function KnowledgeView({
                     key={i}
                     d={`M${a.x},${a.y} C${a.x + (b.x - a.x) * 0.55},${a.y} ${a.x + (b.x - a.x) * 0.45},${b.y} ${b.x},${b.y}`}
                     fill="none"
+                    data-knowledge-connection="true"
                     stroke={
-                      e.fruit
-                        ? "#ff7900"
-                        : `url(#bark-${compact ? "mini" : "full"})`
+                      e.fruit && !focusNode ? "#ff7900" : `url(#${barkId})`
                     }
                     strokeWidth={e.main ? 12 : e.fruit ? 2 : 5}
                     strokeLinecap="round"
@@ -748,13 +761,12 @@ function KnowledgeView({
                     Grow seed
                   </Button>
                 )}
-                {onFocus &&
-                  ["sub-area", "tree"].includes(sel.kind) &&
-                  !sel.trashedAt && (
-                    <Button primary onClick={() => onFocus(sel)}>
-                      Focus on this {sel.kind === "tree" ? "tree" : "grove"}
-                    </Button>
-                  )}
+                {onFocus && !isScaffold(sel) && !sel.trashedAt && (
+                  <Button primary onClick={() => onFocus(sel)}>
+                    Focus on this{" "}
+                    {knowledgeLabel(sel, data.concepts).toLowerCase()}
+                  </Button>
+                )}
                 <p className="muted">
                   {area.name} /{" "}
                   {area.subAreas.find((s) => s.id === loc(sel).subAreaId)

@@ -82,6 +82,62 @@ const assert = require("node:assert/strict");
       saved.concepts.find((n) => n.title === "Focused practice").parent,
       "ecosystem-management-v1:people",
     );
+    for (const [kind, title] of [
+      ["Root", "Human behavior"],
+      ["Stem", "Core principles of people management"],
+      ["Branch", "Performance Management"],
+      ["Sub-branch", "Feedback"],
+      ["Leaf", "SBI model"],
+      ["Fruit", "Giving Effective Corrective Feedback"],
+    ]) {
+      await tab("Management").click();
+      await btn(kind + ": " + title).click();
+      await btn("Focus on this " + kind.toLowerCase()).click();
+      assert.equal(await tab(title).getAttribute("aria-selected"), "true");
+      await btn(kind + ": " + title).waitFor();
+      assert.equal(await btn("Tree: Project Management").count(), 0);
+      const edges = await p
+        .locator('[role="tabpanel"]:visible .orchard-tree')
+        .evaluate((svg) => {
+          const gradient = svg.querySelector("linearGradient");
+          return {
+            id: gradient.id,
+            count: document.querySelectorAll('[id="' + gradient.id + '"]')
+              .length,
+            strokes: [
+              ...svg.querySelectorAll("[data-knowledge-connection]"),
+            ].map((e) => e.getAttribute("stroke")),
+            colors: [...gradient.querySelectorAll("stop")].map((e) =>
+              e.getAttribute("stop-color"),
+            ),
+          };
+        });
+      assert.equal(edges.count, 1);
+      assert(edges.strokes.length > 0);
+      assert(edges.strokes.every((s) => s === "url(#" + edges.id + ")"));
+      assert.deepEqual(edges.colors, ["#082b96", "#009cde"]);
+    }
+    await btn("Peel").click();
+    await p
+      .getByRole("textbox", { name: "Foundations", exact: true })
+      .fill("Focus fruit notes preserved");
+    await btn("Done").click();
+    await tab("Management").click();
+    await btn("Fruit: Giving Effective Corrective Feedback").click();
+    await btn("Peel").click();
+    assert.equal(
+      await p
+        .getByRole("textbox", { name: "Foundations", exact: true })
+        .inputValue(),
+      "Focus fruit notes preserved",
+    );
+    await btn("Done").click();
+    await btn("Leadership & influence").click();
+    await btn("Focus on this forest").click();
+    assert.equal(
+      await tab("Leadership & influence").getAttribute("aria-selected"),
+      "true",
+    );
     await p.setViewportSize({ width: 390, height: 844 });
     assert(await tab("Knowledge Ecosystem").isVisible());
     assert.deepEqual(errors, []);
