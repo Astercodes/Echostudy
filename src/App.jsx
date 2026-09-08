@@ -84,12 +84,12 @@ const NAV = [
   ["Barns", Library],
 ];
 const KINDS = {
-  deep: ["Deep study", "#00B7C7"],
-  light: ["Light study", "#658D10"],
-  reflection: ["Reflection", "#B00C60"],
-  recovery: ["Recovery", "#ADCBCD"],
-  life: ["Life", "#D7E525"],
-  fixed: ["Commitment", "#5D787B"],
+  deep: ["Deep study", "#009cde"],
+  light: ["Light study", "#07529a"],
+  reflection: ["Reflection", "#173dc5"],
+  recovery: ["Recovery", "#a9c5e5"],
+  life: ["Life", "#ff7900"],
+  fixed: ["Commitment", "#586e8a"],
 };
 function read(key) {
   try {
@@ -622,14 +622,14 @@ export default function App({ user, onSignOut }) {
                   label="Study planned"
                   value={duration(planned)}
                   foot={studyBlocks.length + " intentional study windows"}
-                  color="#00B7C7"
+                  color="#009cde"
                 />
                 <Stat
                   icon={Flame}
                   label="Focused today"
                   value={duration(actual)}
                   foot={sessions.length + " completed sessions"}
-                  color="#D7E525"
+                  color="#ff7900"
                 />
                 <Stat
                   icon={Network}
@@ -641,14 +641,14 @@ export default function App({ user, onSignOut }) {
                       0,
                     ) + " cross-concept connections"
                   }
-                  color="#B00C60"
+                  color="#173dc5"
                 />
                 <Stat
                   icon={Target}
                   label="Goals in motion"
                   value={data.goals.filter((g) => g.level === "Week").length}
                   foot="Weekly priorities with a purpose"
-                  color="#658D10"
+                  color="#07529a"
                 />
               </div>
               <div className="dashboard-grid">
@@ -1251,6 +1251,13 @@ function Planner({ blocks, data, date, update, edit, start, notify }) {
                     data.goals.find((g) => g.id === b.goalId)?.title ||
                     "A protected part of your day"}
                 </small>
+                <small className="planner-goal">
+                  {b.goalId
+                    ? "Goal: " +
+                      (data.goals.find((g) => g.id === b.goalId)?.title ||
+                        "Unavailable — choose another goal")
+                    : "No linked goal · Edit to connect"}
+                </small>
               </span>
             </button>
             <Badge color={KINDS[b.kind]?.[1]}>{KINDS[b.kind]?.[0]}</Badge>
@@ -1295,6 +1302,10 @@ function BlockModal({ block, blocks, goals, close, submit, remove }) {
       },
     ),
     [error, setError] = useState("");
+  const [startTime, setStartTime] = useState(clock(b.start));
+  const [endTime, setEndTime] = useState(
+    b.end === 1440 ? "00:00" : clock(b.end),
+  );
   const change = (k, v) => setB({ ...b, [k]: v });
   return (
     <Modal
@@ -1304,12 +1315,17 @@ function BlockModal({ block, blocks, goals, close, submit, remove }) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const err = validateBlock(b, blocks);
+          const saved = {
+            ...b,
+            start: minutes(startTime),
+            end: endTime === "00:00" ? 1440 : minutes(endTime),
+          };
+          const err = validateBlock(saved, blocks);
           if (err) {
             setError(err);
             return;
           }
-          submit(b);
+          submit(saved);
         }}
       >
         <Field label="What is this time for?">
@@ -1325,19 +1341,22 @@ function BlockModal({ block, blocks, goals, close, submit, remove }) {
             <input
               type="time"
               required
-              value={clock(b.start)}
-              onChange={(e) => change("start", minutes(e.target.value))}
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
             />
           </Field>
-          <Field label="Ends (24:00 for midnight)">
+          <Field label="Ends">
             <input
               required
-              pattern="([01][0-9]|2[0-3]):[0-5][0-9]|24:00"
-              value={clock(b.end)}
-              onChange={(e) => change("end", minutes(e.target.value))}
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </Field>
         </div>
+        <p className="field-help">
+          Choose 00:00 to end at midnight (24:00). Blocks stay within this day.
+        </p>
         <Field label="Type of energy">
           <select
             value={b.kind}
@@ -1357,6 +1376,7 @@ function BlockModal({ block, blocks, goals, close, submit, remove }) {
             onChange={(v) => change("goalId", v)}
           />
         </Field>
+        {b.goalId && <GoalTrail id={b.goalId} goals={goals} />}
         {["deep", "light"].includes(b.kind) && (
           <Field label="What will you understand, explain, or do?">
             <textarea
@@ -1563,7 +1583,7 @@ function Study({ data, save, tick, start, finish, go }) {
   return (
     <div className={focus ? "study-area distraction-free" : "study-area"}>
       <div className="section-head">
-        <Badge color="#00B7C7">
+        <Badge color="#009cde">
           {t.started ? "FOCUS IN PROGRESS" : "PAUSED · TAKE A BREATH"}
         </Badge>
         <button className="text-btn" onClick={() => setFocus(!focus)}>
@@ -1863,21 +1883,21 @@ function Growth({ data }) {
             duration(days.reduce((n, d) => n + d.planned, 0)) +
             " planned"
           }
-          color="#00B7C7"
+          color="#009cde"
         />
         <Stat
           icon={CheckCircle2}
           label="Study sessions"
           value={data.sessions.length}
           foot="All-time completed sessions"
-          color="#D7E525"
+          color="#ff7900"
         />
         <Stat
           icon={Network}
           label="Confident concepts"
           value={data.concepts.filter((c) => c.status === "Confident").length}
           foot="Self-assessed understanding"
-          color="#B00C60"
+          color="#173dc5"
         />
         <Stat
           icon={NotebookPen}
@@ -1886,7 +1906,7 @@ function Growth({ data }) {
             Object.values(data.reflections).filter((r) => r.savedAt).length
           }
           foot="Learning carried forward"
-          color="#658D10"
+          color="#07529a"
         />
       </div>
       <section className="card growth-chart">
@@ -1897,11 +1917,11 @@ function Growth({ data }) {
           </div>
           <div className="tree-legend">
             <span>
-              <i style={{ background: "#F0FAF9" }} />
+              <i style={{ background: "#edf4fc" }} />
               Planned
             </span>
             <span>
-              <i style={{ background: "#00B7C7" }} />
+              <i style={{ background: "#009cde" }} />
               Focused
             </span>
           </div>
@@ -1918,7 +1938,7 @@ function Growth({ data }) {
                 <div
                   style={{
                     height: (d.actual / max) * 180,
-                    background: "#00B7C7",
+                    background: "#009cde",
                   }}
                   title={"Focused: " + Math.round(d.actual) + " minutes"}
                 />

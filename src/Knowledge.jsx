@@ -220,7 +220,7 @@ export default function Knowledge({ data, save, compact = false, notify }) {
                             " " +
                             b.y
                           }
-                          stroke="#5D787B"
+                          stroke="#586e8a"
                           strokeWidth="1.5"
                           strokeDasharray="5 7"
                           fill="none"
@@ -275,7 +275,7 @@ export default function Knowledge({ data, save, compact = false, notify }) {
                             width="156"
                             height="56"
                             rx="19"
-                            fill="#143F45"
+                            fill="#102c54"
                           />
                           <text
                             textAnchor="middle"
@@ -310,7 +310,7 @@ export default function Knowledge({ data, save, compact = false, notify }) {
                             fill={
                               branch
                                 ? readableAccent(COLORS[c.domain])
-                                : "#143F45"
+                                : "#102c54"
                             }
                             fontSize={
                               compact ? (branch ? 22 : 19) : branch ? 18 : 16

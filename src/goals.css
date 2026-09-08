@@ -7,7 +7,7 @@
   margin-bottom: 24px;
   border: 1px solid #95dfe2;
   border-radius: 12px;
-  background: linear-gradient(120deg, #bff5f560, #f9fefc);
+  background: linear-gradient(120deg, #dcefff60, #f9fefc);
 }
 .goals-overview h2 {
   font-size: 22px;
@@ -29,7 +29,7 @@
   font:
     600 38px Manrope,
     sans-serif;
-  color: #006874;
+  color: #006596;
   line-height: 1.2;
 }
 .area-total > span {
@@ -85,7 +85,7 @@
   cursor: pointer;
   font-size: 11px;
   padding: 13px 0;
-  color: #3d6267;
+  color: #395778;
 }
 .sub-area-details summary::-webkit-details-marker {
   display: none;
@@ -112,10 +112,10 @@
   line-height: 1.5;
 }
 .sub-area-details li button:hover {
-  background: #bff5f550;
+  background: #dcefff50;
 }
 .sub-area-details li span {
-  color: #5d787b;
+  color: #586e8a;
   font-size: 10px;
 }
 .sub-area-details > p {
@@ -150,7 +150,7 @@
 }
 .goal-filters .search {
   background: white;
-  border: 1px solid #d4e9e8;
+  border: 1px solid #d5e2f2;
   border-radius: 7px;
   padding: 5px 12px;
   height: 39px;
@@ -174,7 +174,7 @@
   min-width: 18px;
   padding: 2px 4px;
   font-size: 9px;
-  color: #3d6267;
+  color: #395778;
 }
 .goal-results-head {
   display: flex;
@@ -185,7 +185,7 @@
   font-size: 12px;
 }
 .goal-results-head > span {
-  color: #5d787b;
+  color: #586e8a;
 }
 .area-goal-group {
   margin-bottom: 20px;
@@ -256,14 +256,14 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  border: 1px solid #143f4520;
+  border: 1px solid #102c5420;
 }
 .area-colors input:checked + span {
-  outline: 2px solid #143f45;
+  outline: 2px solid #102c54;
   outline-offset: 3px;
 }
 .area-colors input:focus-visible + span {
-  outline: 3px solid #b00c60;
+  outline: 3px solid #173dc5;
   outline-offset: 3px;
 }
 .sub-area-head {
@@ -294,7 +294,7 @@
   font-size: 10px;
   min-width: 17px;
   text-align: right;
-  color: #5d787b;
+  color: #586e8a;
 }
 .sub-area-input input {
   width: 100%;

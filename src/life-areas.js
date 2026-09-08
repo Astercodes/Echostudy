@@ -5,7 +5,7 @@ const catalog = [
   [
     "faith",
     "Faith & spirituality",
-    "#B00C60",
+    "#173dc5",
     [
       "Faith and beliefs",
       "Relationship with God / spirituality",
@@ -25,7 +25,7 @@ const catalog = [
   [
     "mind",
     "Mind & intellectual capacity",
-    "#00B7C7",
+    "#009cde",
     [
       "Critical thinking",
       "Analytical reasoning",
@@ -48,7 +48,7 @@ const catalog = [
   [
     "emotional",
     "Emotional wellbeing & identity",
-    "#FADF96",
+    "#ffd7b0",
     [
       "Emotional intelligence",
       "Self-awareness",
@@ -70,7 +70,7 @@ const catalog = [
   [
     "health",
     "Physical health & vitality",
-    "#658D10",
+    "#07529a",
     [
       "Nutrition",
       "Exercise",
@@ -95,7 +95,7 @@ const catalog = [
   [
     "knowledge",
     "Knowledge & education",
-    "#BFF5F5",
+    "#dcefff",
     [
       "Formal education",
       "Professional education",
@@ -122,7 +122,7 @@ const catalog = [
   [
     "skills",
     "Skills & competence",
-    "#D7E525",
+    "#ff7900",
     [
       "Writing",
       "Speaking",
@@ -150,7 +150,7 @@ const catalog = [
   [
     "career",
     "Career & professional life",
-    "#00B7C7",
+    "#009cde",
     [
       "Career direction",
       "Professional identity",
@@ -174,7 +174,7 @@ const catalog = [
   [
     "business",
     "Business & entrepreneurship",
-    "#B00C60",
+    "#173dc5",
     [
       "Entrepreneurship",
       "Business ideas",
@@ -202,7 +202,7 @@ const catalog = [
   [
     "finance",
     "Personal finance & wealth",
-    "#658D10",
+    "#07529a",
     [
       "Income",
       "Expenses",
@@ -230,7 +230,7 @@ const catalog = [
   [
     "relationships",
     "Relationships & social life",
-    "#FADF96",
+    "#ffd7b0",
     [
       "Friendships",
       "Family relationships",
@@ -254,7 +254,7 @@ const catalog = [
   [
     "marriage",
     "Marriage & romantic partnership",
-    "#B00C60",
+    "#173dc5",
     [
       "Dating/courtship",
       "Partner selection",
@@ -280,7 +280,7 @@ const catalog = [
   [
     "parenting",
     "Parenting & family life",
-    "#BFF5F5",
+    "#dcefff",
     [
       "Preparing for parenthood",
       "Pregnancy/birth knowledge",
@@ -305,7 +305,7 @@ const catalog = [
   [
     "home",
     "Home & lifestyle",
-    "#D7E525",
+    "#ff7900",
     [
       "Housing",
       "Home organization",
@@ -329,7 +329,7 @@ const catalog = [
   [
     "discipline",
     "Discipline & personal effectiveness",
-    "#658D10",
+    "#07529a",
     [
       "Time management",
       "Attention management",
@@ -354,7 +354,7 @@ const catalog = [
   [
     "recreation",
     "Recreation & creative expression",
-    "#FADF96",
+    "#ffd7b0",
     [
       "Hobbies",
       "Play",
@@ -381,7 +381,7 @@ const catalog = [
   [
     "purpose",
     "Purpose, contribution & legacy",
-    "#00B7C7",
+    "#009cde",
     [
       "Life purpose",
       "Calling",
@@ -433,6 +433,29 @@ export const LEGACY_GOAL_AREAS = [
 // Migration is additive: existing goals, relationships, progress and session
 // references retain their IDs. Existing version-2 areas are never reseeded.
 export function migrateWorkspace(state) {
+  // Upgrade only the previous built-in palette; preserve custom user colors.
+  const palette = {
+    "#00b7c7": "#009cde",
+    "#b00c60": "#173dc5",
+    "#658d10": "#07529a",
+    "#d7e525": "#ff7900",
+    "#bff5f5": "#dcefff",
+    "#fadf96": "#ffd7b0",
+  };
+  const recolor = (value) =>
+    Array.isArray(value)
+      ? value.map(recolor)
+      : value && typeof value === "object"
+        ? Object.fromEntries(
+            Object.entries(value).map(([key, item]) => [
+              key,
+              key === "color" && typeof item === "string"
+                ? palette[item.toLowerCase()] || item
+                : recolor(item),
+            ]),
+          )
+        : value;
+  state = recolor(state);
   if (state.version === 2)
     return state.lifeAreaCatalogRevision >= 2
       ? state

@@ -184,8 +184,8 @@
   border-radius: 22px;
   background: linear-gradient(150deg, #ffffff 65%, #f2fbf9);
   box-shadow:
-    0 3px 6px #143f4508,
-    0 12px 28px -8px #143f4526,
+    0 3px 6px #102c5408,
+    0 12px 28px -8px #102c5426,
     inset 0 1px 0 #ffffff;
   transition:
     transform 0.2s ease,
@@ -195,8 +195,8 @@
   .barn-card:hover {
     transform: translateY(-5px);
     box-shadow:
-      0 5px 10px #143f450a,
-      0 20px 38px -10px #143f4536,
+      0 5px 10px #102c540a,
+      0 20px 38px -10px #102c5436,
       inset 0 1px 0 #ffffff;
   }
 }
@@ -204,7 +204,7 @@
   transform: translateY(-1px);
 }
 .barn-card:focus-visible {
-  outline: 3px solid #b00c60;
+  outline: 3px solid #173dc5;
   outline-offset: 4px;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -286,7 +286,7 @@
 }
 .capacity-picker input {
   width: auto;
-  accent-color: #658d10;
+  accent-color: #07529a;
 }
 @media (max-width: 1150px) {
   .barn-grid {

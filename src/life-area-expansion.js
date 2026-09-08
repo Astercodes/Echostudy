@@ -34,7 +34,7 @@ export const additionalAreas = [
   [
     "identity",
     "Identity & self-knowledge",
-    "#FADF96",
+    "#ffd7b0",
     [
       "Identity",
       "Values",
@@ -57,7 +57,7 @@ export const additionalAreas = [
   [
     "character",
     "Character & virtue",
-    "#B00C60",
+    "#173dc5",
     [
       "Integrity",
       "Honesty",
@@ -80,7 +80,7 @@ export const additionalAreas = [
   [
     "cognitive",
     "Cognitive & brain development",
-    "#00B7C7",
+    "#009cde",
     [
       "Attention",
       "Concentration",
@@ -100,7 +100,7 @@ export const additionalAreas = [
   [
     "communication",
     "Communication & expression",
-    "#D7E525",
+    "#ff7900",
     [
       "Speaking",
       "Writing",
@@ -121,7 +121,7 @@ export const additionalAreas = [
   [
     "leadership",
     "Leadership & influence",
-    "#658D10",
+    "#07529a",
     [
       "Self-leadership",
       "People leadership",
@@ -142,7 +142,7 @@ export const additionalAreas = [
   [
     "civic",
     "Community, citizenship & civic life",
-    "#BFF5F5",
+    "#dcefff",
     [
       "Citizenship",
       "Civic knowledge",
@@ -161,7 +161,7 @@ export const additionalAreas = [
   [
     "digital",
     "Digital & information life",
-    "#00B7C7",
+    "#009cde",
     [
       "Digital identity",
       "Online reputation",
@@ -181,7 +181,7 @@ export const additionalAreas = [
   [
     "safety",
     "Safety, security & preparedness",
-    "#FADF96",
+    "#ffd7b0",
     [
       "Personal safety",
       "Home security",

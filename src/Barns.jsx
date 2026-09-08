@@ -66,7 +66,7 @@ function ProgressVisual({ s, color }) {
         role="img"
         aria-label={`${s.percent}% milestone progress: ${s.practice.toFixed(1)} percentage points from practice, ${s.study.toFixed(1)} from study, ${s.goal.toFixed(1)} from goals`}
         style={{
-          background: `conic-gradient(#B00C60 0 ${s.practice}%, ${color} ${s.practice}% ${s.practice + s.study}%, #D7E525 ${s.practice + s.study}% ${s.practice + s.study + s.goal}%, #e6efeb ${s.practice + s.study + s.goal}% 100%)`,
+          background: `conic-gradient(#173dc5 0 ${s.practice}%, ${color} ${s.practice}% ${s.practice + s.study}%, #ff7900 ${s.practice + s.study}% ${s.practice + s.study + s.goal}%, #e6efeb ${s.practice + s.study + s.goal}% 100%)`,
         }}
       >
         <span>{s.percent}%</span>
@@ -178,10 +178,10 @@ export default function Barns({ data, save }) {
                 personal assessment
               </small>
               <small>
-                <span style={{ color: "#B00C60" }}>●</span> Practice{" "}
+                <span style={{ color: "#173dc5" }}>●</span> Practice{" "}
                 {s.practice.toFixed(1)}% · <span style={{ color }}>●</span>{" "}
                 Study {s.study.toFixed(1)}% ·{" "}
-                <span style={{ color: "#658D10" }}>●</span> Goals{" "}
+                <span style={{ color: "#07529a" }}>●</span> Goals{" "}
                 {s.goal.toFixed(1)}%
               </small>
               <div className="barn-stats">
@@ -207,7 +207,7 @@ export default function Barns({ data, save }) {
           onClose={() => setSelected(null)}
         >
           <p>{CAPACITIES.find((c) => c.id === selected).question}</p>
-          <ProgressVisual s={stats(selected)} color="#00B7C7" />
+          <ProgressVisual s={stats(selected)} color="#009cde" />
           <p>
             {stats(selected).practiceUnits.toFixed(1)} / 10 practice credits ·{" "}
             {stats(selected).studyUnits.toFixed(1)} / 10 study credits ·{" "}

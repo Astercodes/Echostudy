@@ -136,28 +136,28 @@ export default function Landing({ navigate }) {
               <path
                 d="M300 430C300 380 285 330 287 270M287 300C230 300 225 230 150 230M287 310C370 310 360 205 450 205M287 365C220 365 210 390 130 370M287 260C287 180 330 170 340 100"
                 fill="none"
-                stroke="#658D10"
+                stroke="#07529a"
                 strokeWidth="5"
                 strokeLinecap="round"
               />
               <path
                 d="M150 230C95 240 120 165 74 152M450 205C490 170 470 128 530 110M340 140C390 140 376 80 420 65"
                 fill="none"
-                stroke="#00B7C7"
+                stroke="#009cde"
                 strokeWidth="3"
                 strokeLinecap="round"
               />
               <path
                 d="M297 389Q358 329 423 356Q380 420 297 411"
-                fill="#D7E525"
+                fill="#ff7900"
               />
               <path
                 d="M278 292Q220 227 192 291Q210 324 278 321"
-                fill="#BFF5F5"
+                fill="#dcefff"
               />
               <path
                 d="M300 222Q370 152 370 219Q363 251 297 255"
-                fill="#FADF96"
+                fill="#ffd7b0"
               />
             </svg>
             <div className="garden-card garden-time">

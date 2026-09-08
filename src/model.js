@@ -3,21 +3,22 @@ import { validateBarns } from "./barns.js";
 export { migrateWorkspace } from "./life-areas.js";
 
 export const COLORS = [
-  "#00B7C7",
-  "#B00C60",
-  "#658D10",
-  "#D7E525",
-  "#BFF5F5",
-  "#FADF96",
+  "#009cde",
+  "#173dc5",
+  "#07529a",
+  "#ff7900",
+  "#dcefff",
+  "#ffd7b0",
 ];
 export const readableAccent = (color) =>
   ({
-    "#00B7C7": "#006874",
-    "#658D10": "#49680B",
-    "#D7E525": "#52600A",
-    "#BFF5F5": "#17636B",
-    "#FADF96": "#745A15",
-  })[color] || color;
+    "#009cde": "#006596",
+    "#a9c5e5": "#526b8c",
+    "#07529a": "#073d75",
+    "#ff7900": "#984400",
+    "#dcefff": "#164c7e",
+    "#ffd7b0": "#8a450e",
+  })[color?.toLowerCase()] || color;
 export const DOMAINS = [
   "Mind & expertise",
   "Spirit & faith",
