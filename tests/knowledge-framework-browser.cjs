@@ -15,10 +15,43 @@ const assert = require("node:assert/strict");
     await p
       .getByRole("combobox", { name: "Life-area tree", exact: true })
       .selectOption("leadership");
+    const grove = p.getByRole("combobox", {
+      name: "Grove (sub-area)",
+      exact: true,
+    });
+    const groveCount = (await grove.locator("option").count()) - 1;
+    assert.equal(
+      await p.getByRole("button", { name: /^Grove: / }).count(),
+      groveCount,
+    );
+    await grove.selectOption({ label: "Management" });
+    assert.equal(await p.getByRole("button", { name: /^Grove: / }).count(), 1);
+    await btn("Grove: Management").waitFor();
     await p
       .getByRole("combobox", { name: "Knowledge tree", exact: true })
       .selectOption({ label: "People Management" });
     await btn("Root: Human behavior").waitFor();
+    assert.equal(await btn("Tree: Project Management").count(), 0);
+    await grove.selectOption({ label: "Self-leadership" });
+    assert.equal(await btn("Tree: People Management").count(), 0);
+    assert.equal(
+      await p
+        .getByRole("combobox", { name: "Knowledge tree", exact: true })
+        .locator("option")
+        .count(),
+      1,
+    );
+    assert.equal(await p.getByRole("button", { name: /^Grove: / }).count(), 1);
+    await grove.selectOption("");
+    assert.equal(
+      await p.getByRole("button", { name: /^Grove: / }).count(),
+      groveCount,
+    );
+    await btn("Tree: Project Management").waitFor();
+    await grove.selectOption({ label: "Management" });
+    await p
+      .getByRole("combobox", { name: "Knowledge tree", exact: true })
+      .selectOption({ label: "People Management" });
     await btn("Stem: Core principles of people management").waitFor();
     await btn("Sub-branch: Feedback").click();
     await btn("Grow a leaf").waitFor();

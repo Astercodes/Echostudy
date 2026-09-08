@@ -89,7 +89,6 @@ export default function Knowledge({
     [editor, setEditor] = useState(null),
     [action, setAction] = useState(null),
     [isolated, setIsolated] = useState(false),
-    [allBranches, setAll] = useState(false),
     [search, setSearch] = useState(""),
     [zoom, setZoom] = useState(1),
     [branchId, setBranch] = useState(""),
@@ -97,28 +96,42 @@ export default function Knowledge({
   const area = data.lifeAreas.find((a) => a.id === areaId) || data.lifeAreas[0];
   const entries = useMemo(() => knowledgeEntries(data), [data]);
   const forestNodes = treeNodes(data, area?.id);
-  const focusTree = forestNodes.find(
+  const groveNodes = branchId
+    ? forestNodes.filter(
+        (n) =>
+          locationOf(n, data.concepts, data.lifeAreas).subAreaId === branchId,
+      )
+    : forestNodes;
+  const focusTree = groveNodes.find(
     (n) => n.id === treeId && n.kind === "tree",
   );
-  const treeIds = focusTree ? descendants(focusTree.id, forestNodes) : null;
+  const treeIds = focusTree ? descendants(focusTree.id, groveNodes) : null;
+  const displayedGrove =
+    branchId ||
+    (focusTree
+      ? locationOf(focusTree, data.concepts, data.lifeAreas).subAreaId
+      : "");
   const nodes = treeIds
-      ? forestNodes.filter((n) => treeIds.has(n.id))
-      : forestNodes,
+      ? groveNodes.filter((n) => treeIds.has(n.id))
+      : groveNodes,
     sel = entries.find(
       (n) => n.id === selected && (!n.trashedAt || isScopeNode(n)),
     );
   const loc = (n) => locationOf(n, data.concepts, data.lifeAreas);
   const open = (n) => {
     setArea(loc(n).areaId);
+    if (branchId && loc(n).subAreaId !== branchId) setBranch(loc(n).subAreaId);
     if (treeIds && !treeIds.has(n.id)) setTree("");
     setSelected(n.id);
     setIsolated(false);
   };
-  const branches = useMemo(() => {
+  const branches = (() => {
     if (entries.find((n) => n.id === scopeId(area.id))?.trashedAt) return [];
     const groups = area.subAreas
       .filter(
-        (s) => !entries.find((n) => n.id === scopeId(area.id, s.id))?.trashedAt,
+        (s) =>
+          (!displayedGrove || s.id === displayedGrove) &&
+          !entries.find((n) => n.id === scopeId(area.id, s.id))?.trashedAt,
       )
       .map((s) => ({
         ...s,
@@ -126,13 +139,17 @@ export default function Knowledge({
         subAreaId: s.id,
         title: s.name,
       }));
-    groups.unshift({
-      id: "branch:independent",
-      subAreaId: "",
-      title: "Independent knowledge & seeds",
-      independent: true,
-    });
-    if (nodes.some((n) => !loc(n).subAreaId && !n.standalone))
+    if (!displayedGrove)
+      groups.unshift({
+        id: "branch:independent",
+        subAreaId: "",
+        title: "Independent knowledge & seeds",
+        independent: true,
+      });
+    if (
+      !displayedGrove &&
+      nodes.some((n) => !loc(n).subAreaId && !n.standalone)
+    )
       groups.unshift({
         id: "branch:unplaced",
         subAreaId: "",
@@ -148,12 +165,8 @@ export default function Knowledge({
             !nodes.some((p) => p.id === n.parent),
         ),
       }))
-      .filter((b, i) =>
-        b.independent
-          ? b.nodes.length > 0
-          : allBranches || b.nodes.length || b.subAreaId === branchId || i < 3,
-      );
-  }, [data, area, allBranches, branchId]);
+      .filter((b) => !b.independent || b.nodes.length > 0);
+  })();
   const layout = growLayout(nodes, branches);
   const canvas = useRef(null);
   const [canvasWidth, setCanvasWidth] = useState(900);
@@ -174,7 +187,7 @@ export default function Knowledge({
         layout.points.get("tree-root").y * scale - el.clientHeight / 2,
       );
     }
-  }, [area.id, zoom, allBranches, canvasWidth]);
+  }, [area.id, zoom, branchId, treeId, canvasWidth]);
   const linked = sel ? connectionsOf(sel, entries) : [];
   const focusIds = new Set(
     sel ? [sel.id, sel.parent, ...linked.map((n) => n.id)] : [],
@@ -246,9 +259,15 @@ export default function Knowledge({
           <Field label="Grove (sub-area)">
             <select
               value={branchId}
-              onChange={(e) => setBranch(e.target.value)}
+              onChange={(e) => {
+                setBranch(e.target.value);
+                setTree("");
+                setSelected(null);
+                setSearch("");
+                setIsolated(false);
+              }}
             >
-              <option value="">Select a grove to grow</option>
+              <option value="">All groves in this forest</option>
               {area.subAreas.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -264,8 +283,12 @@ export default function Knowledge({
                 setSelected(e.target.value || null);
               }}
             >
-              <option value="">All trees in this forest</option>
-              {forestNodes
+              <option value="">
+                {branchId
+                  ? "All trees in this grove"
+                  : "All trees in this forest"}
+              </option>
+              {groveNodes
                 .filter((n) => n.kind === "tree")
                 .map((n) => (
                   <option key={n.id} value={n.id}>
@@ -409,6 +432,7 @@ export default function Knowledge({
                         setIsolated(false);
                       } else if (p.branch) {
                         setBranch(n.subAreaId);
+                        setTree("");
                         setSelected(
                           n.subAreaId ? scopeId(area.id, n.subAreaId) : null,
                         );
@@ -566,14 +590,6 @@ export default function Knowledge({
               <RotateCcw size={14} />
               Reset
             </button>
-            <label>
-              <input
-                type="checkbox"
-                checked={allBranches}
-                onChange={(e) => setAll(e.target.checked)}
-              />
-              Show empty branches
-            </label>
           </div>
         </section>
         {!compact && (
@@ -842,8 +858,8 @@ export default function Knowledge({
                 <h2>A place for every idea.</h2>
                 <p>
                   Each life area is a forest; each sub-area is a grove. Grow
-                  topic trees with foundational roots, a core stem, branches
-                  and sub-branches. Leaves hold atomic knowledge, fruits support
+                  topic trees with foundational roots, a core stem, branches and
+                  sub-branches. Leaves hold atomic knowledge, fruits support
                   deep study, and seeds hold new questions.
                 </p>
                 <p>
