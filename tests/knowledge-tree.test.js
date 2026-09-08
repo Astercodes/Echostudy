@@ -81,6 +81,60 @@ test("cross-tree connections are reciprocal and removable", () => {
   );
 });
 import { pluckNode, compostNode, restoreNode } from "../src/knowledge-tree.js";
+import {
+  knowledgeEntries,
+  scopeId,
+  saveKnowledgeEntry,
+  graftKnowledge,
+} from "../src/knowledge-tree.js";
+test("root and sub-area workspaces save independently, survive renames, and graft without changing homes", () => {
+  let d = initialState();
+  const rootId = scopeId("knowledge"),
+    subId = d.lifeAreas.find((a) => a.id === "knowledge").subAreas[0].id,
+    branchId = scopeId("knowledge", subId);
+  d = saveKnowledgeEntry(d, {
+    ...knowledgeEntries(d).find((n) => n.id === rootId),
+    learning: { peel: { definitions: "Root explanation" } },
+  });
+  d = saveKnowledgeEntry(d, {
+    ...knowledgeEntries(d).find((n) => n.id === branchId),
+    learning: { peel: { definitions: "Branch explanation" } },
+  });
+  d = graftKnowledge(d, rootId, [branchId], {
+    [branchId]: {
+      relationship: "Shared principle",
+      note: "A branch of this area",
+    },
+  });
+  d.lifeAreas = d.lifeAreas.map((a) =>
+    a.id === "knowledge" ? { ...a, name: "My education" } : a,
+  );
+  const entries = knowledgeEntries(d);
+  assert.equal(entries.find((n) => n.id === rootId).title, "My education");
+  assert.equal(
+    entries.find((n) => n.id === branchId).learning.peel.definitions,
+    "Branch explanation",
+  );
+  assert(
+    !treeNodes(d, "knowledge").some(
+      (n) => n.id === rootId || n.id === branchId,
+    ),
+  );
+  assert(validateBackup(JSON.parse(JSON.stringify(d))));
+  const before = d.concepts.length;
+  d = pluckNode(d, rootId);
+  assert.equal(d.concepts.length, before + 1);
+  assert(d.lifeAreas.some((a) => a.id === "knowledge"));
+  assert(d.concepts.some((n) => n.sourceScopeId === rootId && n.standalone));
+  d = compostNode(d, rootId);
+  assert.equal(treeNodes(d, "knowledge").length, 0);
+  d = restoreNode(d, rootId);
+  assert(treeNodes(d, "knowledge").some((n) => n.id === "c3"));
+  assert.equal(
+    knowledgeEntries(d).find((n) => n.id === rootId).learning.peel.definitions,
+    "Root explanation",
+  );
+});
 test("pluck preserves learning and references while giving a fruit an independent home", () => {
   let d = initialState();
   d = saveTreeNode(d, {

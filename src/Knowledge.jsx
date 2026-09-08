@@ -22,6 +22,11 @@ import {
   pluckNode,
   compostNode,
   restoreNode,
+  knowledgeEntries,
+  isScopeNode,
+  scopeId,
+  saveKnowledgeEntry,
+  graftKnowledge,
 } from "./knowledge-tree";
 import "./knowledge-tree.css";
 import KnowledgeActions from "./KnowledgeActions";
@@ -85,8 +90,11 @@ export default function Knowledge({
     [zoom, setZoom] = useState(1),
     [branchId, setBranch] = useState("");
   const area = data.lifeAreas.find((a) => a.id === areaId) || data.lifeAreas[0];
+  const entries = useMemo(() => knowledgeEntries(data), [data]);
   const nodes = treeNodes(data, area?.id),
-    sel = data.concepts.find((n) => n.id === selected && !n.trashedAt);
+    sel = entries.find(
+      (n) => n.id === selected && (!n.trashedAt || isScopeNode(n)),
+    );
   const loc = (n) => locationOf(n, data.concepts, data.lifeAreas);
   const open = (n) => {
     setArea(loc(n).areaId);
@@ -94,12 +102,17 @@ export default function Knowledge({
     setIsolated(false);
   };
   const branches = useMemo(() => {
-    const groups = area.subAreas.map((s) => ({
-      ...s,
-      id: "branch:" + s.id,
-      subAreaId: s.id,
-      title: s.name,
-    }));
+    if (entries.find((n) => n.id === scopeId(area.id))?.trashedAt) return [];
+    const groups = area.subAreas
+      .filter(
+        (s) => !entries.find((n) => n.id === scopeId(area.id, s.id))?.trashedAt,
+      )
+      .map((s) => ({
+        ...s,
+        id: "branch:" + s.id,
+        subAreaId: s.id,
+        title: s.name,
+      }));
     groups.unshift({
       id: "branch:independent",
       subAreaId: "",
@@ -149,7 +162,7 @@ export default function Knowledge({
       );
     }
   }, [area.id, zoom, allBranches, canvasWidth]);
-  const linked = sel ? connectionsOf(sel, data.concepts) : [];
+  const linked = sel ? connectionsOf(sel, entries) : [];
   const focusIds = new Set(
     sel ? [sel.id, sel.parent, ...linked.map((n) => n.id)] : [],
   );
@@ -157,13 +170,23 @@ export default function Knowledge({
     const l = parent
       ? loc(parent)
       : { areaId: area.id, subAreaId: branchId || area.subAreas[0]?.id || "" };
+    const archived = entries.find(
+      (n) =>
+        n.trashedAt &&
+        (n.id === scopeId(l.areaId) || n.id === scopeId(l.areaId, l.subAreaId)),
+    );
+    if (archived) {
+      setSelected(archived.id);
+      notify("Restore this knowledge workspace before growing it.");
+      return;
+    }
     setEditor({
       id: uid(),
       kind,
       title: "",
       description: "",
       summary: "",
-      parent: parent?.id || "",
+      parent: parent && !isScopeNode(parent) ? parent.id : "",
       ...l,
       domain: parent?.domain || 0,
       status: "Growing",
@@ -171,11 +194,7 @@ export default function Knowledge({
       links: [],
     });
   };
-  const update = (n) =>
-    save((d) => ({
-      ...d,
-      concepts: d.concepts.map((c) => (c.id === n.id ? n : c)),
-    }));
+  const update = (n) => save((d) => saveKnowledgeEntry(d, n));
   if (!area)
     return <p>Create a life area under Goals to plant your first tree.</p>;
   return (
@@ -317,7 +336,12 @@ export default function Knowledge({
               {[...layout.points].map(([id, p]) => {
                 const n = p.n,
                   fruit = n?.kind === "fruit",
-                  active = id === selected;
+                  active =
+                    (p.root
+                      ? scopeId(area.id)
+                      : p.branch && n.subAreaId
+                        ? scopeId(area.id, n.subAreaId)
+                        : id) === selected;
                 return (
                   <g
                     key={id}
@@ -339,11 +363,13 @@ export default function Knowledge({
                     }
                     onClick={() => {
                       if (p.root) {
-                        setSelected(null);
+                        setSelected(scopeId(area.id));
                         setIsolated(false);
                       } else if (p.branch) {
                         setBranch(n.subAreaId);
-                        setSelected(null);
+                        setSelected(
+                          n.subAreaId ? scopeId(area.id, n.subAreaId) : null,
+                        );
                       } else open(n);
                     }}
                     onKeyDown={(e) => {
@@ -511,18 +537,52 @@ export default function Knowledge({
             {sel ? (
               <>
                 <div className="orchard-eyebrow">
-                  {sel.kind === "fruit" ? "KNOWLEDGE FRUIT" : "CONCEPT BRANCH"}
+                  {sel.kind === "life-area"
+                    ? "LIFE-AREA ROOT"
+                    : sel.kind === "sub-area"
+                      ? "SUB-AREA BRANCH"
+                      : sel.kind === "fruit"
+                        ? "KNOWLEDGE FRUIT"
+                        : "CONCEPT BRANCH"}
                 </div>
                 <h2>{sel.title}</h2>
                 <p className="muted">
                   {area.name} /{" "}
                   {area.subAreas.find((s) => s.id === loc(sel).subAreaId)
                     ?.name ||
-                    (sel.standalone
-                      ? "Independent concepts"
-                      : "Choose a sub-area")}
+                    (sel.kind === "life-area"
+                      ? "Root workspace"
+                      : sel.standalone
+                        ? "Independent concepts"
+                        : "Choose a sub-area")}
                 </p>
-                {sel.kind === "fruit" ? (
+                {isScopeNode(sel) ? (
+                  <>
+                    {sel.trashedAt ? (
+                      <>
+                        <p>This knowledge workspace is in Compost.</p>
+                        <Button
+                          onClick={() => save((d) => restoreNode(d, sel.id))}
+                        >
+                          Restore workspace
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <p className="orchard-text">
+                          {sel.description ||
+                            "Explore this whole area of knowledge. Each action saves work here, separately from its concepts."}
+                        </p>
+                        <Button primary onClick={() => setAction("content")}>
+                          Open content
+                        </Button>
+                        <Button onClick={() => create("concept", sel)}>
+                          Grow a concept
+                        </Button>
+                      </>
+                    )}
+                  </>
+                ) : sel.kind === "fruit" ? (
                   <>
                     <Button primary onClick={() => setAction("content")}>
                       Open content
@@ -611,7 +671,11 @@ export default function Knowledge({
                     ["isolate", "Isolate"],
                     ["compost", "Compost"],
                   ].map(([key, label]) => (
-                    <Button key={key} onClick={() => setAction(key)}>
+                    <Button
+                      key={key}
+                      disabled={Boolean(sel.trashedAt)}
+                      onClick={() => setAction(key)}
+                    >
                       {label}
                     </Button>
                   ))}
@@ -781,11 +845,19 @@ export default function Knowledge({
         )}
       {sel && action === "pluck" && (
         <Modal title={"Pluck · " + sel.title} onClose={() => setAction(null)}>
-          <p>
-            This idea will become an independent concept in {area.name}, ready
-            to grow its own branches and fruits. Its text, history, links and ID
-            stay intact.
-          </p>
+          {isScopeNode(sel) ? (
+            <p>
+              Create an independent concept from this workspace’s text and
+              learning history. Its life-area or sub-area home remains in the
+              catalog.
+            </p>
+          ) : (
+            <p>
+              This idea will become an independent concept in {area.name}, ready
+              to grow its own branches and fruits. Its text, history, links and
+              ID stay intact.
+            </p>
+          )}
           <Button
             primary
             onClick={() => {
@@ -800,13 +872,21 @@ export default function Knowledge({
       )}
       {sel && action === "compost" && (
         <Modal title={"Compost · " + sel.title} onClose={() => setAction(null)}>
-          <p>
-            Move this idea and its{" "}
-            {Math.max(0, descendants(sel.id, data.concepts).size - 1)}{" "}
-            descendants out of the active tree. Text, notes, learning history
-            and connections will be preserved. You can restore them from
-            Compost.
-          </p>
+          {isScopeNode(sel) ? (
+            <p>
+              Archive this knowledge workspace and its knowledge branches.
+              Notes, history and connections are preserved for restoration. The
+              life-area catalog and its goals remain available.
+            </p>
+          ) : (
+            <p>
+              Move this idea and its{" "}
+              {Math.max(0, descendants(sel.id, data.concepts).size - 1)}{" "}
+              descendants out of the active tree. Text, notes, learning history
+              and connections will be preserved. You can restore them from
+              Compost.
+            </p>
+          )}
           <Button
             onClick={() => {
               save((d) => compostNode(d, sel.id));
@@ -823,10 +903,10 @@ export default function Knowledge({
         <Connections
           key={sel.id}
           node={sel}
-          data={data}
+          data={{ ...data, concepts: entries }}
           close={() => setAction(null)}
           submit={(ids, details) => {
-            save((d) => connectNodes(d, sel.id, ids, details));
+            save((d) => graftKnowledge(d, sel.id, ids, details));
             setAction(null);
             notify("Grafts saved; each idea keeps its primary home.");
           }}
@@ -922,6 +1002,7 @@ function NodeEditor({ node, data, close, submit }) {
               .filter(
                 (n) =>
                   !isScaffold(n) &&
+                  !isScopeNode(n) &&
                   !n.trashedAt &&
                   n.kind !== "fruit" &&
                   !excluded.has(n.id) &&

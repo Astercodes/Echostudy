@@ -121,7 +121,13 @@ function Content({ node, mode, data, persist, close }) {
             : "The text held inside this idea."}
         </p>
         <p className="muted">Saved as you write.</p>
-        <VoiceField label="Fruit content">
+        <VoiceField
+          label={
+            ["life-area", "sub-area"].includes(node.kind)
+              ? "Workspace content"
+              : "Fruit content"
+          }
+        >
           <textarea
             rows={12}
             value={node.description || ""}

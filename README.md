@@ -142,6 +142,8 @@ Transcription uses the browser's SpeechRecognition service, which has limited br
 
 Each life area has its own tree. Sub-areas form branches, concepts can grow smaller concept branches, and fruits hold text hidden from the canvas. Choose a life-area tree, select a sub-area and add a concept, then use **Grow a fruit**. Existing notes stay linked by their original concept IDs. Built-in legacy grouping nodes remain stored for backup compatibility.
 
+Clicking a life-area root or sub-area branch opens the same eleven learning actions and audio-enabled text fields. Their workspaces use stable catalog IDs and keep their writing separate from child concepts, including after catalog renames. Grafts can target roots and sub-areas too. Pluck on a catalog workspace creates an independent concept from its text and learning history; Compost archives that workspace and its associated knowledge, preserving the catalog and goals. Restore recovers the knowledge without rebuilding the area.
+
 - **Peel:** eight saved sections for foundations, prerequisites, definitions, mechanisms, components, assumptions, examples and advanced layers.
 - **Squeeze:** eight deep-study sections for nuances, implications, debates, edge cases, relationships, evidence, questions and applications.
 - **Chew:** guided working sections for restating, reasoning, examples, challenges and resolving friction.
