@@ -600,6 +600,9 @@ export default function Knowledge({
                   {[
                     ["peel", "Peel"],
                     ["squeeze", "Squeeze"],
+                    ["chew", "Chew"],
+                    ["regurgitate", "Regurgitate"],
+                    ["absorb", "Absorb / Take Root"],
                     ["taste", "Taste"],
                     ["apply", "Apply"],
                     ["pluck", "Pluck"],
@@ -755,9 +758,17 @@ export default function Knowledge({
         </Modal>
       )}
       {sel &&
-        ["content", "peel", "squeeze", "taste", "apply", "isolate"].includes(
-          action,
-        ) && (
+        [
+          "content",
+          "peel",
+          "squeeze",
+          "chew",
+          "regurgitate",
+          "absorb",
+          "taste",
+          "apply",
+          "isolate",
+        ].includes(action) && (
           <KnowledgeActions
             key={sel.id + action}
             node={sel}

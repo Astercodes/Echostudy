@@ -140,6 +140,9 @@ Each life area has its own tree. Sub-areas form branches, concepts can grow smal
 
 - **Peel:** eight saved sections for foundations, prerequisites, definitions, mechanisms, components, assumptions, examples and advanced layers.
 - **Squeeze:** eight deep-study sections for nuances, implications, debates, edge cases, relationships, evidence, questions and applications.
+- **Chew:** guided working sections for restating, reasoning, examples, challenges and resolving friction.
+- **Regurgitate:** recall from memory first, then reveal source content and record gaps and corrections.
+- **Absorb / Take Root:** saved reflection on meaning, implications, connections, changed understanding, changed action and what to carry forward.
 - **Taste:** editable questions and reference answers, concealed answers during recall, explicit self-assessment and timestamped attempt history. Starter prompts are templates, not AI-generated quizzes or automatic grades.
 - **Apply:** saved application drafts and evidence/outcome records. Recording requires actual evidence and an outcome and marks the concept applied; it does not automatically complete goals or create Stretch/Barns credits.
 - **Pluck:** preserves the idea's ID, content, history and grafts while making it an independent concept in its life-area tree.

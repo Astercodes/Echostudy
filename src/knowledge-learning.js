@@ -1,4 +1,71 @@
 export const LEARNING_MODES = {
+  chew: {
+    title: "Chew",
+    meaning: "Work the idea",
+    fields: [
+      [
+        "restate",
+        "Restate it",
+        "Work the idea into your own words. What does it actually say?",
+      ],
+      [
+        "reason",
+        "Reason it through",
+        "Trace the reasoning step by step. Where does each step lead?",
+      ],
+      [
+        "work",
+        "Work an example",
+        "Choose a concrete example or problem and show your working.",
+      ],
+      [
+        "challenge",
+        "Challenge it",
+        "Try a counterexample, a different perspective, or a changed assumption.",
+      ],
+      [
+        "resolve",
+        "Resolve the friction",
+        "Where are you stuck? What changed as you worked the idea?",
+      ],
+    ],
+  },
+  absorb: {
+    title: "Absorb / Take Root",
+    meaning: "Stay with this idea. Reflect, meditate, and let it take root.",
+    fields: [
+      [
+        "meaning",
+        "Meaning",
+        "Stay with the idea. What does it mean, beyond your first reading?",
+      ],
+      [
+        "implications",
+        "Implications",
+        "What follows from this? What matters most to you?",
+      ],
+      [
+        "connections",
+        "Connections",
+        "How does this connect with your experience, beliefs, or other knowledge?",
+      ],
+      [
+        "understanding",
+        "Changed understanding",
+        "How should this deepen or change the way you understand?",
+      ],
+      [
+        "action",
+        "Changed action",
+        "How should it change your choices, habits, or actions?",
+      ],
+      [
+        "carry",
+        "Carry it with you",
+        "What will you remember, return to, or put into practice?",
+      ],
+    ],
+  },
   peel: {
     title: "Peel",
     meaning: "Understand layer by layer",

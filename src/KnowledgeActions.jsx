@@ -5,6 +5,8 @@ import { uid } from "./model";
 export default function KnowledgeActions({ node, mode, data, persist, close }) {
   if (LEARNING_MODES[mode])
     return <Layers node={node} mode={mode} persist={persist} close={close} />;
+  if (mode === "regurgitate")
+    return <Regurgitate node={node} persist={persist} close={close} />;
   if (mode === "taste")
     return <Taste node={node} persist={persist} close={close} />;
   if (mode === "apply")
@@ -462,6 +464,112 @@ function Apply({ node, persist, close }) {
         <div className="form-actions">
           <Button onClick={close}>Done</Button>
         </div>
+      </div>
+    </Modal>
+  );
+}
+
+function Regurgitate({ node, persist, close }) {
+  const values = node.learning?.regurgitate || {},
+    attempts = values.attempts || [];
+  const [reveal, setReveal] = useState(false),
+    [history, setHistory] = useState(false);
+  const write = (patch) =>
+    persist({
+      learning: { ...node.learning, regurgitate: { ...values, ...patch } },
+    });
+  return (
+    <Modal title={"Regurgitate · " + node.title} onClose={close}>
+      <div className="learning-workspace">
+        <p className="learning-meaning">Recall it from memory.</p>
+        <p>
+          Without opening your notes, reconstruct the idea: its meaning,
+          reasoning, examples, and connections. Your draft saves as you write.
+        </p>
+        <Field label="Recall from memory">
+          <textarea
+            rows={10}
+            value={values.draft || ""}
+            onChange={(e) => write({ draft: e.target.value })}
+          />
+        </Field>
+        {!reveal ? (
+          <Button
+            primary
+            disabled={!values.draft?.trim()}
+            onClick={() => {
+              write({
+                attempts: [
+                  ...attempts,
+                  {
+                    id: uid(),
+                    text: values.draft,
+                    reference: node.description || "",
+                    at: new Date().toISOString(),
+                  },
+                ],
+              });
+              setReveal(true);
+            }}
+          >
+            Save recall & compare
+          </Button>
+        ) : (
+          <>
+            <p role="status">Recall saved before revealing your notes.</p>
+            <details open>
+              <summary>Source content</summary>
+              <p className="orchard-text">
+                {node.description || "No source text saved yet."}
+              </p>
+            </details>
+            <Field label="Gaps and corrections">
+              <textarea
+                rows={5}
+                value={values.corrections || ""}
+                placeholder="What did you miss, distort, or remember clearly?"
+                onChange={(e) => {
+                  const correction = e.target.value;
+                  write({
+                    corrections: correction,
+                    attempts: attempts.map((a, i) =>
+                      i === attempts.length - 1
+                        ? { ...a, corrections: correction }
+                        : a,
+                    ),
+                  });
+                }}
+              />
+            </Field>
+            <Button
+              onClick={() => {
+                write({ draft: "", corrections: "" });
+                setReveal(false);
+                setHistory(false);
+              }}
+            >
+              New recall
+            </Button>
+          </>
+        )}
+        <div className="form-actions">
+          <Button onClick={() => setHistory(!history)}>
+            {history ? "Hide" : "Show"} recall history ({attempts.length})
+          </Button>
+          <Button onClick={close}>Done</Button>
+        </div>
+        {history && (
+          <div className="learning-history">
+            {[...attempts].reverse().map((a) => (
+              <article key={a.id}>
+                <small>{new Date(a.at).toLocaleString()}</small>
+                <p className="orchard-text">{a.text}</p>
+                {a.corrections && <p>Gaps and corrections: {a.corrections}</p>}
+              </article>
+            ))}
+            {!attempts.length && <p>No saved recalls yet.</p>}
+          </div>
+        )}
       </div>
     </Modal>
   );
