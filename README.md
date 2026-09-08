@@ -54,7 +54,7 @@ Open **Goals → Life areas** to explore or edit the starting catalog. **Add lif
 
 The 24 groups include the original Faith & spirituality; Mind & intellectual capacity; Emotional wellbeing & identity; Physical health & vitality; Knowledge & education; Skills & competence; Career & professional life; Business & entrepreneurship; Personal finance & wealth; Relationships & social life; Marriage & romantic partnership; Parenting & family life; Home & lifestyle; Discipline & personal effectiveness; Recreation & creative expression; and Purpose, contribution & legacy, plus Identity & self-knowledge; Character & virtue; Cognitive & brain development; Communication & expression; Leadership & influence; Community, citizenship & civic life; Digital & information life; and Safety, security & preparedness. Existing sub-area names and IDs are preserved; the expansion is additive.
 
-Workspace schema 2 stores `lifeAreas` and stable goal `areaId` / `subAreaId` references. Version-1 account data and backups migrate automatically; existing goal IDs, progress, parent links, notes, sessions, and concepts are preserved. Renaming an area never changes its IDs. Sub-areas referenced by goals cannot be removed until those goals are moved. Exported backups include all custom areas and their sub-areas. Existing knowledge-tree branches remain intact and are independent from the goal catalog.
+Workspace schema 2 stores `lifeAreas` and stable goal `areaId` / `subAreaId` references. Version-1 account data and backups migrate automatically; existing goal IDs, progress, parent links, notes, sessions, and concepts are preserved. Renaming an area never changes its IDs. Sub-areas referenced by goals cannot be removed until those goals are moved. Exported backups include all custom areas and their sub-areas. The knowledge orchard now uses the same life-area and sub-area catalog. Existing concept IDs, note references, sessions and links remain intact; legacy concepts are shown under “Choose a sub-area” until placed.
 
 ## Run locally
 
@@ -133,3 +133,20 @@ This is a functional **single-device first version** with account-gated access. 
 - `tests/`: model and browser workflow checks.
 
 A future synchronized edition can replace the persistence boundary with authenticated database/file storage while retaining the study, goal, and knowledge models.
+
+## Knowledge orchard
+
+Each life area has its own tree. Sub-areas form branches, concepts can grow smaller concept branches, and fruits hold text hidden from the canvas. Choose a life-area tree, select a sub-area and add a concept, then use **Grow a fruit**. Existing notes stay linked by their original concept IDs. Built-in legacy grouping nodes remain stored for backup compatibility.
+
+- **Peel:** eight saved sections for foundations, prerequisites, definitions, mechanisms, components, assumptions, examples and advanced layers.
+- **Squeeze:** eight deep-study sections for nuances, implications, debates, edge cases, relationships, evidence, questions and applications.
+- **Taste:** editable questions and reference answers, concealed answers during recall, explicit self-assessment and timestamped attempt history. Starter prompts are templates, not AI-generated quizzes or automatic grades.
+- **Apply:** saved application drafts and evidence/outcome records. Recording requires actual evidence and an outcome and marks the concept applied; it does not automatically complete goals or create Stretch/Barns credits.
+- **Pluck:** preserves the idea's ID, content, history and grafts while making it an independent concept in its life-area tree.
+- **Graft:** reciprocal links with a relationship and explanation, including between different life-area trees; neither primary home changes.
+- **Isolate:** opens one idea with its content and investigation in an opaque focus view.
+- **Compost:** archives an idea and its descendants without deleting notes, links or history; restore recovers the branch.
+
+Learning edits save as you write. All these tools work without an AI provider. Like the rest of the workspace, knowledge is stored in this browser under the signed-in account; include it in JSON backups for transfer to another device.
+
+Knowledge checks: `node --test tests/knowledge-tree.test.js`, `node tests/knowledge-tree-browser.cjs`, and `node tests/knowledge-actions-browser.cjs` (the browser tests use the local mock-auth fixture on port 5180).

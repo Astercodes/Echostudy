@@ -139,6 +139,7 @@ export function focusedMs(timer, now = Date.now()) {
     : 0;
 }
 export function insights(concepts) {
+  concepts = concepts.filter(c => !c.trashedAt);
   const out = [];
   for (const c of concepts) {
     if (c.parent && c.status === "Growing")

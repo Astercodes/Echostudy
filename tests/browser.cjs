@@ -93,9 +93,11 @@ const fs = require("node:fs/promises");
   await page
     .getByRole("button", { name: "Knowledge tree", exact: true })
     .click();
-  await page.getByRole("button", { name: "Transformers", exact: true }).click();
   await page
-    .getByRole("button", { name: "Grow a branch", exact: true })
+    .getByRole("button", { name: "Concept: Transformers", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Grow a sub-concept", exact: true })
     .click();
   await page.getByLabel("Concept name", { exact: true }).fill("Turns ratio");
   await page
