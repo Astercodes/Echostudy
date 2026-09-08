@@ -77,7 +77,7 @@ const NAV = [
   ["Goals", Target],
   ["Study workspace", BookOpen],
   ["Stretch workspace", Flame],
-  ["Knowledge tree", Network],
+  ["Knowledge Ecosystem", Network],
   ["Resource library", Library],
   ["Reflection", NotebookPen],
   ["Growth", ChartNoAxesCombined],
@@ -349,7 +349,7 @@ export default function App({ user, onSignOut }) {
           .map((c) => ({
             title: c.title,
             type: "Concept",
-            page: "Knowledge tree",
+            page: "Knowledge Ecosystem",
           })),
         ...data.resources
           .filter((r) => r.title.toLowerCase().includes(query.toLowerCase()))
@@ -516,7 +516,7 @@ export default function App({ user, onSignOut }) {
                     ? "Room for greater capacity."
                     : page === "Today"
                       ? "Make room for becoming."
-                      : page === "Knowledge tree"
+                      : page === "Knowledge Ecosystem"
                         ? "A mind that keeps growing."
                         : page === "Goals"
                           ? "Give your growth direction."
@@ -537,7 +537,7 @@ export default function App({ user, onSignOut }) {
                     ? "Sixteen dimensions. Every life area. Evidence of becoming."
                     : page === "Today"
                       ? "A purposeful day. A focused mind. A stronger you."
-                      : page === "Knowledge tree"
+                      : page === "Knowledge Ecosystem"
                         ? "Let ideas take root, branch out, and find unexpected connections."
                         : page === "Goals"
                           ? "Connect what you do today to who you are becoming."
@@ -704,7 +704,7 @@ export default function App({ user, onSignOut }) {
                       </div>
                       <button
                         className="text-btn"
-                        onClick={() => go("Knowledge tree")}
+                        onClick={() => go("Knowledge Ecosystem")}
                       >
                         Explore tree <ArrowUpRight size={16} />
                       </button>
@@ -743,7 +743,7 @@ export default function App({ user, onSignOut }) {
                       </p>
                       <button
                         className="text-btn"
-                        onClick={() => go("Knowledge tree")}
+                        onClick={() => go("Knowledge Ecosystem")}
                       >
                         Follow this thread <ArrowRight size={15} />
                       </button>
@@ -912,7 +912,7 @@ export default function App({ user, onSignOut }) {
               go={go}
             />
           )}
-          {page === "Knowledge tree" && (
+          {page === "Knowledge Ecosystem" && (
             <Knowledge data={data} save={save} notify={notify} />
           )}
           {page === "Resource library" && (
@@ -1694,7 +1694,7 @@ function Study({ data, save, tick, start, finish, go }) {
             <Button
               onClick={() => {
                 setFocus(false);
-                go("Knowledge tree");
+                go("Knowledge Ecosystem");
               }}
             >
               <Plus size={16} />

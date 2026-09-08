@@ -75,17 +75,110 @@ function growLayout(nodes, branches) {
     height: Math.max(520, y + 40),
   };
 }
-export default function Knowledge({
+export default function Knowledge(props) {
+  const [tabs, setTabs] = useState([]),
+    [active, setActive] = useState("ecosystem");
+  if (props.compact) return <KnowledgeView {...props} />;
+  const entries = knowledgeEntries(props.data);
+  const focus = (node) => {
+    setTabs((current) =>
+      current.includes(node.id) ? current : [...current, node.id],
+    );
+    setActive(node.id);
+  };
+  const close = (id) => {
+    setTabs((current) => current.filter((key) => key !== id));
+    if (active === id) setActive("ecosystem");
+  };
+  return (
+    <div className="ecosystem-tabs-workspace">
+      <div
+        className="ecosystem-tabs"
+        role="tablist"
+        aria-label="Knowledge Ecosystem workspaces"
+      >
+        <button
+          type="button"
+          role="tab"
+          id="ecosystem-tab"
+          aria-controls="ecosystem-panel"
+          aria-selected={active === "ecosystem"}
+          onClick={() => setActive("ecosystem")}
+        >
+          Knowledge Ecosystem
+        </button>
+        {tabs.map((id) => {
+          const node = entries.find((n) => n.id === id);
+          return (
+            <div className="ecosystem-tab-item" key={id}>
+              <button
+                type="button"
+                role="tab"
+                id={"focus-tab-" + id}
+                aria-controls={"focus-panel-" + id}
+                aria-selected={active === id}
+                onClick={() => setActive(id)}
+              >
+                {node?.title || "Unavailable workspace"}
+              </button>
+              <button
+                type="button"
+                aria-label={
+                  "Close focus: " + (node?.title || "Unavailable workspace")
+                }
+                onClick={() => close(id)}
+              >
+                ×
+              </button>
+            </div>
+          );
+        })}
+      </div>
+      <div
+        role="tabpanel"
+        id="ecosystem-panel"
+        aria-labelledby="ecosystem-tab"
+        hidden={active !== "ecosystem"}
+      >
+        <KnowledgeView {...props} onFocus={focus} />
+      </div>
+      {tabs.map((id) => {
+        const node = entries.find((n) => n.id === id && !n.trashedAt);
+        return (
+          <div
+            role="tabpanel"
+            id={"focus-panel-" + id}
+            aria-labelledby={"focus-tab-" + id}
+            hidden={active !== id}
+            key={id}
+          >
+            {node ? (
+              <KnowledgeView {...props} focusNode={node} onFocus={focus} />
+            ) : (
+              <p>
+                This knowledge is no longer active. Return to the ecosystem to
+                restore it from Pruned knowledge.
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+function KnowledgeView({
   data,
   save,
   compact = false,
   notify = () => {},
+  onFocus,
+  focusNode,
 }) {
   const [areaId, setArea] = useState(
     data.lifeAreas.find((a) => a.id === "knowledge")?.id ||
       data.lifeAreas[0]?.id,
   );
-  const [selected, setSelected] = useState(null),
+  const [selected, setSelected] = useState(focusNode?.id || null),
     [editor, setEditor] = useState(null),
     [action, setAction] = useState(null),
     [isolated, setIsolated] = useState(false),
@@ -93,21 +186,30 @@ export default function Knowledge({
     [zoom, setZoom] = useState(1),
     [branchId, setBranch] = useState(""),
     [treeId, setTree] = useState("");
-  const area = data.lifeAreas.find((a) => a.id === areaId) || data.lifeAreas[0];
+  const focusHome = focusNode
+    ? locationOf(focusNode, data.concepts, data.lifeAreas)
+    : null;
+  const area =
+    data.lifeAreas.find((a) => a.id === (focusHome?.areaId || areaId)) ||
+    data.lifeAreas[0];
   const entries = useMemo(() => knowledgeEntries(data), [data]);
   const forestNodes = treeNodes(data, area?.id);
-  const groveNodes = branchId
+  const effectiveGrove = focusHome ? focusHome.subAreaId : branchId;
+  const groveNodes = effectiveGrove
     ? forestNodes.filter(
         (n) =>
-          locationOf(n, data.concepts, data.lifeAreas).subAreaId === branchId,
+          locationOf(n, data.concepts, data.lifeAreas).subAreaId ===
+          effectiveGrove,
       )
     : forestNodes;
   const focusTree = groveNodes.find(
-    (n) => n.id === treeId && n.kind === "tree",
+    (n) =>
+      n.id === (focusNode?.kind === "tree" ? focusNode.id : treeId) &&
+      n.kind === "tree",
   );
   const treeIds = focusTree ? descendants(focusTree.id, groveNodes) : null;
   const displayedGrove =
-    branchId ||
+    effectiveGrove ||
     (focusTree
       ? locationOf(focusTree, data.concepts, data.lifeAreas).subAreaId
       : "");
@@ -173,7 +275,9 @@ export default function Knowledge({
   useEffect(() => {
     const el = canvas.current;
     if (!el) return;
-    const observer = new ResizeObserver(() => setCanvasWidth(el.clientWidth));
+    const observer = new ResizeObserver(() => {
+      if (el.clientWidth) setCanvasWidth(el.clientWidth);
+    });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
@@ -195,7 +299,10 @@ export default function Knowledge({
   const create = (kind, parent) => {
     const l = parent
       ? loc(parent)
-      : { areaId: area.id, subAreaId: branchId || area.subAreas[0]?.id || "" };
+      : {
+          areaId: area.id,
+          subAreaId: effectiveGrove || area.subAreas[0]?.id || "",
+        };
     const archived = entries.find(
       (n) =>
         n.trashedAt &&
@@ -228,85 +335,95 @@ export default function Knowledge({
     <div className={"orchard " + (compact ? "orchard-compact" : "")}>
       <div className="orchard-header">
         <div>
-          <span className="orchard-eyebrow">YOUR KNOWLEDGE ORCHARD</span>
-          <h2>{area.name}</h2>
+          <span className="orchard-eyebrow">
+            {focusNode ? "FOCUSED WORKSPACE" : "YOUR KNOWLEDGE ECOSYSTEM"}
+          </span>
+          <h2>{focusNode?.title || area.name}</h2>
           <p>
             One life area. A forest of knowledge, with a grove for each
             sub-area.
           </p>
         </div>
-        <Field label="Life-area tree">
-          <select
-            value={area.id}
-            onChange={(e) => {
-              setArea(e.target.value);
-              setSelected(null);
-              setIsolated(false);
-              setBranch("");
-              setSearch("");
-            }}
-          >
-            {data.lifeAreas.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-      </div>
-      {!compact && (
-        <div className="orchard-toolbar">
-          <Field label="Grove (sub-area)">
+        {!focusNode && (
+          <Field label="Life-area tree">
             <select
-              value={branchId}
+              value={area.id}
               onChange={(e) => {
-                setBranch(e.target.value);
-                setTree("");
+                setArea(e.target.value);
                 setSelected(null);
-                setSearch("");
                 setIsolated(false);
+                setBranch("");
+                setSearch("");
               }}
             >
-              <option value="">All groves in this forest</option>
-              {area.subAreas.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
+              {data.lifeAreas.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
                 </option>
               ))}
             </select>
           </Field>
-          <Field label="Knowledge tree">
-            <select
-              value={focusTree?.id || ""}
-              onChange={(e) => {
-                setTree(e.target.value);
-                setSelected(e.target.value || null);
-              }}
-            >
-              <option value="">
-                {branchId
-                  ? "All trees in this grove"
-                  : "All trees in this forest"}
-              </option>
-              {groveNodes
-                .filter((n) => n.kind === "tree")
-                .map((n) => (
-                  <option key={n.id} value={n.id}>
-                    {n.title}
+        )}
+      </div>
+      {!compact && (
+        <div className="orchard-toolbar">
+          {!focusNode && (
+            <Field label="Grove (sub-area)">
+              <select
+                value={branchId}
+                onChange={(e) => {
+                  setBranch(e.target.value);
+                  setTree("");
+                  setSelected(null);
+                  setSearch("");
+                  setIsolated(false);
+                }}
+              >
+                <option value="">All groves in this forest</option>
+                {area.subAreas.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
                   </option>
                 ))}
-            </select>
-          </Field>
-          <Button
-            primary
-            onClick={() => {
-              setTree("");
-              create("tree");
-            }}
-          >
-            <Plus size={16} />
-            Add tree
-          </Button>
+              </select>
+            </Field>
+          )}
+          {focusNode?.kind !== "tree" && (
+            <Field label="Knowledge tree">
+              <select
+                value={focusTree?.id || ""}
+                onChange={(e) => {
+                  setTree(e.target.value);
+                  setSelected(e.target.value || null);
+                }}
+              >
+                <option value="">
+                  {effectiveGrove
+                    ? "All trees in this grove"
+                    : "All trees in this forest"}
+                </option>
+                {groveNodes
+                  .filter((n) => n.kind === "tree")
+                  .map((n) => (
+                    <option key={n.id} value={n.id}>
+                      {n.title}
+                    </option>
+                  ))}
+              </select>
+            </Field>
+          )}
+          {focusNode?.kind !== "tree" && (
+            <Button
+              primary
+              onClick={() => {
+                setTree("");
+                create("tree");
+              }}
+            >
+              <Plus size={16} />
+              Add tree
+            </Button>
+          )}
           <Button onClick={() => setAction("suggestions")}>
             Growth suggestions
           </Button>
@@ -631,6 +748,13 @@ export default function Knowledge({
                     Grow seed
                   </Button>
                 )}
+                {onFocus &&
+                  ["sub-area", "tree"].includes(sel.kind) &&
+                  !sel.trashedAt && (
+                    <Button primary onClick={() => onFocus(sel)}>
+                      Focus on this {sel.kind === "tree" ? "tree" : "grove"}
+                    </Button>
+                  )}
                 <p className="muted">
                   {area.name} /{" "}
                   {area.subAreas.find((s) => s.id === loc(sel).subAreaId)

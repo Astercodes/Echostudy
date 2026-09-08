@@ -11,7 +11,7 @@ const assert = require("node:assert/strict");
     await p.goto("http://127.0.0.1:5180");
     await enterWorkspace(p);
     const btn = (name) => p.getByRole("button", { name, exact: true });
-    await btn("Knowledge tree").click();
+    await btn("Knowledge Ecosystem").click();
     await p
       .getByRole("combobox", { name: "Life-area tree", exact: true })
       .selectOption("leadership");
@@ -62,7 +62,7 @@ const assert = require("node:assert/strict");
       .fill("My saved feedback foundation");
     await btn("Done").click();
     await p.reload();
-    await btn("Knowledge tree").click();
+    await btn("Knowledge Ecosystem").click();
     await p
       .getByRole("combobox", { name: "Life-area tree", exact: true })
       .selectOption("leadership");

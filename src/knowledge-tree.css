@@ -409,3 +409,40 @@
     font-size: 11px;
   }
 }
+.ecosystem-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+}
+.ecosystem-tab-item {
+  display: flex;
+  flex-shrink: 0;
+}
+.ecosystem-tabs button {
+  border: 1px solid #a9c5e5;
+  background: #fff;
+  color: #082b96;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  font: inherit;
+}
+.ecosystem-tabs [aria-selected="true"] {
+  background: #082b96;
+  color: #fff;
+}
+.ecosystem-tab-item [role="tab"] {
+  border-radius: 10px 0 0 10px;
+}
+.ecosystem-tab-item button:last-child {
+  border-radius: 0 10px 10px 0;
+}
+.ecosystem-tabs button:focus-visible {
+  outline: 3px solid #ff7900;
+  outline-offset: 2px;
+}
+.ecosystem-tabs-workspace > [hidden] {
+  display: none;
+}
