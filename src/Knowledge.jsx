@@ -92,16 +92,25 @@ export default function Knowledge({
     [allBranches, setAll] = useState(false),
     [search, setSearch] = useState(""),
     [zoom, setZoom] = useState(1),
-    [branchId, setBranch] = useState("");
+    [branchId, setBranch] = useState(""),
+    [treeId, setTree] = useState("");
   const area = data.lifeAreas.find((a) => a.id === areaId) || data.lifeAreas[0];
   const entries = useMemo(() => knowledgeEntries(data), [data]);
-  const nodes = treeNodes(data, area?.id),
+  const forestNodes = treeNodes(data, area?.id);
+  const focusTree = forestNodes.find(
+    (n) => n.id === treeId && n.kind === "tree",
+  );
+  const treeIds = focusTree ? descendants(focusTree.id, forestNodes) : null;
+  const nodes = treeIds
+      ? forestNodes.filter((n) => treeIds.has(n.id))
+      : forestNodes,
     sel = entries.find(
       (n) => n.id === selected && (!n.trashedAt || isScopeNode(n)),
     );
   const loc = (n) => locationOf(n, data.concepts, data.lifeAreas);
   const open = (n) => {
     setArea(loc(n).areaId);
+    if (treeIds && !treeIds.has(n.id)) setTree("");
     setSelected(n.id);
     setIsolated(false);
   };
@@ -208,7 +217,10 @@ export default function Knowledge({
         <div>
           <span className="orchard-eyebrow">YOUR KNOWLEDGE ORCHARD</span>
           <h2>{area.name}</h2>
-          <p>One life area. One living tree. Every idea has a place to grow.</p>
+          <p>
+            One life area. A forest of knowledge, with a grove for each
+            sub-area.
+          </p>
         </div>
         <Field label="Life-area tree">
           <select
@@ -231,12 +243,12 @@ export default function Knowledge({
       </div>
       {!compact && (
         <div className="orchard-toolbar">
-          <Field label="Stem (sub-area)">
+          <Field label="Grove (sub-area)">
             <select
               value={branchId}
               onChange={(e) => setBranch(e.target.value)}
             >
-              <option value="">Select a stem to grow</option>
+              <option value="">Select a grove to grow</option>
               {area.subAreas.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -244,9 +256,33 @@ export default function Knowledge({
               ))}
             </select>
           </Field>
-          <Button primary onClick={() => create("concept")}>
+          <Field label="Knowledge tree">
+            <select
+              value={focusTree?.id || ""}
+              onChange={(e) => {
+                setTree(e.target.value);
+                setSelected(e.target.value || null);
+              }}
+            >
+              <option value="">All trees in this forest</option>
+              {forestNodes
+                .filter((n) => n.kind === "tree")
+                .map((n) => (
+                  <option key={n.id} value={n.id}>
+                    {n.title}
+                  </option>
+                ))}
+            </select>
+          </Field>
+          <Button
+            primary
+            onClick={() => {
+              setTree("");
+              create("tree");
+            }}
+          >
             <Plus size={16} />
-            Add branch
+            Add tree
           </Button>
           <Button onClick={() => setAction("suggestions")}>
             Growth suggestions
@@ -281,7 +317,8 @@ export default function Knowledge({
         <section className="card orchard-stage">
           <div className="orchard-legend">
             <span>
-              <Sprout size={16} /> Tree → stem → branch → leaf → fruit → seed
+              <Sprout size={16} /> Forest → grove → tree · Roots, stem,
+              branches, leaves & fruits
             </span>
             <span>
               {nodes.filter((n) => n.kind !== "fruit").length} knowledge objects
@@ -357,7 +394,7 @@ export default function Knowledge({
                       p.root
                         ? area.name
                         : p.branch
-                          ? "Stem: " + n.title
+                          ? "Grove: " + n.title
                           : knowledgeLabel(n, data.concepts) + ": " + n.title
                     }
                     className={"orchard-node " + (active ? "is-selected" : "")}
@@ -410,7 +447,7 @@ export default function Knowledge({
                           fontSize="10"
                           letterSpacing="2"
                         >
-                          LIFE AREA · ROOT
+                          LIFE AREA · FOREST
                         </text>
                         <text
                           textAnchor="middle"
@@ -485,7 +522,7 @@ export default function Knowledge({
                           letterSpacing="1"
                         >
                           {p.branch
-                            ? "STEM"
+                            ? "GROVE"
                             : knowledgeLabel(n, data.concepts).toUpperCase()}
                         </text>
                         <text
@@ -545,9 +582,9 @@ export default function Knowledge({
               <>
                 <div className="orchard-eyebrow">
                   {sel.kind === "life-area"
-                    ? "LIFE-AREA ROOT"
+                    ? "LIFE-AREA FOREST"
                     : sel.kind === "sub-area"
-                      ? "STEM"
+                      ? "GROVE"
                       : sel.kind === "fruit"
                         ? "KNOWLEDGE FRUIT"
                         : knowledgeLabel(sel, data.concepts).toUpperCase()}
@@ -583,7 +620,7 @@ export default function Knowledge({
                   {area.subAreas.find((s) => s.id === loc(sel).subAreaId)
                     ?.name ||
                     (sel.kind === "life-area"
-                      ? "Root workspace"
+                      ? "Forest workspace"
                       : sel.standalone
                         ? "Independent knowledge & seeds"
                         : "Choose a sub-area")}
@@ -608,8 +645,8 @@ export default function Knowledge({
                         <Button primary onClick={() => setAction("content")}>
                           Open content
                         </Button>
-                        <Button onClick={() => create("concept", sel)}>
-                          Grow a branch
+                        <Button onClick={() => create("tree", sel)}>
+                          Grow a tree
                         </Button>
                       </>
                     )}
@@ -633,6 +670,36 @@ export default function Knowledge({
                       {sel.description ||
                         "Grow this concept with explanations, examples and knowledge fruits."}
                     </p>
+                    {sel.kind === "tree" && (
+                      <>
+                        <Button onClick={() => create("foundation", sel)}>
+                          Add root
+                        </Button>
+                        <Button onClick={() => create("stem", sel)}>
+                          Add stem
+                        </Button>
+                        <Button onClick={() => create("branch", sel)}>
+                          Grow a branch
+                        </Button>
+                      </>
+                    )}
+                    {["branch", "sub-branch"].includes(sel.kind) && (
+                      <>
+                        <Button onClick={() => create("sub-branch", sel)}>
+                          Grow a sub-branch
+                        </Button>
+                        <Button onClick={() => create("fruit", sel)}>
+                          Grow a fruit
+                        </Button>
+                      </>
+                    )}
+                    {["foundation", "stem", "sub-branch"].includes(
+                      sel.kind,
+                    ) && (
+                      <Button onClick={() => create("leaf", sel)}>
+                        Grow a leaf
+                      </Button>
+                    )}
                     {knowledgeLabel(sel, data.concepts) === "Leaf" && (
                       <Button onClick={() => create("fruit", sel)}>
                         <Cherry size={16} />
@@ -774,9 +841,10 @@ export default function Knowledge({
                 <Sprout size={42} />
                 <h2>A place for every idea.</h2>
                 <p>
-                  Each life area has a tree. Choose a stem (sub-area), grow a
-                  branch, and add leaves of atomic knowledge. Fruits explore
-                  what follows; seeds hold the next questions.
+                  Each life area is a forest; each sub-area is a grove. Grow
+                  topic trees with foundational roots, a core stem, branches
+                  and sub-branches. Leaves hold atomic knowledge, fruits support
+                  deep study, and seeds hold new questions.
                 </p>
                 <p>
                   Click a fruit for its actions. Its text stays tucked away
@@ -1057,7 +1125,7 @@ function NodeEditor({ node, data, close, submit }) {
                 ))}
               </select>
             </Field>
-            <Field label="Stem (sub-area)">
+            <Field label="Grove (sub-area)">
               <select
                 value={v.subAreaId}
                 onChange={(e) =>
@@ -1088,7 +1156,7 @@ function NodeEditor({ node, data, close, submit }) {
             }}
           >
             {v.kind !== "fruit" && (
-              <option value="">Directly from the stem</option>
+              <option value="">Directly from the grove</option>
             )}
             {data.concepts
               .filter(

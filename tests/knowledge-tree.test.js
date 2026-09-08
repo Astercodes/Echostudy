@@ -189,8 +189,10 @@ test("seeds preserve the source and grow into existing or new trees without losi
   d = plantSeed(d, seed.id, { title: "A new field" });
   const second = d.concepts.at(-1).id;
   d = growSeed(d, second, { newTreeName: "My new field" });
-  const tree = d.lifeAreas.find((a) => a.name === "My new field");
-  assert(treeNodes(d, tree.id).some((n) => n.id === second));
+  const tree = d.concepts.find((a) => a.title === "My new field");
+  assert.equal(tree.kind, "tree");
+  assert(treeNodes(d, tree.areaId).some((n) => n.id === second));
+  assert.equal(d.lifeAreas.length, original.lifeAreas.length);
   assert(validateBackup(JSON.parse(JSON.stringify(d))));
   assert.equal(knowledgeLabel({ kind: "leaf" }, []), "Leaf");
 });

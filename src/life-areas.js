@@ -1,4 +1,5 @@
 import { expandLifeAreas } from "./life-area-expansion.js";
+import { addManagementExample } from "./knowledge-example.js";
 // The original supplied list, grouped into 16 major areas. Repeated sub-area names
 // intentionally belong to different areas (for example, Communication).
 const catalog = [
@@ -457,15 +458,17 @@ export function migrateWorkspace(state) {
         : value;
   state = recolor(state);
   if (state.version === 2)
-    return state.lifeAreaCatalogRevision >= 2
-      ? state
-      : {
-          ...state,
-          lifeAreaCatalogRevision: 2,
-          lifeAreas: expandLifeAreas(state.lifeAreas),
-        };
+    return addManagementExample(
+      state.lifeAreaCatalogRevision >= 2
+        ? state
+        : {
+            ...state,
+            lifeAreaCatalogRevision: 2,
+            lifeAreas: expandLifeAreas(state.lifeAreas),
+          },
+    );
   if (state.version !== 1) throw new Error("Unsupported workspace version.");
-  return {
+  return addManagementExample({
     ...state,
     version: 2,
     lifeAreaCatalogRevision: 2,
@@ -475,7 +478,7 @@ export function migrateWorkspace(state) {
       areaId: LEGACY_GOAL_AREAS[domain],
       subAreaId: "",
     })),
-  };
+  });
 }
 
 const normalized = (name) => name.trim().toLocaleLowerCase();

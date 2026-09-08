@@ -208,8 +208,16 @@ export function connectNodes(data, id, ids, details = {}) {
   };
 }
 export function knowledgeLabel(node, nodes) {
-  if (node.kind === "life-area") return "Tree";
-  if (node.kind === "sub-area") return "Stem";
+  if (node.kind === "life-area") return "Forest";
+  if (node.kind === "sub-area") return "Grove";
+  const kinds = {
+    tree: "Tree",
+    foundation: "Root",
+    stem: "Stem",
+    branch: "Branch",
+    "sub-branch": "Sub-branch",
+  };
+  if (kinds[node.kind]) return kinds[node.kind];
   if (node.kind === "seed") return "Seed";
   if (node.kind === "fruit") return "Fruit";
   if (node.kind === "leaf") return "Leaf";
@@ -277,30 +285,21 @@ export function growSeed(
     (n) => n.id === id && n.kind === "seed" && !n.trashedAt,
   );
   if (!seed) throw new Error("Choose an active seed.");
+  areaId ||= seed.areaId;
   let next = data;
   if (newTreeName.trim()) {
-    if (
-      data.lifeAreas.some(
-        (a) => a.name.trim().toLowerCase() === newTreeName.trim().toLowerCase(),
-      )
-    )
-      throw new Error(
-        "A tree with this name already exists. Choose it as the destination.",
-      );
-    areaId = crypto.randomUUID();
-    next = {
-      ...data,
-      lifeAreas: [
-        ...data.lifeAreas,
-        {
-          id: areaId,
-          name: newTreeName.trim(),
-          color: "#009cde",
-          subAreas: [],
-        },
+    return saveTreeNode(data, {
+      ...seed,
+      title: newTreeName.trim(),
+      kind: "tree",
+      areaId,
+      subAreaId,
+      standalone: !subAreaId,
+      history: [
+        ...(seed.history || []),
+        { action: "grow-tree", at: new Date().toISOString() },
       ],
-    };
-    subAreaId = "";
+    });
   }
   return saveTreeNode(next, {
     ...seed,

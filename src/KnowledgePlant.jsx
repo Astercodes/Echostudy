@@ -28,7 +28,7 @@ export default function KnowledgePlant({
     >
       <p>
         {grow
-          ? "Let this question grow into a branch in an existing tree, or begin a new life-area tree. Its source stays attached."
+          ? "Let this question grow into independent knowledge or a topic tree within a grove. Its source stays attached; your life-area catalog stays unchanged."
           : "Knowledge produces questions. Select a passage below, then name the question or idea you want to plant. The source remains untouched."}
       </p>
       <form
@@ -96,21 +96,24 @@ export default function KnowledgePlant({
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
               >
-                <option value="existing">A branch in an existing tree</option>
-                <option value="new">A new life-area tree</option>
+                <option value="existing">
+                  An independent branch in a grove
+                </option>
+                <option value="new">A new knowledge tree</option>
               </select>
             </Field>
-            {destination === "new" ? (
-              <Field label="New life-area tree name">
+            {destination === "new" && (
+              <Field label="New knowledge tree name">
                 <input
                   required
                   value={draft.newTreeName}
                   onChange={(e) => change("newTreeName", e.target.value)}
                 />
               </Field>
-            ) : (
+            )}
+            {
               <>
-                <Field label="Destination tree">
+                <Field label="Destination forest">
                   <select
                     value={draft.areaId}
                     onChange={(e) =>
@@ -128,7 +131,7 @@ export default function KnowledgePlant({
                     ))}
                   </select>
                 </Field>
-                <Field label="Destination stem">
+                <Field label="Destination grove">
                   <select
                     value={draft.subAreaId}
                     onChange={(e) => change("subAreaId", e.target.value)}
@@ -142,7 +145,7 @@ export default function KnowledgePlant({
                   </select>
                 </Field>
               </>
-            )}
+            }
           </>
         )}
         {error && <p role="alert">{error}</p>}
