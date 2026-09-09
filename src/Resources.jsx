@@ -19,6 +19,7 @@ import { uid, COLORS, DOMAINS } from "./model";
 import { putFile, getFile } from "./files";
 import { Button, Badge, Modal, Field, GoalSelect } from "./App";
 import "./pdf-text-layer.css";
+import { ResourceTrace } from "./KnowledgeSources";
 const pdfEngine = () =>
   import("pdfjs-dist").then(async (p) => {
     p.GlobalWorkerOptions.workerSrc = new URL(
@@ -634,6 +635,7 @@ function Reader({ resource: r, data, save, back, notify, addNote }) {
           </Button>
         </div>
       </div>
+      <ResourceTrace resource={r} data={data} />
       <div className="reader-layout">
         <section className="reading-pane">
           {loading && <div className="empty">Opening your resource…</div>}

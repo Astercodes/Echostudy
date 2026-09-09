@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { KnowledgeSourceContext } from "./KnowledgeSources";
 import { Modal, Field, Button } from "./App";
 import { LEARNING_MODES, defaultQuestions } from "./knowledge-learning";
 import { uid } from "./model";
@@ -7,19 +8,31 @@ import ActionComponents from "./ActionComponents";
 import { RECALL_MODES } from "./action-components";
 import KnowledgeTest from "./KnowledgeTest";
 export default function KnowledgeActions({ node, mode, data, persist, close }) {
+  const [currentMode, setCurrentMode] = useState(mode);
+  const sourceContext = useContext(KnowledgeSourceContext);
   return (
-    <VoiceScope.Provider value={node.id + ":" + mode}>
-      <ActionContent
-        node={node}
-        mode={mode}
-        data={data}
-        persist={persist}
-        close={close}
-      />
-    </VoiceScope.Provider>
+    <KnowledgeSourceContext.Provider
+      value={{ ...sourceContext, action: currentMode }}
+    >
+      <VoiceScope.Provider value={node.id + ":" + currentMode}>
+        <ActionContent
+          key={currentMode}
+          node={node}
+          mode={currentMode}
+          data={data}
+          persist={persist}
+          close={
+            mode === "isolate" && currentMode !== "isolate"
+              ? () => setCurrentMode("isolate")
+              : close
+          }
+          switchMode={setCurrentMode}
+        />
+      </VoiceScope.Provider>
+    </KnowledgeSourceContext.Provider>
   );
 }
-function ActionContent({ node, mode, data, persist, close }) {
+function ActionContent({ node, mode, data, persist, close, switchMode }) {
   if (mode === "taste")
     return (
       <Layers node={node} mode="tasteExplore" persist={persist} close={close} />
@@ -39,6 +52,7 @@ function ActionContent({ node, mode, data, persist, close }) {
       data={data}
       persist={persist}
       close={close}
+      switchMode={switchMode}
     />
   );
 }
@@ -135,7 +149,8 @@ function Layers({ node, mode, persist, close }) {
     </Modal>
   );
 }
-function Content({ node, mode, data, persist, close }) {
+function Content({ node, mode, data, persist, close, switchMode }) {
+  const [saved, setSaved] = useState(false);
   return (
     <Modal
       title={
@@ -154,8 +169,12 @@ function Content({ node, mode, data, persist, close }) {
             ? "One idea. Your full attention."
             : "The text held inside this idea."}
         </p>
-        <p className="muted">Saved as you write.</p>
+        <p className="muted">
+          Saved as you write in this knowledge object's content. Plucked studies
+          are available in the Knowledge Notebook.
+        </p>
         <VoiceField
+          resourceScope={node.id + ":content"}
           label={
             ["life-area", "sub-area"].includes(node.kind)
               ? "Workspace content"
@@ -165,27 +184,34 @@ function Content({ node, mode, data, persist, close }) {
           <textarea
             rows={12}
             value={node.description || ""}
-            onChange={(e) => persist({ description: e.target.value })}
+            onChange={(e) => {
+              setSaved(false);
+              persist({ description: e.target.value });
+            }}
           />
         </VoiceField>
         {mode === "isolate" && (
           <>
             <h3>Your investigation</h3>
-            {Object.entries(LEARNING_MODES).map(([mode, spec]) => (
-              <details key={mode}>
-                <summary>
-                  {spec.title} · {spec.meaning}
-                </summary>
-                {spec.fields
-                  .filter(([key]) => node.learning?.[mode]?.[key])
-                  .map(([key, label]) => (
-                    <section key={key}>
-                      <h4>{label}</h4>
-                      <p className="orchard-text">{node.learning[mode][key]}</p>
-                    </section>
-                  ))}
-              </details>
-            ))}
+            <p>
+              Open an action to write, record audio and attach sources to its
+              components. Your work stays with this independent study.
+            </p>
+            <div className="fruit-actions">
+              {[
+                ["taste", "Taste"],
+                ["peel", "Peel"],
+                ["squeeze", "Squeeze"],
+                ["chew", "Chew"],
+                ["regurgitate", "Regurgitate"],
+                ["absorb", "Absorb / Take Root"],
+                ["test", "Test"],
+              ].map(([key, title]) => (
+                <Button key={key} onClick={() => switchMode(key)}>
+                  {title}
+                </Button>
+              ))}
+            </div>
             <h3>Linked notes</h3>
             {data.notes
               .filter((n) => n.concepts?.includes(node.id))
@@ -206,9 +232,20 @@ function Content({ node, mode, data, persist, close }) {
           </>
         )}
         <div className="form-actions">
-          <Button primary onClick={close}>
-            Return to tree
+          <Button
+            primary
+            onClick={() => {
+              persist({
+                description: node.description || "",
+                updatedAt: new Date().toISOString(),
+              });
+              setSaved(true);
+            }}
+          >
+            Save study content
           </Button>
+          {saved && <p role="status">Study content saved.</p>}
+          <Button onClick={close}>Return to ecosystem</Button>
         </div>
       </div>
     </Modal>

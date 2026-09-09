@@ -9,9 +9,10 @@ import { Mic, Square } from "lucide-react";
 import { Field } from "./App";
 import { voiceStore } from "./voice-storage";
 import "./voice.css";
+import KnowledgeSources from "./KnowledgeSources";
 
 export const VoiceScope = createContext("knowledge");
-export function VoiceField({ label, scope, slot, children }) {
+export function VoiceField({ label, scope, slot, resourceScope, children }) {
   const context = useContext(VoiceScope);
   const key = (scope || context) + ":" + (slot || label);
   return (
@@ -23,6 +24,11 @@ export function VoiceField({ label, scope, slot, children }) {
         label={label}
         value={children.props.value || ""}
         insert={(text) => children.props.onChange({ target: { value: text } })}
+      />
+      <KnowledgeSources
+        key={resourceScope || key}
+        scope={resourceScope || key}
+        label={label}
       />
     </div>
   );

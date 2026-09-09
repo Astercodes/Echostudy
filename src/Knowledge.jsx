@@ -38,6 +38,8 @@ import KnowledgePlant from "./KnowledgePlant";
 import { VoiceField } from "./VoiceField";
 import ActionComponents from "./ActionComponents";
 import { GRAFT_TYPES } from "./action-components";
+import { KnowledgeSourceContext } from "./KnowledgeSources";
+import KnowledgeNotebook from "./KnowledgeNotebook";
 
 function growLayout(nodes, branches) {
   const points = new Map(),
@@ -258,7 +260,7 @@ function KnowledgeView({
         subAreaId: s.id,
         title: s.name,
       }));
-    if (!displayedGrove)
+    if (!displayedGrove && focusNode?.standalone)
       groups.unshift({
         id: "branch:independent",
         subAreaId: "",
@@ -349,936 +351,1002 @@ function KnowledgeView({
   if (!area)
     return <p>Create a life area under Goals to plant your first tree.</p>;
   return (
-    <div className={"orchard " + (compact ? "orchard-compact" : "")}>
-      <div className="orchard-header">
-        <div>
-          <span className="orchard-eyebrow">
-            {focusNode ? "FOCUSED WORKSPACE" : "YOUR KNOWLEDGE ECOSYSTEM"}
-          </span>
-          <h2>{focusNode?.title || area.name}</h2>
-          <p>
-            One life area. A forest of knowledge, with a grove for each
-            sub-area.
-          </p>
-        </div>
-        {!focusNode && (
-          <Field label="Life-area tree">
-            <select
-              value={area.id}
-              onChange={(e) => {
-                setArea(e.target.value);
-                setSelected(null);
-                setIsolated(false);
-                setBranch("");
-                setSearch("");
-              }}
-            >
-              {data.lifeAreas.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          </Field>
+    <KnowledgeSourceContext.Provider
+      value={{
+        data,
+        save,
+        node: sel,
+        action:
+          action === "connect" ? "graft" : action?.replace("management-", ""),
+      }}
+    >
+      <div className={"orchard " + (compact ? "orchard-compact" : "")}>
+        {!compact && (
+          <KnowledgeNotebook
+            data={data}
+            entries={entries}
+            open={(node, nextAction) => {
+              open(node);
+              setAction(nextAction);
+            }}
+          />
         )}
-      </div>
-      {!compact && (
-        <div className="orchard-toolbar">
+        <div className="orchard-header">
+          <div>
+            <span className="orchard-eyebrow">
+              {focusNode ? "FOCUSED WORKSPACE" : "YOUR KNOWLEDGE ECOSYSTEM"}
+            </span>
+            <h2>{focusNode?.title || area.name}</h2>
+            <p>
+              One life area. A forest of knowledge, with a grove for each
+              sub-area.
+            </p>
+          </div>
           {!focusNode && (
-            <Field label="Grove (sub-area)">
+            <Field label="Life-area tree">
               <select
-                value={branchId}
+                value={area.id}
                 onChange={(e) => {
-                  setBranch(e.target.value);
-                  setTree("");
+                  setArea(e.target.value);
                   setSelected(null);
-                  setSearch("");
                   setIsolated(false);
+                  setBranch("");
+                  setSearch("");
                 }}
               >
-                <option value="">All groves in this forest</option>
-                {area.subAreas.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
+                {data.lifeAreas.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
                   </option>
                 ))}
               </select>
             </Field>
           )}
-          {(!focusNode || isScopeNode(focusNode)) && (
-            <Field label="Knowledge tree">
-              <select
-                value={focusTree?.id || ""}
-                onChange={(e) => {
-                  setTree(e.target.value);
-                  setSelected(e.target.value || null);
-                }}
-              >
-                <option value="">
-                  {effectiveGrove
-                    ? "All trees in this grove"
-                    : "All trees in this forest"}
-                </option>
-                {groveNodes
-                  .filter((n) => n.kind === "tree")
-                  .map((n) => (
-                    <option key={n.id} value={n.id}>
-                      {n.title}
+        </div>
+        {!compact && (
+          <div className="orchard-toolbar">
+            {!focusNode && (
+              <Field label="Grove (sub-area)">
+                <select
+                  value={branchId}
+                  onChange={(e) => {
+                    setBranch(e.target.value);
+                    setTree("");
+                    setSelected(null);
+                    setSearch("");
+                    setIsolated(false);
+                  }}
+                >
+                  <option value="">All groves in this forest</option>
+                  {area.subAreas.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
                     </option>
                   ))}
-              </select>
-            </Field>
+                </select>
+              </Field>
+            )}
+            {(!focusNode || isScopeNode(focusNode)) && (
+              <Field label="Knowledge tree">
+                <select
+                  value={focusTree?.id || ""}
+                  onChange={(e) => {
+                    setTree(e.target.value);
+                    setSelected(e.target.value || null);
+                  }}
+                >
+                  <option value="">
+                    {effectiveGrove
+                      ? "All trees in this grove"
+                      : "All trees in this forest"}
+                  </option>
+                  {groveNodes
+                    .filter((n) => n.kind === "tree")
+                    .map((n) => (
+                      <option key={n.id} value={n.id}>
+                        {n.title}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+            )}
+            {(!focusNode || isScopeNode(focusNode)) && (
+              <Button
+                primary
+                onClick={() => {
+                  setTree("");
+                  create("tree");
+                }}
+              >
+                <Plus size={16} />
+                Add tree
+              </Button>
+            )}
+            <Button onClick={() => setAction("suggestions")}>
+              Growth suggestions
+            </Button>
+            <Button onClick={() => setAction("trash")}>
+              <Trash2 size={16} />
+              Pruned knowledge
+            </Button>
+            <label className="orchard-search">
+              <Search size={16} />
+              <input
+                aria-label="Search this tree"
+                placeholder="Find a branch, leaf, fruit or seed"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </label>
+          </div>
+        )}
+        {search && (
+          <div className="orchard-results">
+            {nodes
+              .filter((n) =>
+                n.title.toLowerCase().includes(search.toLowerCase()),
+              )
+              .map((n) => (
+                <button key={n.id} onClick={() => open(n)}>
+                  {knowledgeLabel(n, data.concepts)} · {n.title}
+                </button>
+              ))}
+          </div>
+        )}
+        <div className="orchard-workspace">
+          <section className="card orchard-stage">
+            <div className="orchard-legend">
+              <span>
+                <Sprout size={16} /> Forest → grove → tree · Roots, stem,
+                branches, leaves & fruits
+              </span>
+              <span>
+                {nodes.filter((n) => n.kind !== "fruit").length} knowledge
+                objects · {nodes.filter((n) => n.kind === "fruit").length}{" "}
+                fruits
+              </span>
+            </div>
+            <div className="orchard-scroll" ref={canvas}>
+              <svg
+                className="orchard-tree"
+                aria-label={"Knowledge tree for " + area.name}
+                viewBox={[layout.minX, 0, layout.width, layout.height].join(
+                  " ",
+                )}
+                style={{
+                  width: layout.width * scale,
+                  height: layout.height * scale,
+                }}
+              >
+                <defs>
+                  <linearGradient id={barkId}>
+                    <stop stopColor="#082b96" />
+                    <stop offset="1" stopColor="#009cde" />
+                  </linearGradient>
+                </defs>
+                {layout.paths.map((e, i) => {
+                  const a = layout.points.get(e.from),
+                    b = layout.points.get(e.to);
+                  return (
+                    <path
+                      key={i}
+                      d={`M${a.x},${a.y} C${a.x + (b.x - a.x) * 0.55},${a.y} ${a.x + (b.x - a.x) * 0.45},${b.y} ${b.x},${b.y}`}
+                      fill="none"
+                      data-knowledge-connection="true"
+                      stroke={
+                        e.fruit && !focusNode ? "#ff7900" : `url(#${barkId})`
+                      }
+                      strokeWidth={e.main ? 12 : e.fruit ? 2 : 5}
+                      strokeLinecap="round"
+                      opacity={isolated && !focusIds.has(e.to) ? 0.16 : 1}
+                    />
+                  );
+                })}
+                {sel &&
+                  linked.map((n) => {
+                    const a = layout.points.get(sel.id),
+                      b = layout.points.get(n.id);
+                    return a && b ? (
+                      <path
+                        key={"link" + n.id}
+                        d={`M${a.x},${a.y} Q0,${Math.min(a.y, b.y) - 60} ${b.x},${b.y}`}
+                        stroke="#ff7900"
+                        strokeWidth="2"
+                        strokeDasharray="5 7"
+                        fill="none"
+                      />
+                    ) : null;
+                  })}
+                {[...layout.points].map(([id, p]) => {
+                  const n = p.n,
+                    fruit = n?.kind === "fruit",
+                    active =
+                      (p.root
+                        ? scopeId(area.id)
+                        : p.branch && n.subAreaId
+                          ? scopeId(area.id, n.subAreaId)
+                          : id) === selected;
+                  return (
+                    <g
+                      key={id}
+                      transform={`translate(${p.x} ${p.y})`}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={
+                        p.root
+                          ? area.name
+                          : p.branch
+                            ? "Grove: " + n.title
+                            : knowledgeLabel(n, data.concepts) + ": " + n.title
+                      }
+                      className={
+                        "orchard-node " + (active ? "is-selected" : "")
+                      }
+                      opacity={
+                        isolated && !p.root && !p.branch && !focusIds.has(id)
+                          ? 0.12
+                          : 1
+                      }
+                      onClick={() => {
+                        if (p.root) {
+                          setSelected(scopeId(area.id));
+                          setIsolated(false);
+                        } else if (p.branch) {
+                          setBranch(n.subAreaId);
+                          setTree("");
+                          setSelected(
+                            n.subAreaId ? scopeId(area.id, n.subAreaId) : null,
+                          );
+                        } else open(n);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          e.currentTarget.dispatchEvent(
+                            new MouseEvent("click", { bubbles: true }),
+                          );
+                        }
+                      }}
+                    >
+                      {p.root ? (
+                        <>
+                          <path
+                            d="M-12 26 Q-16 70 -60 86 M0 24 V95 M14 26 Q20 65 64 84"
+                            stroke="#082b96"
+                            strokeWidth="8"
+                            fill="none"
+                            strokeLinecap="round"
+                          />
+                          <rect
+                            x="-110"
+                            y="-37"
+                            width="220"
+                            height="74"
+                            rx="28"
+                            fill="#082b96"
+                          />
+                          <text
+                            textAnchor="middle"
+                            fill="white"
+                            y="-8"
+                            fontSize="10"
+                            letterSpacing="2"
+                          >
+                            LIFE AREA · FOREST
+                          </text>
+                          <text
+                            textAnchor="middle"
+                            fill="white"
+                            y="15"
+                            fontSize="14"
+                          >
+                            {area.name.length > 27
+                              ? area.name.slice(0, 25) + "…"
+                              : area.name}
+                          </text>
+                        </>
+                      ) : fruit ? (
+                        <>
+                          <path
+                            d="M0 -22 Q-2 -39 11 -39"
+                            stroke="#07529a"
+                            strokeWidth="3"
+                            fill="none"
+                          />
+                          <ellipse
+                            cx="13"
+                            cy="-34"
+                            rx="12"
+                            ry="5"
+                            transform="rotate(-25 13 -34)"
+                            fill="#009cde"
+                          />
+                          <circle
+                            r="24"
+                            fill={active ? "#ffd7b0" : "#ff7900"}
+                            stroke={active ? "#082b96" : "#d96300"}
+                            strokeWidth="2"
+                          />
+                          <path
+                            d="M-12 -10 Q-17 -4 -15 4"
+                            stroke="#fff"
+                            strokeWidth="3"
+                            opacity=".6"
+                            fill="none"
+                          />
+                          <text
+                            textAnchor="middle"
+                            y="45"
+                            fontSize="12"
+                            fill="#102c54"
+                          >
+                            {n.title.length > 23
+                              ? n.title.slice(0, 21) + "…"
+                              : n.title}
+                          </text>
+                        </>
+                      ) : (
+                        <>
+                          <rect
+                            x="-86"
+                            y="-24"
+                            width="172"
+                            height="48"
+                            rx={p.branch ? 20 : 10}
+                            fill={
+                              active ? "#dcefff" : p.branch ? "#e7efff" : "#fff"
+                            }
+                            stroke={active ? "#ff7900" : "#a9c5e5"}
+                            strokeWidth={active ? 3 : 1}
+                          />
+                          <text
+                            textAnchor="middle"
+                            y="-7"
+                            fontSize="8"
+                            fill="#586e8a"
+                            letterSpacing="1"
+                          >
+                            {p.branch
+                              ? "GROVE"
+                              : knowledgeLabel(n, data.concepts).toUpperCase()}
+                          </text>
+                          <text
+                            textAnchor="middle"
+                            y="11"
+                            fontSize="12"
+                            fill="#102c54"
+                          >
+                            {n.title.length > 23
+                              ? n.title.slice(0, 21) + "…"
+                              : n.title}
+                          </text>
+                        </>
+                      )}
+                      <title>{p.root ? area.name : n.title}</title>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+            <div className="orchard-view-controls">
+              <button
+                aria-label="Zoom out"
+                onClick={() => setZoom((z) => Math.max(0.35, z - 0.15))}
+              >
+                <Minus size={16} />
+              </button>
+              <span>{Math.round(zoom * 100)}%</span>
+              <button
+                aria-label="Zoom in"
+                onClick={() => setZoom((z) => Math.min(1.6, z + 0.15))}
+              >
+                <Plus size={16} />
+              </button>
+              <button
+                onClick={() => {
+                  setZoom(1);
+                  setIsolated(false);
+                }}
+              >
+                <RotateCcw size={14} />
+                Reset
+              </button>
+            </div>
+          </section>
+          {!compact && (
+            <aside className="card orchard-detail">
+              {sel ? (
+                <>
+                  <div className="orchard-eyebrow">
+                    {sel.kind === "life-area"
+                      ? "LIFE-AREA FOREST"
+                      : sel.kind === "sub-area"
+                        ? "GROVE"
+                        : sel.kind === "fruit"
+                          ? "KNOWLEDGE FRUIT"
+                          : knowledgeLabel(sel, data.concepts).toUpperCase()}
+                  </div>
+                  <h2>{sel.title}</h2>
+                  {sel.lineage && (
+                    <p className="muted">
+                      {sel.lineage.action === "plant"
+                        ? "Planted from"
+                        : "Plucked from"}
+                      : {sel.lineage.path}
+                    </p>
+                  )}
+                  {sel.lineage &&
+                    entries.some(
+                      (n) => n.id === sel.lineage.sourceId && !n.trashedAt,
+                    ) && (
+                      <Button
+                        onClick={() =>
+                          open(
+                            entries.find((n) => n.id === sel.lineage.sourceId),
+                          )
+                        }
+                      >
+                        Open original source
+                      </Button>
+                    )}
+                  {sel.kind === "seed" && (
+                    <Button primary onClick={() => setAction("grow-seed")}>
+                      Grow seed
+                    </Button>
+                  )}
+                  {onFocus && !isScaffold(sel) && !sel.trashedAt && (
+                    <Button primary onClick={() => onFocus(sel)}>
+                      Focus on this{" "}
+                      {knowledgeLabel(sel, data.concepts).toLowerCase()}
+                    </Button>
+                  )}
+                  <p className="muted">
+                    {area.name} /{" "}
+                    {area.subAreas.find((s) => s.id === loc(sel).subAreaId)
+                      ?.name ||
+                      (sel.kind === "life-area"
+                        ? "Forest workspace"
+                        : sel.standalone
+                          ? "Independent knowledge & seeds"
+                          : "Choose a sub-area")}
+                  </p>
+                  {isScopeNode(sel) ? (
+                    <>
+                      {sel.trashedAt ? (
+                        <>
+                          <p>This knowledge workspace has been pruned.</p>
+                          <Button
+                            onClick={() => save((d) => restoreNode(d, sel.id))}
+                          >
+                            Restore workspace
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <p className="orchard-text">
+                            {sel.description ||
+                              "Explore this whole area of knowledge. Each action saves work here, separately from its concepts."}
+                          </p>
+                          <Button primary onClick={() => setAction("content")}>
+                            Open content
+                          </Button>
+                          <Button onClick={() => create("tree", sel)}>
+                            Grow a tree
+                          </Button>
+                        </>
+                      )}
+                    </>
+                  ) : sel.kind === "fruit" ? (
+                    <>
+                      <Button primary onClick={() => setAction("content")}>
+                        Open content
+                      </Button>
+                      <Button
+                        onClick={() => setEditor({ ...sel, ...loc(sel) })}
+                      >
+                        Edit fruit & placement
+                      </Button>
+                      <p className="fruit-closed">
+                        Explore this idea in layers, study its depth, test
+                        yourself, and put it to work.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="orchard-text">
+                        {sel.description ||
+                          "Grow this concept with explanations, examples and knowledge fruits."}
+                      </p>
+                      {sel.kind === "tree" && (
+                        <>
+                          <Button onClick={() => create("foundation", sel)}>
+                            Add root
+                          </Button>
+                          <Button onClick={() => create("stem", sel)}>
+                            Add stem
+                          </Button>
+                          <Button onClick={() => create("branch", sel)}>
+                            Grow a branch
+                          </Button>
+                        </>
+                      )}
+                      {["branch", "sub-branch"].includes(sel.kind) && (
+                        <>
+                          <Button onClick={() => create("sub-branch", sel)}>
+                            Grow a sub-branch
+                          </Button>
+                          <Button onClick={() => create("fruit", sel)}>
+                            Grow a fruit
+                          </Button>
+                        </>
+                      )}
+                      {["foundation", "stem", "sub-branch"].includes(
+                        sel.kind,
+                      ) && (
+                        <Button onClick={() => create("leaf", sel)}>
+                          Grow a leaf
+                        </Button>
+                      )}
+                      {knowledgeLabel(sel, data.concepts) === "Leaf" && (
+                        <Button onClick={() => create("fruit", sel)}>
+                          <Cherry size={16} />
+                          Grow a fruit
+                        </Button>
+                      )}
+                      {knowledgeLabel(sel, data.concepts) === "Branch" && (
+                        <Button onClick={() => create("concept", sel)}>
+                          <Plus size={16} />
+                          Grow a leaf
+                        </Button>
+                      )}
+                      {knowledgeLabel(sel, data.concepts) === "Leaf" && (
+                        <p className="muted">
+                          Atomic knowledge: a definition, fact, formula,
+                          principle, term, example or distinction. Grow fruits
+                          to explore what follows from it.
+                        </p>
+                      )}
+                      <Button
+                        onClick={() =>
+                          setEditor({
+                            ...sel,
+                            ...loc(sel),
+                            parent: isScaffold(
+                              data.concepts.find((n) => n.id === sel.parent) ||
+                                {},
+                            )
+                              ? ""
+                              : sel.parent,
+                          })
+                        }
+                      >
+                        Edit knowledge & placement
+                      </Button>
+
+                      <Field label="Understanding">
+                        <select
+                          value={sel.status}
+                          onChange={(e) =>
+                            update({ ...sel, status: e.target.value })
+                          }
+                        >
+                          <option>Growing</option>
+                          <option>Confident</option>
+                        </select>
+                      </Field>
+                      <label className="check-field">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(sel.applied)}
+                          onChange={(e) =>
+                            update({ ...sel, applied: e.target.checked })
+                          }
+                        />
+                        I have applied this concept
+                      </label>
+                      <Button
+                        onClick={() => {
+                          update({
+                            ...sel,
+                            reviewed: new Date().toISOString(),
+                          });
+                          notify("Review recorded.");
+                        }}
+                      >
+                        Mark reviewed today
+                      </Button>
+                    </>
+                  )}
+                  <div className="fruit-actions" aria-label="Knowledge actions">
+                    {[
+                      ["peel", "Peel"],
+                      ["squeeze", "Squeeze"],
+                      ["chew", "Chew"],
+                      ["regurgitate", "Regurgitate"],
+                      ["absorb", "Absorb / Take Root"],
+                      ["taste", "Taste"],
+                      ["test", "Test"],
+                      ["apply", "Apply"],
+                      ["plant", "Plant"],
+                      ["pluck", "Pluck"],
+                      ["connect", "Graft"],
+                      ["compost", "Prune"],
+                    ].map(([key, label]) => (
+                      <Button
+                        key={key}
+                        disabled={Boolean(sel.trashedAt)}
+                        onClick={() => setAction(key)}
+                      >
+                        {label}
+                      </Button>
+                    ))}
+                  </div>
+                  <h3>Grafted ideas</h3>
+                  {linked.length ? (
+                    linked.map((n) => (
+                      <button
+                        className="orchard-connection"
+                        key={n.id}
+                        onClick={() => open(n)}
+                      >
+                        <Link size={14} />
+                        <span>
+                          {n.title}
+                          {sel.grafts?.[n.id] && (
+                            <small>
+                              {sel.grafts[n.id].relationship} ·{" "}
+                              {sel.grafts[n.id].note}
+                            </small>
+                          )}
+                          <small>
+                            {
+                              data.lifeAreas.find((a) => a.id === loc(n).areaId)
+                                ?.name
+                            }
+                          </small>
+                        </span>
+                      </button>
+                    ))
+                  ) : (
+                    <p className="muted">
+                      No grafts yet. Graft ideas within this tree or across your
+                      orchard.
+                    </p>
+                  )}
+                  {sel.kind !== "fruit" && (
+                    <>
+                      <h3>Notes & resources</h3>
+                      {data.notes
+                        .filter((n) => n.concepts?.includes(sel.id))
+                        .map((n) => (
+                          <blockquote key={n.id}>
+                            {n.quote && <mark>{n.quote}</mark>}
+                            <p>{n.text}</p>
+                          </blockquote>
+                        ))}
+                    </>
+                  )}
+                </>
+              ) : (
+                <div className="orchard-welcome">
+                  <Sprout size={42} />
+                  <h2>A place for every idea.</h2>
+                  <p>
+                    Each life area is a forest; each sub-area is a grove. Grow
+                    topic trees with foundational roots, a core stem, branches
+                    and sub-branches. Leaves hold atomic knowledge, fruits
+                    support deep study, and seeds hold new questions.
+                  </p>
+                  <p>
+                    Click a fruit for its actions. Its text stays tucked away
+                    until you open it.
+                  </p>
+                  <small>
+                    Older concepts stay on “Choose a sub-area” until you place
+                    them. Manage life areas and sub-areas under Goals.
+                  </small>
+                </div>
+              )}
+            </aside>
           )}
-          {(!focusNode || isScopeNode(focusNode)) && (
+        </div>
+        {editor && (
+          <NodeEditor
+            node={editor}
+            data={data}
+            close={() => setEditor(null)}
+            submit={(n) => {
+              save((d) => saveTreeNode(d, n));
+              setEditor(null);
+              setSelected(n.id);
+              setArea(n.areaId);
+              setBranch(n.subAreaId);
+              notify(knowledgeLabel(n, data.concepts) + " saved.");
+            }}
+          />
+        )}
+        {action === "suggestions" && (
+          <Modal
+            title="Growth suggestions for this tree"
+            onClose={() => setAction(null)}
+          >
+            <p>
+              Based on prerequisites, connections, applications and review dates
+              in this life area.
+            </p>
+            <div className="orchard-suggestions">
+              {insights(nodes).map((s) => (
+                <section key={s.id}>
+                  <h3>{s.title}</h3>
+                  <p>{s.body}</p>
+                  <Button
+                    onClick={() => {
+                      const n = nodes.find((n) => n.id === s.concept);
+                      if (n) open(n);
+                      setAction(null);
+                    }}
+                  >
+                    Explore knowledge
+                  </Button>
+                </section>
+              ))}
+              {!insights(nodes).length && (
+                <p>
+                  Grow branches and graft ideas to start finding growth
+                  opportunities.
+                </p>
+              )}
+            </div>
+          </Modal>
+        )}
+        {action === "trash" && (
+          <Modal title="Pruned knowledge" onClose={() => setAction(null)}>
+            <p>
+              Pruned ideas are hidden from trees. Restoring keeps their text,
+              learning history and connections.
+            </p>
+            {data.concepts
+              .filter((n) => n.trashedAt)
+              .map((n) => (
+                <div className="orchard-bin-row" key={n.id}>
+                  <span>
+                    {n.title}
+                    <small>
+                      {data.lifeAreas.find((a) => a.id === loc(n).areaId)?.name}
+                    </small>
+                  </span>
+                  <Button onClick={() => save((d) => restoreNode(d, n.id))}>
+                    Restore
+                  </Button>
+                </div>
+              ))}
+            {!data.concepts.some((n) => n.trashedAt) && (
+              <p>Your compost is empty.</p>
+            )}
+          </Modal>
+        )}
+        {sel &&
+          [
+            "content",
+            "peel",
+            "squeeze",
+            "chew",
+            "regurgitate",
+            "absorb",
+            "taste",
+            "test",
+            "apply",
+            "isolate",
+          ].includes(action) && (
+            <KnowledgeActions
+              key={sel.id + action}
+              node={sel}
+              mode={action}
+              data={data}
+              persist={(patch) => update({ ...sel, ...patch })}
+              close={() => setAction(null)}
+            />
+          )}
+        {sel && ["management-plant", "management-pluck"].includes(action) && (
+          <Modal
+            title={"Management notes · " + sel.title}
+            onClose={() => setAction(null)}
+          >
+            <p>
+              Saved with this knowledge object, organized in the Knowledge
+              Notebook. Editing these notes does not create another seed or
+              copy.
+            </p>
+            <ActionComponents
+              mode={action.replace("management-", "")}
+              scope={sel.id + ":" + action.replace("management-", "")}
+              values={
+                sel.learning?.[action.replace("management-", "")]?.components
+              }
+              onChange={(components) => {
+                const mode = action.replace("management-", "");
+                update({
+                  ...sel,
+                  learning: {
+                    ...sel.learning,
+                    [mode]: { ...sel.learning?.[mode], components },
+                  },
+                });
+              }}
+            />
+            <Button primary onClick={() => setAction(null)}>
+              Save & close notes
+            </Button>
+          </Modal>
+        )}
+        {sel && action === "pluck" && (
+          <Modal title={"Pluck · " + sel.title} onClose={() => setAction(null)}>
+            <p>Original lineage: {knowledgeLineage(data, sel).path}</p>
+            <ActionComponents
+              mode="pluck"
+              scope={sel.id + ":pluck"}
+              values={sel.learning?.pluck?.components}
+              onChange={(components) =>
+                update({
+                  ...sel,
+                  learning: {
+                    ...sel.learning,
+                    pluck: { ...sel.learning?.pluck, components },
+                  },
+                })
+              }
+            />
+            <p>
+              Create an independent copy to study by itself. The original, its
+              descendants and its home remain intact. The copy keeps its text,
+              learning history, grafts and source lineage.
+            </p>
             <Button
               primary
               onClick={() => {
-                setTree("");
-                create("tree");
+                const next = pluckNode(data, sel.id);
+                const copy = next.concepts.find(
+                  (n) => !data.concepts.some((old) => old.id === n.id),
+                );
+                save(next);
+                setSelected(copy.id);
+                setAction("isolate");
+                notify("Independent copy created. The original is preserved.");
               }}
             >
-              <Plus size={16} />
-              Add tree
+              Copy & study independently
             </Button>
-          )}
-          <Button onClick={() => setAction("suggestions")}>
-            Growth suggestions
-          </Button>
-          <Button onClick={() => setAction("trash")}>
-            <Trash2 size={16} />
-            Pruned knowledge
-          </Button>
-          <label className="orchard-search">
-            <Search size={16} />
-            <input
-              aria-label="Search this tree"
-              placeholder="Find a branch, leaf, fruit or seed"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-        </div>
-      )}
-      {search && (
-        <div className="orchard-results">
-          {nodes
-            .filter((n) => n.title.toLowerCase().includes(search.toLowerCase()))
-            .map((n) => (
-              <button key={n.id} onClick={() => open(n)}>
-                {knowledgeLabel(n, data.concepts)} · {n.title}
-              </button>
-            ))}
-        </div>
-      )}
-      <div className="orchard-workspace">
-        <section className="card orchard-stage">
-          <div className="orchard-legend">
-            <span>
-              <Sprout size={16} /> Forest → grove → tree · Roots, stem,
-              branches, leaves & fruits
-            </span>
-            <span>
-              {nodes.filter((n) => n.kind !== "fruit").length} knowledge objects
-              · {nodes.filter((n) => n.kind === "fruit").length} fruits
-            </span>
-          </div>
-          <div className="orchard-scroll" ref={canvas}>
-            <svg
-              className="orchard-tree"
-              aria-label={"Knowledge tree for " + area.name}
-              viewBox={[layout.minX, 0, layout.width, layout.height].join(" ")}
-              style={{
-                width: layout.width * scale,
-                height: layout.height * scale,
-              }}
-            >
-              <defs>
-                <linearGradient id={barkId}>
-                  <stop stopColor="#082b96" />
-                  <stop offset="1" stopColor="#009cde" />
-                </linearGradient>
-              </defs>
-              {layout.paths.map((e, i) => {
-                const a = layout.points.get(e.from),
-                  b = layout.points.get(e.to);
-                return (
-                  <path
-                    key={i}
-                    d={`M${a.x},${a.y} C${a.x + (b.x - a.x) * 0.55},${a.y} ${a.x + (b.x - a.x) * 0.45},${b.y} ${b.x},${b.y}`}
-                    fill="none"
-                    data-knowledge-connection="true"
-                    stroke={
-                      e.fruit && !focusNode ? "#ff7900" : `url(#${barkId})`
-                    }
-                    strokeWidth={e.main ? 12 : e.fruit ? 2 : 5}
-                    strokeLinecap="round"
-                    opacity={isolated && !focusIds.has(e.to) ? 0.16 : 1}
-                  />
-                );
-              })}
-              {sel &&
-                linked.map((n) => {
-                  const a = layout.points.get(sel.id),
-                    b = layout.points.get(n.id);
-                  return a && b ? (
-                    <path
-                      key={"link" + n.id}
-                      d={`M${a.x},${a.y} Q0,${Math.min(a.y, b.y) - 60} ${b.x},${b.y}`}
-                      stroke="#ff7900"
-                      strokeWidth="2"
-                      strokeDasharray="5 7"
-                      fill="none"
-                    />
-                  ) : null;
-                })}
-              {[...layout.points].map(([id, p]) => {
-                const n = p.n,
-                  fruit = n?.kind === "fruit",
-                  active =
-                    (p.root
-                      ? scopeId(area.id)
-                      : p.branch && n.subAreaId
-                        ? scopeId(area.id, n.subAreaId)
-                        : id) === selected;
-                return (
-                  <g
-                    key={id}
-                    transform={`translate(${p.x} ${p.y})`}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={
-                      p.root
-                        ? area.name
-                        : p.branch
-                          ? "Grove: " + n.title
-                          : knowledgeLabel(n, data.concepts) + ": " + n.title
-                    }
-                    className={"orchard-node " + (active ? "is-selected" : "")}
-                    opacity={
-                      isolated && !p.root && !p.branch && !focusIds.has(id)
-                        ? 0.12
-                        : 1
-                    }
-                    onClick={() => {
-                      if (p.root) {
-                        setSelected(scopeId(area.id));
-                        setIsolated(false);
-                      } else if (p.branch) {
-                        setBranch(n.subAreaId);
-                        setTree("");
-                        setSelected(
-                          n.subAreaId ? scopeId(area.id, n.subAreaId) : null,
-                        );
-                      } else open(n);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        e.currentTarget.dispatchEvent(
-                          new MouseEvent("click", { bubbles: true }),
-                        );
-                      }
-                    }}
-                  >
-                    {p.root ? (
-                      <>
-                        <path
-                          d="M-12 26 Q-16 70 -60 86 M0 24 V95 M14 26 Q20 65 64 84"
-                          stroke="#082b96"
-                          strokeWidth="8"
-                          fill="none"
-                          strokeLinecap="round"
-                        />
-                        <rect
-                          x="-110"
-                          y="-37"
-                          width="220"
-                          height="74"
-                          rx="28"
-                          fill="#082b96"
-                        />
-                        <text
-                          textAnchor="middle"
-                          fill="white"
-                          y="-8"
-                          fontSize="10"
-                          letterSpacing="2"
-                        >
-                          LIFE AREA · FOREST
-                        </text>
-                        <text
-                          textAnchor="middle"
-                          fill="white"
-                          y="15"
-                          fontSize="14"
-                        >
-                          {area.name.length > 27
-                            ? area.name.slice(0, 25) + "…"
-                            : area.name}
-                        </text>
-                      </>
-                    ) : fruit ? (
-                      <>
-                        <path
-                          d="M0 -22 Q-2 -39 11 -39"
-                          stroke="#07529a"
-                          strokeWidth="3"
-                          fill="none"
-                        />
-                        <ellipse
-                          cx="13"
-                          cy="-34"
-                          rx="12"
-                          ry="5"
-                          transform="rotate(-25 13 -34)"
-                          fill="#009cde"
-                        />
-                        <circle
-                          r="24"
-                          fill={active ? "#ffd7b0" : "#ff7900"}
-                          stroke={active ? "#082b96" : "#d96300"}
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M-12 -10 Q-17 -4 -15 4"
-                          stroke="#fff"
-                          strokeWidth="3"
-                          opacity=".6"
-                          fill="none"
-                        />
-                        <text
-                          textAnchor="middle"
-                          y="45"
-                          fontSize="12"
-                          fill="#102c54"
-                        >
-                          {n.title.length > 23
-                            ? n.title.slice(0, 21) + "…"
-                            : n.title}
-                        </text>
-                      </>
-                    ) : (
-                      <>
-                        <rect
-                          x="-86"
-                          y="-24"
-                          width="172"
-                          height="48"
-                          rx={p.branch ? 20 : 10}
-                          fill={
-                            active ? "#dcefff" : p.branch ? "#e7efff" : "#fff"
-                          }
-                          stroke={active ? "#ff7900" : "#a9c5e5"}
-                          strokeWidth={active ? 3 : 1}
-                        />
-                        <text
-                          textAnchor="middle"
-                          y="-7"
-                          fontSize="8"
-                          fill="#586e8a"
-                          letterSpacing="1"
-                        >
-                          {p.branch
-                            ? "GROVE"
-                            : knowledgeLabel(n, data.concepts).toUpperCase()}
-                        </text>
-                        <text
-                          textAnchor="middle"
-                          y="11"
-                          fontSize="12"
-                          fill="#102c54"
-                        >
-                          {n.title.length > 23
-                            ? n.title.slice(0, 21) + "…"
-                            : n.title}
-                        </text>
-                      </>
-                    )}
-                    <title>{p.root ? area.name : n.title}</title>
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
-          <div className="orchard-view-controls">
-            <button
-              aria-label="Zoom out"
-              onClick={() => setZoom((z) => Math.max(0.35, z - 0.15))}
-            >
-              <Minus size={16} />
-            </button>
-            <span>{Math.round(zoom * 100)}%</span>
-            <button
-              aria-label="Zoom in"
-              onClick={() => setZoom((z) => Math.min(1.6, z + 0.15))}
-            >
-              <Plus size={16} />
-            </button>
-            <button
-              onClick={() => {
-                setZoom(1);
-                setIsolated(false);
-              }}
-            >
-              <RotateCcw size={14} />
-              Reset
-            </button>
-          </div>
-        </section>
-        {!compact && (
-          <aside className="card orchard-detail">
-            {sel ? (
-              <>
-                <div className="orchard-eyebrow">
-                  {sel.kind === "life-area"
-                    ? "LIFE-AREA FOREST"
-                    : sel.kind === "sub-area"
-                      ? "GROVE"
-                      : sel.kind === "fruit"
-                        ? "KNOWLEDGE FRUIT"
-                        : knowledgeLabel(sel, data.concepts).toUpperCase()}
-                </div>
-                <h2>{sel.title}</h2>
-                {sel.lineage && (
-                  <p className="muted">
-                    {sel.lineage.action === "plant"
-                      ? "Planted from"
-                      : "Plucked from"}
-                    : {sel.lineage.path}
-                  </p>
-                )}
-                {sel.lineage &&
-                  entries.some(
-                    (n) => n.id === sel.lineage.sourceId && !n.trashedAt,
-                  ) && (
-                    <Button
-                      onClick={() =>
-                        open(entries.find((n) => n.id === sel.lineage.sourceId))
-                      }
-                    >
-                      Open original source
-                    </Button>
-                  )}
-                {sel.kind === "seed" && (
-                  <Button primary onClick={() => setAction("grow-seed")}>
-                    Grow seed
-                  </Button>
-                )}
-                {onFocus && !isScaffold(sel) && !sel.trashedAt && (
-                  <Button primary onClick={() => onFocus(sel)}>
-                    Focus on this{" "}
-                    {knowledgeLabel(sel, data.concepts).toLowerCase()}
-                  </Button>
-                )}
-                <p className="muted">
-                  {area.name} /{" "}
-                  {area.subAreas.find((s) => s.id === loc(sel).subAreaId)
-                    ?.name ||
-                    (sel.kind === "life-area"
-                      ? "Forest workspace"
-                      : sel.standalone
-                        ? "Independent knowledge & seeds"
-                        : "Choose a sub-area")}
-                </p>
-                {isScopeNode(sel) ? (
-                  <>
-                    {sel.trashedAt ? (
-                      <>
-                        <p>This knowledge workspace has been pruned.</p>
-                        <Button
-                          onClick={() => save((d) => restoreNode(d, sel.id))}
-                        >
-                          Restore workspace
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <p className="orchard-text">
-                          {sel.description ||
-                            "Explore this whole area of knowledge. Each action saves work here, separately from its concepts."}
-                        </p>
-                        <Button primary onClick={() => setAction("content")}>
-                          Open content
-                        </Button>
-                        <Button onClick={() => create("tree", sel)}>
-                          Grow a tree
-                        </Button>
-                      </>
-                    )}
-                  </>
-                ) : sel.kind === "fruit" ? (
-                  <>
-                    <Button primary onClick={() => setAction("content")}>
-                      Open content
-                    </Button>
-                    <Button onClick={() => setEditor({ ...sel, ...loc(sel) })}>
-                      Edit fruit & placement
-                    </Button>
-                    <p className="fruit-closed">
-                      Explore this idea in layers, study its depth, test
-                      yourself, and put it to work.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="orchard-text">
-                      {sel.description ||
-                        "Grow this concept with explanations, examples and knowledge fruits."}
-                    </p>
-                    {sel.kind === "tree" && (
-                      <>
-                        <Button onClick={() => create("foundation", sel)}>
-                          Add root
-                        </Button>
-                        <Button onClick={() => create("stem", sel)}>
-                          Add stem
-                        </Button>
-                        <Button onClick={() => create("branch", sel)}>
-                          Grow a branch
-                        </Button>
-                      </>
-                    )}
-                    {["branch", "sub-branch"].includes(sel.kind) && (
-                      <>
-                        <Button onClick={() => create("sub-branch", sel)}>
-                          Grow a sub-branch
-                        </Button>
-                        <Button onClick={() => create("fruit", sel)}>
-                          Grow a fruit
-                        </Button>
-                      </>
-                    )}
-                    {["foundation", "stem", "sub-branch"].includes(
-                      sel.kind,
-                    ) && (
-                      <Button onClick={() => create("leaf", sel)}>
-                        Grow a leaf
-                      </Button>
-                    )}
-                    {knowledgeLabel(sel, data.concepts) === "Leaf" && (
-                      <Button onClick={() => create("fruit", sel)}>
-                        <Cherry size={16} />
-                        Grow a fruit
-                      </Button>
-                    )}
-                    {knowledgeLabel(sel, data.concepts) === "Branch" && (
-                      <Button onClick={() => create("concept", sel)}>
-                        <Plus size={16} />
-                        Grow a leaf
-                      </Button>
-                    )}
-                    {knowledgeLabel(sel, data.concepts) === "Leaf" && (
-                      <p className="muted">
-                        Atomic knowledge: a definition, fact, formula,
-                        principle, term, example or distinction. Grow fruits to
-                        explore what follows from it.
-                      </p>
-                    )}
-                    <Button
-                      onClick={() =>
-                        setEditor({
-                          ...sel,
-                          ...loc(sel),
-                          parent: isScaffold(
-                            data.concepts.find((n) => n.id === sel.parent) ||
-                              {},
-                          )
-                            ? ""
-                            : sel.parent,
-                        })
-                      }
-                    >
-                      Edit knowledge & placement
-                    </Button>
-
-                    <Field label="Understanding">
-                      <select
-                        value={sel.status}
-                        onChange={(e) =>
-                          update({ ...sel, status: e.target.value })
-                        }
-                      >
-                        <option>Growing</option>
-                        <option>Confident</option>
-                      </select>
-                    </Field>
-                    <label className="check-field">
-                      <input
-                        type="checkbox"
-                        checked={Boolean(sel.applied)}
-                        onChange={(e) =>
-                          update({ ...sel, applied: e.target.checked })
-                        }
-                      />
-                      I have applied this concept
-                    </label>
-                    <Button
-                      onClick={() => {
-                        update({ ...sel, reviewed: new Date().toISOString() });
-                        notify("Review recorded.");
-                      }}
-                    >
-                      Mark reviewed today
-                    </Button>
-                  </>
-                )}
-                <div className="fruit-actions" aria-label="Knowledge actions">
-                  {[
-                    ["peel", "Peel"],
-                    ["squeeze", "Squeeze"],
-                    ["chew", "Chew"],
-                    ["regurgitate", "Regurgitate"],
-                    ["absorb", "Absorb / Take Root"],
-                    ["taste", "Taste"],
-                    ["test", "Test"],
-                    ["apply", "Apply"],
-                    ["plant", "Plant"],
-                    ["pluck", "Pluck"],
-                    ["connect", "Graft"],
-                    ["compost", "Prune"],
-                  ].map(([key, label]) => (
-                    <Button
-                      key={key}
-                      disabled={Boolean(sel.trashedAt)}
-                      onClick={() => setAction(key)}
-                    >
-                      {label}
-                    </Button>
-                  ))}
-                </div>
-                <h3>Grafted ideas</h3>
-                {linked.length ? (
-                  linked.map((n) => (
-                    <button
-                      className="orchard-connection"
-                      key={n.id}
-                      onClick={() => open(n)}
-                    >
-                      <Link size={14} />
-                      <span>
-                        {n.title}
-                        {sel.grafts?.[n.id] && (
-                          <small>
-                            {sel.grafts[n.id].relationship} ·{" "}
-                            {sel.grafts[n.id].note}
-                          </small>
-                        )}
-                        <small>
-                          {
-                            data.lifeAreas.find((a) => a.id === loc(n).areaId)
-                              ?.name
-                          }
-                        </small>
-                      </span>
-                    </button>
-                  ))
-                ) : (
-                  <p className="muted">
-                    No grafts yet. Graft ideas within this tree or across your
-                    orchard.
-                  </p>
-                )}
-                {sel.kind !== "fruit" && (
-                  <>
-                    <h3>Notes & resources</h3>
-                    {data.notes
-                      .filter((n) => n.concepts?.includes(sel.id))
-                      .map((n) => (
-                        <blockquote key={n.id}>
-                          {n.quote && <mark>{n.quote}</mark>}
-                          <p>{n.text}</p>
-                        </blockquote>
-                      ))}
-                  </>
-                )}
-              </>
-            ) : (
-              <div className="orchard-welcome">
-                <Sprout size={42} />
-                <h2>A place for every idea.</h2>
+            {!isScopeNode(sel) && (
+              <details>
+                <summary>Move instead of copy</summary>
                 <p>
-                  Each life area is a forest; each sub-area is a grove. Grow
-                  topic trees with foundational roots, a core stem, branches and
-                  sub-branches. Leaves hold atomic knowledge, fruits support
-                  deep study, and seeds hold new questions.
+                  This relocates the original and its descendants into
+                  independent knowledge. Its lineage is retained.
                 </p>
-                <p>
-                  Click a fruit for its actions. Its text stays tucked away
-                  until you open it.
-                </p>
-                <small>
-                  Older concepts stay on “Choose a sub-area” until you place
-                  them. Manage life areas and sub-areas under Goals.
-                </small>
-              </div>
-            )}
-          </aside>
-        )}
-      </div>
-      {editor && (
-        <NodeEditor
-          node={editor}
-          data={data}
-          close={() => setEditor(null)}
-          submit={(n) => {
-            save((d) => saveTreeNode(d, n));
-            setEditor(null);
-            setSelected(n.id);
-            setArea(n.areaId);
-            setBranch(n.subAreaId);
-            notify(knowledgeLabel(n, data.concepts) + " saved.");
-          }}
-        />
-      )}
-      {action === "suggestions" && (
-        <Modal
-          title="Growth suggestions for this tree"
-          onClose={() => setAction(null)}
-        >
-          <p>
-            Based on prerequisites, connections, applications and review dates
-            in this life area.
-          </p>
-          <div className="orchard-suggestions">
-            {insights(nodes).map((s) => (
-              <section key={s.id}>
-                <h3>{s.title}</h3>
-                <p>{s.body}</p>
                 <Button
                   onClick={() => {
-                    const n = nodes.find((n) => n.id === s.concept);
-                    if (n) open(n);
-                    setAction(null);
+                    save((d) => pluckNode(d, sel.id, { move: true }));
+                    setAction("isolate");
                   }}
                 >
-                  Explore knowledge
+                  Move original & study independently
                 </Button>
-              </section>
-            ))}
-            {!insights(nodes).length && (
-              <p>
-                Grow branches and graft ideas to start finding growth
-                opportunities.
-              </p>
+              </details>
             )}
-          </div>
-        </Modal>
-      )}
-      {action === "trash" && (
-        <Modal title="Pruned knowledge" onClose={() => setAction(null)}>
-          <p>
-            Pruned ideas are hidden from trees. Restoring keeps their text,
-            learning history and connections.
-          </p>
-          {data.concepts
-            .filter((n) => n.trashedAt)
-            .map((n) => (
-              <div className="orchard-bin-row" key={n.id}>
-                <span>
-                  {n.title}
-                  <small>
-                    {data.lifeAreas.find((a) => a.id === loc(n).areaId)?.name}
-                  </small>
-                </span>
-                <Button onClick={() => save((d) => restoreNode(d, n.id))}>
-                  Restore
-                </Button>
-              </div>
-            ))}
-          {!data.concepts.some((n) => n.trashedAt) && (
-            <p>Your compost is empty.</p>
-          )}
-        </Modal>
-      )}
-      {sel &&
-        [
-          "content",
-          "peel",
-          "squeeze",
-          "chew",
-          "regurgitate",
-          "absorb",
-          "taste",
-          "test",
-          "apply",
-          "isolate",
-        ].includes(action) && (
-          <KnowledgeActions
+          </Modal>
+        )}
+        {sel && ["plant", "grow-seed"].includes(action) && (
+          <KnowledgePlant
             key={sel.id + action}
             node={sel}
-            mode={action}
             data={data}
+            grow={action === "grow-seed"}
             persist={(patch) => update({ ...sel, ...patch })}
             close={() => setAction(null)}
-          />
-        )}
-      {sel && action === "pluck" && (
-        <Modal title={"Pluck · " + sel.title} onClose={() => setAction(null)}>
-          <p>Original lineage: {knowledgeLineage(data, sel).path}</p>
-          <ActionComponents
-            mode="pluck"
-            scope={sel.id + ":pluck"}
-            values={sel.learning?.pluck?.components}
-            onChange={(components) =>
-              update({
-                ...sel,
-                learning: {
-                  ...sel.learning,
-                  pluck: { ...sel.learning?.pluck, components },
-                },
-              })
-            }
-          />
-          <p>
-            Create an independent copy to study by itself. The original, its
-            descendants and its home remain intact. The copy keeps its text,
-            learning history, grafts and source lineage.
-          </p>
-          <Button
-            primary
-            onClick={() => {
-              const next = pluckNode(data, sel.id);
-              const copy = next.concepts.find(
-                (n) => !data.concepts.some((old) => old.id === n.id),
-              );
+            submit={(draft) => {
+              const next =
+                action === "plant"
+                  ? plantSeed(data, sel.id, draft)
+                  : growSeed(data, sel.id, draft);
+              const target =
+                action === "plant"
+                  ? next.concepts.find(
+                      (n) => !data.concepts.some((old) => old.id === n.id),
+                    )
+                  : next.concepts.find((n) => n.id === sel.id);
               save(next);
-              setSelected(copy.id);
-              setAction("isolate");
-              notify("Independent copy created. The original is preserved.");
-            }}
-          >
-            Copy & study independently
-          </Button>
-          {!isScopeNode(sel) && (
-            <details>
-              <summary>Move instead of copy</summary>
-              <p>
-                This relocates the original and its descendants into independent
-                knowledge. Its lineage is retained.
-              </p>
-              <Button
-                onClick={() => {
-                  save((d) => pluckNode(d, sel.id, { move: true }));
-                  setAction("isolate");
-                }}
-              >
-                Move original & study independently
-              </Button>
-            </details>
-          )}
-        </Modal>
-      )}
-      {sel && ["plant", "grow-seed"].includes(action) && (
-        <KnowledgePlant
-          key={sel.id + action}
-          node={sel}
-          data={data}
-          grow={action === "grow-seed"}
-          persist={(patch) => update({ ...sel, ...patch })}
-          close={() => setAction(null)}
-          submit={(draft) => {
-            const next =
-              action === "plant"
-                ? plantSeed(data, sel.id, draft)
-                : growSeed(data, sel.id, draft);
-            const target =
-              action === "plant"
-                ? next.concepts.find(
-                    (n) => !data.concepts.some((old) => old.id === n.id),
-                  )
-                : next.concepts.find((n) => n.id === sel.id);
-            save(next);
-            setArea(target.areaId);
-            setSelected(target.id);
-            setAction(null);
-            notify(
-              action === "plant"
-                ? "Seed planted with its source preserved."
-                : "Your seed has grown into a branch.",
-            );
-          }}
-        />
-      )}
-      {sel && action === "compost" && (
-        <Modal title={"Prune · " + sel.title} onClose={() => setAction(null)}>
-          <ActionComponents
-            mode="prune"
-            scope={sel.id + ":prune"}
-            values={sel.learning?.prune?.components}
-            onChange={(components) =>
-              update({
-                ...sel,
-                learning: {
-                  ...sel.learning,
-                  prune: { ...sel.learning?.prune, components },
-                },
-              })
-            }
-          />
-          {!isScopeNode(sel) && (
-            <Button
-              onClick={() => {
-                setAction(null);
-                setEditor({ ...sel, ...loc(sel) });
-              }}
-            >
-              Correct content or placement instead
-            </Button>
-          )}
-          <p>
-            Remove knowledge that does not belong, is redundant, incorrect, or
-            no longer useful. Pruning is recoverable.
-          </p>
-          {isScopeNode(sel) ? (
-            <p>
-              Archive this knowledge workspace and its knowledge branches.
-              Notes, history and connections are preserved for restoration. The
-              life-area catalog and its goals remain available.
-            </p>
-          ) : (
-            <p>
-              Move this idea and its{" "}
-              {Math.max(0, descendants(sel.id, data.concepts).size - 1)}{" "}
-              descendants out of the active tree. Text, notes, learning history
-              and connections will be preserved. You can restore them from
-              Pruned knowledge.
-            </p>
-          )}
-          <Button
-            onClick={() => {
-              const next = compostNode(data, sel.id);
-              if (!validateBackup(next)) {
-                notify(
-                  "Integrity check failed. Nothing was pruned; export a backup before repairing this workspace.",
-                );
-                return;
-              }
-              save(next);
-              setSelected(null);
+              setArea(target.areaId);
+              setSelected(target.id);
               setAction(null);
               notify(
-                "Pruned and preserved. Integrity check passed: references and history retained.",
+                action === "plant"
+                  ? "Seed planted with its source preserved."
+                  : "Your seed has grown into a branch.",
               );
             }}
-          >
-            Prune & preserve
-          </Button>
-        </Modal>
-      )}
-      {sel && action === "connect" && (
-        <Connections
-          key={sel.id}
-          node={sel}
-          data={{ ...data, concepts: entries }}
-          close={() => setAction(null)}
-          submit={(ids, details) => {
-            save((d) => graftKnowledge(d, sel.id, ids, details));
-            setAction(null);
-            notify("Grafts saved; each idea keeps its primary home.");
-          }}
-        />
-      )}
-    </div>
+          />
+        )}
+        {sel && action === "compost" && (
+          <Modal title={"Prune · " + sel.title} onClose={() => setAction(null)}>
+            <ActionComponents
+              mode="prune"
+              scope={sel.id + ":prune"}
+              values={sel.learning?.prune?.components}
+              onChange={(components) =>
+                update({
+                  ...sel,
+                  learning: {
+                    ...sel.learning,
+                    prune: { ...sel.learning?.prune, components },
+                  },
+                })
+              }
+            />
+            {!isScopeNode(sel) && (
+              <Button
+                onClick={() => {
+                  setAction(null);
+                  setEditor({ ...sel, ...loc(sel) });
+                }}
+              >
+                Correct content or placement instead
+              </Button>
+            )}
+            <p>
+              Remove knowledge that does not belong, is redundant, incorrect, or
+              no longer useful. Pruning is recoverable.
+            </p>
+            {isScopeNode(sel) ? (
+              <p>
+                Archive this knowledge workspace and its knowledge branches.
+                Notes, history and connections are preserved for restoration.
+                The life-area catalog and its goals remain available.
+              </p>
+            ) : (
+              <p>
+                Move this idea and its{" "}
+                {Math.max(0, descendants(sel.id, data.concepts).size - 1)}{" "}
+                descendants out of the active tree. Text, notes, learning
+                history and connections will be preserved. You can restore them
+                from Pruned knowledge.
+              </p>
+            )}
+            <Button
+              onClick={() => {
+                const next = compostNode(data, sel.id);
+                if (!validateBackup(next)) {
+                  notify(
+                    "Integrity check failed. Nothing was pruned; export a backup before repairing this workspace.",
+                  );
+                  return;
+                }
+                save(next);
+                setSelected(null);
+                setAction(null);
+                notify(
+                  "Pruned and preserved. Integrity check passed: references and history retained.",
+                );
+              }}
+            >
+              Prune & preserve
+            </Button>
+          </Modal>
+        )}
+        {sel && action === "connect" && (
+          <Connections
+            key={sel.id}
+            node={sel}
+            data={{ ...data, concepts: entries }}
+            close={() => setAction(null)}
+            submit={(ids, details) => {
+              save((d) => graftKnowledge(d, sel.id, ids, details));
+              setAction(null);
+              notify("Grafts saved; each idea keeps its primary home.");
+            }}
+          />
+        )}
+      </div>
+    </KnowledgeSourceContext.Provider>
   );
 }
 function NodeEditor({ node, data, close, submit }) {

@@ -1,0 +1,64 @@
+.knowledge-sources,
+.knowledge-notebook {
+  border: 1px solid #d5e2f2;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 16px 0;
+  background: #f7faff;
+}
+.knowledge-sources summary,
+.knowledge-notebook summary {
+  cursor: pointer;
+  font-weight: 650;
+  color: #082b96;
+}
+.knowledge-sources label {
+  display: grid;
+  gap: 5px;
+  margin: 12px 0;
+  color: #102c54;
+}
+.knowledge-sources input,
+.knowledge-sources select,
+.knowledge-sources textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid #b8cce5;
+  border-radius: 7px;
+  background: white;
+}
+.source-reference {
+  padding: 12px;
+  margin: 10px 0;
+  background: white;
+  border-left: 3px solid #009cde;
+  overflow-wrap: anywhere;
+}
+.source-reference a,
+.source-reference > span {
+  display: block;
+  margin: 8px 0;
+  color: #082b96;
+}
+.source-reference button {
+  text-decoration: underline;
+}
+.notebook-record {
+  display: grid;
+  gap: 8px;
+  border-bottom: 1px solid #d5e2f2;
+  padding: 14px 0;
+}
+.notebook-record .row-actions {
+  flex-wrap: wrap;
+}
+.knowledge-notebook input {
+  width: 100%;
+  padding: 10px;
+  margin: 12px 0;
+}
+.knowledge-notebook .notebook-list {
+  max-height: 480px;
+  overflow-y: auto;
+}

@@ -341,7 +341,28 @@ export function pluckNode(data, id, { move = false } = {}) {
     };
     // Keep the original and its descendants intact; grafts on the copy are reciprocal.
     return graftKnowledge(
-      saveKnowledgeEntry(data, copy),
+      {
+        ...saveKnowledgeEntry(data, copy),
+        resources: (data.resources || []).map((resource) => {
+          const inherited = (resource.knowledgeRefs || [])
+            .filter((ref) => ref.nodeId === source.id)
+            .map((ref) => ({
+              ...ref,
+              id: crypto.randomUUID(),
+              nodeId: copy.id,
+              key: ref.key.replaceAll(source.id, copy.id),
+              scope: ref.scope.replaceAll(source.id, copy.id),
+              inheritedFrom: source.id,
+            }));
+          return inherited.length
+            ? {
+                ...resource,
+                concepts: [...new Set([...(resource.concepts || []), copy.id])],
+                knowledgeRefs: [...resource.knowledgeRefs, ...inherited],
+              }
+            : resource;
+        }),
+      },
       copy.id,
       source.links || [],
       source.grafts || {},
