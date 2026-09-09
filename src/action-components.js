@@ -169,8 +169,50 @@ export const GRAFT_TYPES = [
   "Applied in",
 ];
 export function expandLearningModes(modes) {
+  const legacyGroups = {
+    peel: {
+      foundations: "Foundations",
+      prerequisites: "Foundations",
+      definitions: "Language",
+      mechanisms: "Mechanics",
+      components: "Anatomy",
+      assumptions: "Boundaries",
+      examples: "Grounding",
+      advanced: "Advanced Layers",
+    },
+    squeeze: {
+      nuances: "Nuance",
+      implications: "Implications",
+      debates: "Nuance",
+      edgeCases: "Nuance",
+      relationships: "Relationships",
+      evidence: "Evidence",
+      questions: "Open Questions",
+      applications: "Implications",
+    },
+    chew: {
+      restate: "Explain & Organize",
+      reason: "Reason",
+      work: "Reason",
+      challenge: "Create",
+      resolve: "Reflection",
+    },
+    absorb: {
+      meaning: "Integrate",
+      implications: "Integrate",
+      connections: "Integrate",
+      understanding: "Integrate",
+      action: "Reflection & Practice",
+      carry: "Reflection & Practice",
+    },
+  };
   for (const key of ["peel", "squeeze", "chew", "absorb"]) {
-    const existing = modes[key].fields;
+    const existing = modes[key].fields.map((f) => [
+      f[0],
+      f[1],
+      f[2],
+      legacyGroups[key][f[0]],
+    ]);
     const names = new Set(existing.map((f) => f[1].toLowerCase()));
     const keys = new Set(existing.map((f) => f[0]));
     modes[key] = {

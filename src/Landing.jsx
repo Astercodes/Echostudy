@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { Brand } from "./AuthShell";
+import LandingDetails from "./LandingDetails";
 const features = [
   {
     icon: Clock,
@@ -36,14 +37,42 @@ const features = [
     icon: Network,
     n: "03",
     title: "Grow a connected mind.",
-    body: "Let concepts take root and branch out. Turn your highlights, questions, and ideas into a living knowledge tree.",
+    body: "Build your Knowledge Ecosystem: forests for life areas, groves for sub-areas, and topic trees with roots, branches, leaves, fruits and seeds.",
     tone: "leaf",
   },
   {
     icon: NotebookPen,
     n: "04",
-    title: "Turn learning into growth.",
-    body: "Focus with intention, reflect on what changed, and see the effort that is building your capacity.",
+    title: "Give each session an objective.",
+    body: "Know what you want to understand before the timer starts. Track focused time, pauses and reflections alongside your larger goals.",
+    tone: "gold",
+  },
+  {
+    icon: BookOpen,
+    n: "05",
+    title: "Keep resources close.",
+    body: "Read PDFs and text, highlight passages, and connect notes to the knowledge they support. Keep resource links and learning materials in your workspace.",
+    tone: "cyan",
+  },
+  {
+    icon: NotebookPen,
+    n: "06",
+    title: "Work through your thinking.",
+    body: "Peel a subject into layers, Chew on its reasoning, recall it from memory, and Test for gaps. Expanded components give your writing direction.",
+    tone: "berry",
+  },
+  {
+    icon: Target,
+    n: "07",
+    title: "Stretch through doing.",
+    body: "Plan practical activities across goals and life areas. Name the abilities you will use, define success, and record what happened.",
+    tone: "leaf",
+  },
+  {
+    icon: Sprout,
+    n: "08",
+    title: "See growth in Barns.",
+    body: "Review 16 dimensions of capacity. Pair your self-assessment with visual indicators of linked study, completed practice and goal progress.",
     tone: "gold",
   },
 ];
@@ -60,8 +89,11 @@ export default function Landing({ navigate }) {
           <a href="#how-it-works" onClick={() => setMenu(false)}>
             How it works
           </a>
-          <a href="#grow" onClick={() => setMenu(false)}>
-            Built for your growth
+          <a href="#ecosystem" onClick={() => setMenu(false)}>
+            Knowledge Ecosystem
+          </a>
+          <a href="#practice" onClick={() => setMenu(false)}>
+            Stretch & Barns
           </a>
           <a href="#questions" onClick={() => setMenu(false)}>
             Questions
@@ -98,11 +130,9 @@ export default function Landing({ navigate }) {
               <em>Become more.</em>
             </h1>
             <p>
-              A little more intentional. A little more connected.
-              <br />
-              EchoStudy brings your time, goals, and deep daily study
-              <br className="desktop-break" /> together—so every day builds who
-              you’re becoming.
+              Plan your day. Study deeply. Connect what you learn and put it
+              into practice. EchoStudy brings time, goals, knowledge, practical
+              growth and self-reflection into one workspace.
             </p>
             <div className="hero-actions">
               <button
@@ -271,7 +301,7 @@ export default function Landing({ navigate }) {
               <small>ILLUSTRATIVE SESSION</small>
             </div>
             <div className="example-goals">
-              <span>Yearly capacity</span>
+              <span>Yearly goal</span>
               <ArrowRight size={13} />
               <span>Weekly priority</span>
               <ArrowRight size={13} />
@@ -320,6 +350,7 @@ export default function Landing({ navigate }) {
             </button>
           </div>
         </section>
+        <LandingDetails navigate={navigate} />
         <section className="landing-manifesto">
           <span className="eyebrow">THE ECHOSTUDY WAY</span>
           <blockquote>
@@ -355,8 +386,28 @@ export default function Landing({ navigate }) {
                 "No. Goals start with 24 life areas and 428 sub-areas, from faith and intellectual growth to civic life, digital wellbeing, safety, creativity, and legacy. Add your own areas and decide what growth means in each one.",
               ],
               [
-                "How does my knowledge tree grow?",
-                "Add concepts under a domain or an existing idea, then connect them across branches. Link your notes and highlights to the ideas they deepen. Review prompts use the prerequisites, confidence, and connections you record.",
+                "How does my Knowledge Ecosystem grow?",
+                "Your life areas become forests and your sub-areas become groves. Add topic trees, foundations, core knowledge, branches, leaves and fruits. Plant questions as seeds, graft meaningful connections, or open any part in a focus tab. Your focused work edits the same knowledge, so closing a tab does not remove it.",
+              ],
+              [
+                "How do goals connect to my day?",
+                "Create multiple yearly, quarterly, monthly, weekly and daily goals across your life areas. Link time blocks and study objectives to those goals so each session has a clear purpose. Add custom life areas and sub-areas as your priorities evolve.",
+              ],
+              [
+                "What is the difference between Study and Stretch?",
+                "Study develops understanding through resources, notes and knowledge actions. Stretch tracks practical doing: an activity, the ability it exercises, success criteria, linked goals and a reflection on the result.",
+              ],
+              [
+                "Do Barns percentages measure my actual ability?",
+                "The percentages reflect recorded activity and goal progress, not an objective certification of ability. Barns keeps these indicators alongside your own capacity assessment so you can reflect on both effort and what you can now handle.",
+              ],
+              [
+                "Can I speak instead of typing?",
+                "Knowledge-action writing fields include audio recording. Where browser speech recognition is supported, you can review a transcript and insert it into your notes. Microphone permission is required, and transcription availability depends on your browser and its speech service.",
+              ],
+              [
+                "Does Test automatically teach or grade me?",
+                "Test uses questions and reference answers you provide, including previous saved quizzes. You assess your answers, record confidence and accuracy, and review gap suggestions. Adaptive selection chooses from your saved question bank. It is not an automatic expert assessment or a readiness certificate.",
               ],
               [
                 "Where is my study data saved?",

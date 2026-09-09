@@ -49,6 +49,14 @@ function Layers({ node, mode, persist, close }) {
   const [search, setSearch] = useState("");
   const field = spec.fields.find((f) => f[0] === active),
     filled = spec.fields.filter(([key]) => values[key]?.trim()).length;
+  const sections = new Map();
+  for (const f of spec.fields) {
+    const group = f[3] || "Components";
+    if (![f[1], group].join(" ").toLowerCase().includes(search.toLowerCase()))
+      continue;
+    if (!sections.has(group)) sections.set(group, []);
+    sections.get(group).push(f);
+  }
   return (
     <Modal title={`${spec.title} · ${node.title}`} onClose={close}>
       <div className="learning-workspace">
@@ -61,7 +69,7 @@ function Layers({ node, mode, persist, close }) {
           />
         </Field>
         <p className="muted">
-          {filled} of {spec.fields.length} sections explored · Your writing is
+          {filled} of {spec.fields.length} components explored · Your writing is
           saved as you go.
         </p>
         <div className="learning-layout">
@@ -70,26 +78,25 @@ function Layers({ node, mode, persist, close }) {
             role="tablist"
             aria-label={`${spec.title} sections`}
           >
-            {spec.fields
-              .filter((f) =>
-                [f[1], f[3]]
-                  .join(" ")
-                  .toLowerCase()
-                  .includes(search.toLowerCase()),
-              )
-              .map(([key, label, , group], i) => (
-                <button
-                  key={key}
-                  role="tab"
-                  aria-selected={active === key}
-                  onClick={() => setActive(key)}
-                >
-                  <span>{String(i + 1).padStart(2, "0")}</span>
-                  {label}
-                  {group && <small>{group}</small>}
-                  {values[key]?.trim() && <small>●</small>}
-                </button>
-              ))}
+            {[...sections].map(([group, fields]) => (
+              <section className="learning-component-section" key={group}>
+                <h4>{group}</h4>
+                {fields.map(([key, label]) => (
+                  <button
+                    key={key}
+                    role="tab"
+                    aria-selected={active === key}
+                    onClick={() => setActive(key)}
+                  >
+                    {label}
+                    {values[key]?.trim() && (
+                      <small aria-label="Has notes">✓</small>
+                    )}
+                  </button>
+                ))}
+              </section>
+            ))}
+            {!sections.size && <p className="muted">No matching components.</p>}
           </div>
           <div role="tabpanel" aria-label={field[1]}>
             <h3>{field[1]}</h3>

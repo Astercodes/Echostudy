@@ -337,7 +337,21 @@
 }
 .learning-layer-nav button > small {
   margin-left: auto;
-  color: #ff7900;
+  color: inherit;
+}
+.learning-component-section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.learning-component-section h4 {
+  margin: 6px 0;
+  padding: 7px 3px;
+  color: #07529a;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid #d5e2f2;
 }
 .learning-workspace textarea,
 .knowledge-focus textarea {
@@ -406,6 +420,9 @@
   }
   .learning-layer-nav button {
     min-width: 145px;
+  }
+  .learning-component-section {
+    flex: 0 0 190px;
   }
   .learning-workspace .segmented button {
     font-size: 11px;
