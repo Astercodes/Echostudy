@@ -12,6 +12,7 @@ import {
 import { Button, Field, Modal } from "./App";
 import { uid, validateBackup } from "./model";
 import KnowledgeIntelligence from "./KnowledgeIntelligence";
+import EcosystemSearch from "./EcosystemSearch";
 import {
   isScaffold,
   locationOf,
@@ -462,29 +463,34 @@ function KnowledgeView({
               <Trash2 size={16} />
               Pruned knowledge
             </Button>
-            <label className="orchard-search">
-              <Search size={16} />
-              <input
-                aria-label="Search this tree"
-                placeholder="Find a branch, leaf, fruit or seed"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </label>
           </div>
         )}
-        {search && (
-          <div className="orchard-results">
-            {nodes
-              .filter((n) =>
-                n.title.toLowerCase().includes(search.toLowerCase()),
-              )
-              .map((n) => (
-                <button key={n.id} onClick={() => open(n)}>
-                  {knowledgeLabel(n, data.concepts)} · {n.title}
-                </button>
-              ))}
-          </div>
+        {!compact && (
+          <EcosystemSearch
+            key={
+              area.id + ":" + displayedGrove + ":" + (focusNode?.id || treeId)
+            }
+            data={data}
+            search={search}
+            setSearch={setSearch}
+            open={open}
+            nodes={[
+              ...nodes.filter(
+                (n) =>
+                  !(n.standalone && n.lineage?.action?.startsWith("pluck")),
+              ),
+              ...entries.filter(
+                (n) =>
+                  isScopeNode(n) &&
+                  !n.trashedAt &&
+                  n.areaId === area.id &&
+                  !focusedKnowledge &&
+                  (n.kind === "life-area"
+                    ? !displayedGrove
+                    : !displayedGrove || n.subAreaId === displayedGrove),
+              ),
+            ]}
+          />
         )}
         <div className="orchard-workspace">
           <section className="card orchard-stage">
