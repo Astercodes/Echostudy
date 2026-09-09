@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Field, Button } from "./App";
 import { VoiceField } from "./VoiceField";
+import ActionComponents from "./ActionComponents";
 
 export default function KnowledgePlant({
   node,
@@ -8,6 +9,7 @@ export default function KnowledgePlant({
   grow = false,
   close,
   submit,
+  persist,
 }) {
   const [draft, setDraft] = useState({
     title: "",
@@ -37,6 +39,7 @@ export default function KnowledgePlant({
           try {
             submit({
               ...draft,
+              components: node.learning?.plant?.components || {},
               newTreeName: destination === "new" ? draft.newTreeName : "",
             });
           } catch (err) {
@@ -46,6 +49,78 @@ export default function KnowledgePlant({
       >
         {!grow && (
           <>
+            <ActionComponents
+              mode="plant"
+              scope={node.id + ":plant"}
+              values={node.learning?.plant?.components}
+              onChange={(components) =>
+                persist({
+                  learning: {
+                    ...node.learning,
+                    plant: { ...node.learning?.plant, components },
+                  },
+                })
+              }
+            />
+            <Field label="Plant in forest">
+              <select
+                value={draft.areaId}
+                onChange={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    areaId: e.target.value,
+                    subAreaId: "",
+                    parent: "",
+                  }))
+                }
+              >
+                {data.lifeAreas.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Plant in grove">
+              <select
+                value={draft.subAreaId}
+                onChange={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    subAreaId: e.target.value,
+                    parent: "",
+                  }))
+                }
+              >
+                <option value="">Unplaced seed</option>
+                {area?.subAreas.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Plant under tree or branch">
+              <select
+                value={draft.parent || ""}
+                onChange={(e) => change("parent", e.target.value)}
+              >
+                <option value="">No parent yet</option>
+                {data.concepts
+                  .filter(
+                    (n) =>
+                      !n.trashedAt &&
+                      ["tree", "branch", "sub-branch"].includes(n.kind) &&
+                      n.areaId === draft.areaId &&
+                      n.subAreaId === draft.subAreaId,
+                  )
+                  .map((n) => (
+                    <option key={n.id} value={n.id}>
+                      {n.title}
+                    </option>
+                  ))}
+              </select>
+            </Field>
             <Field label="Source passage — select text to capture a seed">
               <textarea
                 readOnly

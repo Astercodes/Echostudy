@@ -1,3 +1,4 @@
+import { expandLearningModes } from "./action-components.js";
 export const LEARNING_MODES = {
   chew: {
     title: "Chew",
@@ -119,6 +120,7 @@ export const LEARNING_MODES = {
     ],
   },
 };
+expandLearningModes(LEARNING_MODES);
 export function defaultQuestions(node) {
   return [
     {

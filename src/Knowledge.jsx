@@ -10,7 +10,7 @@ import {
   Search,
 } from "lucide-react";
 import { Button, Field, Modal } from "./App";
-import { uid, insights } from "./model";
+import { uid, insights, validateBackup } from "./model";
 import {
   isScaffold,
   locationOf,
@@ -28,6 +28,7 @@ import {
   saveKnowledgeEntry,
   graftKnowledge,
   knowledgeLabel,
+  knowledgeLineage,
   plantSeed,
   growSeed,
 } from "./knowledge-tree";
@@ -35,6 +36,8 @@ import "./knowledge-tree.css";
 import KnowledgeActions from "./KnowledgeActions";
 import KnowledgePlant from "./KnowledgePlant";
 import { VoiceField } from "./VoiceField";
+import ActionComponents from "./ActionComponents";
+import { GRAFT_TYPES } from "./action-components";
 
 function growLayout(nodes, branches) {
   const points = new Map(),
@@ -927,6 +930,7 @@ function KnowledgeView({
                     ["regurgitate", "Regurgitate"],
                     ["absorb", "Absorb / Take Root"],
                     ["taste", "Taste"],
+                    ["test", "Test"],
                     ["apply", "Apply"],
                     ["plant", "Plant"],
                     ["pluck", "Pluck"],
@@ -1095,6 +1099,7 @@ function KnowledgeView({
           "regurgitate",
           "absorb",
           "taste",
+          "test",
           "apply",
           "isolate",
         ].includes(action) && (
@@ -1109,6 +1114,21 @@ function KnowledgeView({
         )}
       {sel && action === "pluck" && (
         <Modal title={"Pluck · " + sel.title} onClose={() => setAction(null)}>
+          <p>Original lineage: {knowledgeLineage(data, sel).path}</p>
+          <ActionComponents
+            mode="pluck"
+            scope={sel.id + ":pluck"}
+            values={sel.learning?.pluck?.components}
+            onChange={(components) =>
+              update({
+                ...sel,
+                learning: {
+                  ...sel.learning,
+                  pluck: { ...sel.learning?.pluck, components },
+                },
+              })
+            }
+          />
           <p>
             Create an independent copy to study by itself. The original, its
             descendants and its home remain intact. The copy keeps its text,
@@ -1154,6 +1174,7 @@ function KnowledgeView({
           node={sel}
           data={data}
           grow={action === "grow-seed"}
+          persist={(patch) => update({ ...sel, ...patch })}
           close={() => setAction(null)}
           submit={(draft) => {
             const next =
@@ -1180,6 +1201,30 @@ function KnowledgeView({
       )}
       {sel && action === "compost" && (
         <Modal title={"Prune · " + sel.title} onClose={() => setAction(null)}>
+          <ActionComponents
+            mode="prune"
+            scope={sel.id + ":prune"}
+            values={sel.learning?.prune?.components}
+            onChange={(components) =>
+              update({
+                ...sel,
+                learning: {
+                  ...sel.learning,
+                  prune: { ...sel.learning?.prune, components },
+                },
+              })
+            }
+          />
+          {!isScopeNode(sel) && (
+            <Button
+              onClick={() => {
+                setAction(null);
+                setEditor({ ...sel, ...loc(sel) });
+              }}
+            >
+              Correct content or placement instead
+            </Button>
+          )}
           <p>
             Remove knowledge that does not belong, is redundant, incorrect, or
             no longer useful. Pruning is recoverable.
@@ -1201,10 +1246,19 @@ function KnowledgeView({
           )}
           <Button
             onClick={() => {
-              save((d) => compostNode(d, sel.id));
+              const next = compostNode(data, sel.id);
+              if (!validateBackup(next)) {
+                notify(
+                  "Integrity check failed. Nothing was pruned; export a backup before repairing this workspace.",
+                );
+                return;
+              }
+              save(next);
               setSelected(null);
               setAction(null);
-              notify("Idea preserved in Pruned knowledge.");
+              notify(
+                "Pruned and preserved. Integrity check passed: references and history retained.",
+              );
             }}
           >
             Prune & preserve
@@ -1441,6 +1495,7 @@ function Connections({ node, data, close, submit }) {
                 }
               >
                 {[
+                  ...GRAFT_TYPES,
                   "Related idea",
                   "Prerequisite",
                   "Example",
@@ -1469,6 +1524,7 @@ function Connections({ node, data, close, submit }) {
                   setDetails({
                     ...details,
                     [id]: {
+                      ...details[id],
                       relationship: details[id]?.relationship || "Related idea",
                       note: e.target.value,
                       sourceId: node.id,
@@ -1477,6 +1533,60 @@ function Connections({ node, data, close, submit }) {
                 }
               />
             </VoiceField>
+            <Field
+              label={
+                "Graft direction for " +
+                data.concepts.find((n) => n.id === id)?.title
+              }
+            >
+              <select
+                value={details[id]?.direction || "Source to target"}
+                onChange={(e) =>
+                  setDetails({
+                    ...details,
+                    [id]: {
+                      ...details[id],
+                      direction: e.target.value,
+                      sourceId: node.id,
+                    },
+                  })
+                }
+              >
+                {["Source to target", "Target to source", "Bidirectional"].map(
+                  (v) => (
+                    <option key={v}>{v}</option>
+                  ),
+                )}
+              </select>
+            </Field>
+            <Field
+              label={
+                "Connection strength for " +
+                data.concepts.find((n) => n.id === id)?.title
+              }
+            >
+              <select
+                value={details[id]?.strength || "Tentative"}
+                onChange={(e) =>
+                  setDetails({
+                    ...details,
+                    [id]: { ...details[id], strength: e.target.value },
+                  })
+                }
+              >
+                {["Tentative", "Moderate", "Strong"].map((v) => (
+                  <option key={v}>{v}</option>
+                ))}
+              </select>
+            </Field>
+            <ActionComponents
+              mode="graft"
+              scope={node.id + ":graft:" + id}
+              values={details[id]?.components}
+              onChange={(components) =>
+                setDetails({ ...details, [id]: { ...details[id], components } })
+              }
+            />
           </section>
         ))}
       </div>

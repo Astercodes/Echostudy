@@ -310,6 +310,8 @@
   margin-top: 24px;
 }
 .learning-layer-nav {
+  max-height: 540px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 7px;

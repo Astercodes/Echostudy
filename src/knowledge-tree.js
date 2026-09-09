@@ -263,8 +263,11 @@ export function plantSeed(data, sourceId, draft) {
     kind: "seed",
     parent: "",
     ...locationOf(source, data.concepts, data.lifeAreas),
-    subAreaId: "",
-    standalone: true,
+    ...(draft.areaId ? { areaId: draft.areaId } : {}),
+    subAreaId: draft.subAreaId || "",
+    parent: draft.parent || "",
+    standalone: !draft.subAreaId && !draft.parent,
+    learning: { plant: { components: draft.components || {} } },
     status: "Growing",
     links: [],
     prerequisites: [],
@@ -274,7 +277,7 @@ export function plantSeed(data, sourceId, draft) {
       excerpt: draft.excerpt || "",
     },
   };
-  return saveKnowledgeEntry(data, seed);
+  return saveTreeNode(data, seed);
 }
 export function growSeed(
   data,

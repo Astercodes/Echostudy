@@ -3,6 +3,9 @@ import { Modal, Field, Button } from "./App";
 import { LEARNING_MODES, defaultQuestions } from "./knowledge-learning";
 import { uid } from "./model";
 import { VoiceField, VoiceScope } from "./VoiceField";
+import ActionComponents from "./ActionComponents";
+import { RECALL_MODES } from "./action-components";
+import KnowledgeTest from "./KnowledgeTest";
 export default function KnowledgeActions({ node, mode, data, persist, close }) {
   return (
     <VoiceScope.Provider value={node.id + ":" + mode}>
@@ -17,12 +20,16 @@ export default function KnowledgeActions({ node, mode, data, persist, close }) {
   );
 }
 function ActionContent({ node, mode, data, persist, close }) {
+  if (mode === "taste")
+    return (
+      <Layers node={node} mode="tasteExplore" persist={persist} close={close} />
+    );
+  if (mode === "test")
+    return <KnowledgeTest node={node} persist={persist} close={close} />;
   if (LEARNING_MODES[mode])
     return <Layers node={node} mode={mode} persist={persist} close={close} />;
   if (mode === "regurgitate")
     return <Regurgitate node={node} persist={persist} close={close} />;
-  if (mode === "taste")
-    return <Taste node={node} persist={persist} close={close} />;
   if (mode === "apply")
     return <Apply node={node} persist={persist} close={close} />;
   return (
@@ -39,12 +46,20 @@ function Layers({ node, mode, persist, close }) {
   const spec = LEARNING_MODES[mode],
     values = node.learning?.[mode] || {};
   const [active, setActive] = useState(spec.fields[0][0]);
+  const [search, setSearch] = useState("");
   const field = spec.fields.find((f) => f[0] === active),
     filled = spec.fields.filter(([key]) => values[key]?.trim()).length;
   return (
     <Modal title={`${spec.title} · ${node.title}`} onClose={close}>
       <div className="learning-workspace">
         <p className="learning-meaning">{spec.meaning}</p>
+        <Field label="Find a component">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search components or groups"
+          />
+        </Field>
         <p className="muted">
           {filled} of {spec.fields.length} sections explored · Your writing is
           saved as you go.
@@ -55,18 +70,26 @@ function Layers({ node, mode, persist, close }) {
             role="tablist"
             aria-label={`${spec.title} sections`}
           >
-            {spec.fields.map(([key, label], i) => (
-              <button
-                key={key}
-                role="tab"
-                aria-selected={active === key}
-                onClick={() => setActive(key)}
-              >
-                <span>{String(i + 1).padStart(2, "0")}</span>
-                {label}
-                {values[key]?.trim() && <small>●</small>}
-              </button>
-            ))}
+            {spec.fields
+              .filter((f) =>
+                [f[1], f[3]]
+                  .join(" ")
+                  .toLowerCase()
+                  .includes(search.toLowerCase()),
+              )
+              .map(([key, label, , group], i) => (
+                <button
+                  key={key}
+                  role="tab"
+                  aria-selected={active === key}
+                  onClick={() => setActive(key)}
+                >
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  {label}
+                  {group && <small>{group}</small>}
+                  {values[key]?.trim() && <small>●</small>}
+                </button>
+              ))}
           </div>
           <div role="tabpanel" aria-label={field[1]}>
             <h3>{field[1]}</h3>
@@ -96,6 +119,7 @@ function Layers({ node, mode, persist, close }) {
           </div>
         </div>
         <div className="form-actions">
+          {spec.outcome && <p>{spec.outcome}</p>}
           <Button primary onClick={close}>
             Done
           </Button>
@@ -166,8 +190,11 @@ function Content({ node, mode, data, persist, close }) {
               ))}
             <h3>Learning history</h3>
             <p>
-              {node.learning?.taste?.attempts?.length || 0} self-tests ·{" "}
-              {node.learning?.apply?.entries?.length || 0} applications recorded
+              {node.learning?.test?.attempts?.length ??
+                node.learning?.taste?.attempts?.length ??
+                0}{" "}
+              self-tests · {node.learning?.apply?.entries?.length || 0}{" "}
+              applications recorded
             </p>
           </>
         )}
@@ -508,6 +535,59 @@ function Regurgitate({ node, persist, close }) {
     <Modal title={"Regurgitate · " + node.title} onClose={close}>
       <div className="learning-workspace">
         <p className="learning-meaning">Recall it from memory.</p>
+        <Field label="Recall method">
+          <select
+            value={values.method || "Free Recall"}
+            onChange={(e) => write({ method: e.target.value })}
+          >
+            {RECALL_MODES.map((m) => (
+              <option key={m}>{m}</option>
+            ))}
+          </select>
+        </Field>
+        <VoiceField label="Recall focus or cue">
+          <textarea
+            value={values.cue || ""}
+            onChange={(e) => write({ cue: e.target.value })}
+            placeholder="Optional aspect, cue or problem to recall. Source content stays hidden."
+          />
+        </VoiceField>
+        <Field label="Recall confidence before comparison (%)">
+          <input
+            type="number"
+            min="0"
+            max="100"
+            value={values.confidence ?? 50}
+            onChange={(e) =>
+              write({
+                confidence: Math.max(0, Math.min(100, Number(e.target.value))),
+              })
+            }
+          />
+        </Field>
+        <details>
+          <summary>Optional progressive hints</summary>
+          <p>Hints are learner-authored. Open only when needed.</p>
+          <details>
+            <summary>Edit hint ladder</summary>
+            <VoiceField label="Hint ladder">
+              <textarea
+                value={values.hints || ""}
+                onChange={(e) => write({ hints: e.target.value })}
+                placeholder="Write increasingly helpful cues, one per line."
+              />
+            </VoiceField>
+          </details>
+          {(values.hints || "")
+            .split("\n")
+            .filter(Boolean)
+            .map((hint, i) => (
+              <details key={i}>
+                <summary>Hint {i + 1}</summary>
+                {hint}
+              </details>
+            ))}
+        </details>
         <p>
           Without opening your notes, reconstruct the idea: its meaning,
           reasoning, examples, and connections. Your draft saves as you write.
@@ -531,6 +611,8 @@ function Regurgitate({ node, persist, close }) {
                     id: uid(),
                     text: values.draft,
                     reference: node.description || "",
+                    method: values.method || "Free Recall",
+                    confidence: values.confidence ?? 50,
                     at: new Date().toISOString(),
                   },
                 ],
@@ -543,6 +625,44 @@ function Regurgitate({ node, persist, close }) {
         ) : (
           <>
             <p role="status">Recall saved before revealing your notes.</p>
+            <Field label="Recall accuracy after comparison (%)">
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={values.accuracy ?? ""}
+                onChange={(e) => {
+                  const accuracy =
+                    e.target.value === ""
+                      ? null
+                      : Math.max(0, Math.min(100, Number(e.target.value)));
+                  write({
+                    accuracy,
+                    attempts: attempts.map((a, i) =>
+                      i === attempts.length - 1 ? { ...a, accuracy } : a,
+                    ),
+                  });
+                }}
+              />
+            </Field>
+            {Number.isFinite(values.accuracy) && (
+              <p>
+                Confidence {values.confidence ?? 50}% / recalled accuracy{" "}
+                {values.accuracy}%:{" "}
+                {(values.confidence ?? 50) - values.accuracy > 15
+                  ? "Possible overconfidence"
+                  : values.accuracy - (values.confidence ?? 50) > 15
+                    ? "Possible underconfidence"
+                    : "Broadly calibrated"}
+                . Based on your comparison with the source.
+              </p>
+            )}
+            <ActionComponents
+              mode="regurgitate"
+              values={values.components}
+              scope={node.id + ":regurgitate:review"}
+              onChange={(components) => write({ components })}
+            />
             <details open>
               <summary>Source content</summary>
               <p className="orchard-text">
@@ -569,7 +689,7 @@ function Regurgitate({ node, persist, close }) {
             </VoiceField>
             <Button
               onClick={() => {
-                write({ draft: "", corrections: "" });
+                write({ draft: "", corrections: "", accuracy: null });
                 setReveal(false);
                 setHistory(false);
               }}
