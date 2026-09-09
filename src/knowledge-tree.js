@@ -267,9 +267,10 @@ export function plantSeed(data, sourceId, draft) {
     subAreaId: draft.subAreaId || "",
     parent: draft.parent || "",
     standalone: !draft.subAreaId && !draft.parent,
-    learning: draft.components && Object.keys(draft.components).length
-      ? { plant: { components: draft.components } }
-      : {},
+    learning:
+      draft.components && Object.keys(draft.components).length
+        ? { plant: { components: draft.components } }
+        : {},
     status: "Growing",
     links: [],
     prerequisites: [],
@@ -466,6 +467,43 @@ export function compostNode(data, id) {
           }
         : n,
     ),
+  };
+}
+export function deletePrunedNode(data, id) {
+  const node = data.concepts.find((n) => n.id === id && n.trashedAt);
+  if (!node) return data;
+  const ids = descendants(id, data.concepts);
+  // Delete only archived descendants; never discard active knowledge.
+  const removed = new Set(
+    data.concepts.filter((n) => ids.has(n.id) && n.trashedAt).map((n) => n.id),
+  );
+  const clean = (record) => ({
+    ...record,
+    ...(record.concepts && {
+      concepts: record.concepts.filter((key) => !removed.has(key)),
+    }),
+    ...(record.knowledgeRefs && {
+      knowledgeRefs: record.knowledgeRefs.filter(
+        (ref) => !removed.has(ref.nodeId),
+      ),
+    }),
+  });
+  return {
+    ...data,
+    concepts: data.concepts
+      .filter((n) => !removed.has(n.id))
+      .map((n) => ({
+        ...n,
+        ...(removed.has(n.parent) && { parent: node.parent || "" }),
+        ...(n.links && { links: n.links.filter((key) => !removed.has(key)) }),
+        ...(n.grafts && {
+          grafts: Object.fromEntries(
+            Object.entries(n.grafts).filter(([key]) => !removed.has(key)),
+          ),
+        }),
+      })),
+    ...(data.notes && { notes: data.notes.map(clean) }),
+    ...(data.resources && { resources: data.resources.map(clean) }),
   };
 }
 export function restoreNode(data, id) {

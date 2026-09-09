@@ -23,6 +23,7 @@ import {
   connectNodes,
   compostNode,
   restoreNode,
+  deletePrunedNode,
   knowledgeEntries,
   isScopeNode,
   scopeId,
@@ -1069,6 +1070,20 @@ function KnowledgeView({
                   </span>
                   <Button onClick={() => save((d) => restoreNode(d, n.id))}>
                     Restore
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `Permanently delete “${n.title}” and its pruned descendants? Their embedded content and study history will be erased. Library resources will be kept. This cannot be undone.`,
+                        )
+                      ) {
+                        save((d) => deletePrunedNode(d, n.id));
+                        notify("Pruned knowledge permanently deleted.");
+                      }
+                    }}
+                  >
+                    Delete
                   </Button>
                 </div>
               ))}
