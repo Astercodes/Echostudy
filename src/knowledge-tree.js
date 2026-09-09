@@ -267,7 +267,9 @@ export function plantSeed(data, sourceId, draft) {
     subAreaId: draft.subAreaId || "",
     parent: draft.parent || "",
     standalone: !draft.subAreaId && !draft.parent,
-    learning: { plant: { components: draft.components || {} } },
+    learning: draft.components && Object.keys(draft.components).length
+      ? { plant: { components: draft.components } }
+      : {},
     status: "Growing",
     links: [],
     prerequisites: [],

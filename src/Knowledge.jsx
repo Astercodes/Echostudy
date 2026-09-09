@@ -19,7 +19,6 @@ import {
   saveTreeNode,
   connectionsOf,
   connectNodes,
-  pluckNode,
   compostNode,
   restoreNode,
   knowledgeEntries,
@@ -39,7 +38,6 @@ import { VoiceField } from "./VoiceField";
 import ActionComponents from "./ActionComponents";
 import { GRAFT_TYPES } from "./action-components";
 import { KnowledgeSourceContext } from "./KnowledgeSources";
-import KnowledgeNotebook from "./KnowledgeNotebook";
 
 function growLayout(nodes, branches) {
   const points = new Map(),
@@ -260,7 +258,7 @@ function KnowledgeView({
         subAreaId: s.id,
         title: s.name,
       }));
-    if (!displayedGrove && focusNode?.standalone)
+    if (!displayedGrove)
       groups.unshift({
         id: "branch:independent",
         subAreaId: "",
@@ -283,6 +281,7 @@ function KnowledgeView({
           (n) =>
             loc(n).subAreaId === b.subAreaId &&
             Boolean(n.standalone) === Boolean(b.independent) &&
+            (!b.independent || focusNode?.id === n.id || !n.lineage?.action?.startsWith("pluck")) &&
             !nodes.some((p) => p.id === n.parent),
         ),
       }))
@@ -361,16 +360,6 @@ function KnowledgeView({
       }}
     >
       <div className={"orchard " + (compact ? "orchard-compact" : "")}>
-        {!compact && (
-          <KnowledgeNotebook
-            data={data}
-            entries={entries}
-            open={(node, nextAction) => {
-              open(node);
-              setAction(nextAction);
-            }}
-          />
-        )}
         <div className="orchard-header">
           <div>
             <span className="orchard-eyebrow">
@@ -853,6 +842,7 @@ function KnowledgeView({
                     </>
                   ) : (
                     <>
+                      <Button primary onClick={() => setAction("content")}>Open content</Button>
                       <p className="orchard-text">
                         {sel.description ||
                           "Grow this concept with explanations, examples and knowledge fruits."}
@@ -981,51 +971,6 @@ function KnowledgeView({
                       </Button>
                     ))}
                   </div>
-                  <h3>Grafted ideas</h3>
-                  {linked.length ? (
-                    linked.map((n) => (
-                      <button
-                        className="orchard-connection"
-                        key={n.id}
-                        onClick={() => open(n)}
-                      >
-                        <Link size={14} />
-                        <span>
-                          {n.title}
-                          {sel.grafts?.[n.id] && (
-                            <small>
-                              {sel.grafts[n.id].relationship} ·{" "}
-                              {sel.grafts[n.id].note}
-                            </small>
-                          )}
-                          <small>
-                            {
-                              data.lifeAreas.find((a) => a.id === loc(n).areaId)
-                                ?.name
-                            }
-                          </small>
-                        </span>
-                      </button>
-                    ))
-                  ) : (
-                    <p className="muted">
-                      No grafts yet. Graft ideas within this tree or across your
-                      orchard.
-                    </p>
-                  )}
-                  {sel.kind !== "fruit" && (
-                    <>
-                      <h3>Notes & resources</h3>
-                      {data.notes
-                        .filter((n) => n.concepts?.includes(sel.id))
-                        .map((n) => (
-                          <blockquote key={n.id}>
-                            {n.quote && <mark>{n.quote}</mark>}
-                            <p>{n.text}</p>
-                          </blockquote>
-                        ))}
-                    </>
-                  )}
                 </>
               ) : (
                 <div className="orchard-welcome">
@@ -1153,9 +1098,7 @@ function KnowledgeView({
             onClose={() => setAction(null)}
           >
             <p>
-              Saved with this knowledge object, organized in the Knowledge
-              Notebook. Editing these notes does not create another seed or
-              copy.
+              Saved within this source. Editing these notes does not create another seed or copy.
             </p>
             <ActionComponents
               mode={action.replace("management-", "")}
@@ -1197,42 +1140,16 @@ function KnowledgeView({
               }
             />
             <p>
-              Create an independent copy to study by itself. The original, its
-              descendants and its home remain intact. The copy keeps its text,
-              learning history, grafts and source lineage.
+              Study this source without the surrounding ecosystem. Your content, action notes and references stay here.
             </p>
             <Button
               primary
               onClick={() => {
-                const next = pluckNode(data, sel.id);
-                const copy = next.concepts.find(
-                  (n) => !data.concepts.some((old) => old.id === n.id),
-                );
-                save(next);
-                setSelected(copy.id);
                 setAction("isolate");
-                notify("Independent copy created. The original is preserved.");
               }}
             >
-              Copy & study independently
+              Focus & study this source
             </Button>
-            {!isScopeNode(sel) && (
-              <details>
-                <summary>Move instead of copy</summary>
-                <p>
-                  This relocates the original and its descendants into
-                  independent knowledge. Its lineage is retained.
-                </p>
-                <Button
-                  onClick={() => {
-                    save((d) => pluckNode(d, sel.id, { move: true }));
-                    setAction("isolate");
-                  }}
-                >
-                  Move original & study independently
-                </Button>
-              </details>
-            )}
           </Modal>
         )}
         {sel && ["plant", "grow-seed"].includes(action) && (

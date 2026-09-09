@@ -7,23 +7,35 @@ import { VoiceField, VoiceScope } from "./VoiceField";
 import ActionComponents from "./ActionComponents";
 import { RECALL_MODES } from "./action-components";
 import KnowledgeTest from "./KnowledgeTest";
+import SourceContentEditor from "./SourceContentEditor";
+import { sourceDocuments } from "./source-content";
+import { knowledgeEntries, saveKnowledgeEntry } from "./knowledge-tree";
 export default function KnowledgeActions({ node, mode, data, persist, close }) {
   const [currentMode, setCurrentMode] = useState(mode);
   const sourceContext = useContext(KnowledgeSourceContext);
+  const [documentId, setDocument] = useState(node.id);
+  const documents = sourceDocuments(data, node);
+  const activeNode = documents.find(n => n.id === documentId) || node;
+  const write = activeNode.id === node.id ? persist : patch => sourceContext.save(d => {
+    const latest = knowledgeEntries(d).find(n => n.id === activeNode.id);
+    return latest ? saveKnowledgeEntry(d, {...latest,...patch}) : d;
+  });
   return (
     <KnowledgeSourceContext.Provider
-      value={{ ...sourceContext, action: currentMode }}
+      value={{ ...sourceContext, node: activeNode, action: currentMode }}
     >
-      <VoiceScope.Provider value={node.id + ":" + currentMode}>
+      <VoiceScope.Provider value={activeNode.id + ":" + currentMode}>
         <ActionContent
-          key={currentMode}
-          node={node}
+          key={activeNode.id + currentMode}
+          node={activeNode}
           mode={currentMode}
           data={data}
-          persist={persist}
+          persist={write}
+          documents={documents}
+          selectDocument={id => {setDocument(id);setCurrentMode("isolate");}}
           close={
-            mode === "isolate" && currentMode !== "isolate"
-              ? () => setCurrentMode("isolate")
+            ["isolate", "content"].includes(mode) && !["isolate", "content"].includes(currentMode)
+              ? () => setCurrentMode(mode)
               : close
           }
           switchMode={setCurrentMode}
@@ -32,7 +44,7 @@ export default function KnowledgeActions({ node, mode, data, persist, close }) {
     </KnowledgeSourceContext.Provider>
   );
 }
-function ActionContent({ node, mode, data, persist, close, switchMode }) {
+function ActionContent({ node, mode, data, persist, close, switchMode, documents, selectDocument }) {
   if (mode === "taste")
     return (
       <Layers node={node} mode="tasteExplore" persist={persist} close={close} />
@@ -53,6 +65,8 @@ function ActionContent({ node, mode, data, persist, close, switchMode }) {
       persist={persist}
       close={close}
       switchMode={switchMode}
+      documents={documents}
+      selectDocument={selectDocument}
     />
   );
 }
@@ -168,12 +182,12 @@ function Layers({ node, mode, persist, close }) {
     </Modal>
   );
 }
-function Content({ node, mode, data, persist, close, switchMode }) {
+function Content({ node, mode, data, persist, close, switchMode, documents, selectDocument }) {
   const [saved, setSaved] = useState(false);
   return (
     <Modal
       title={
-        (mode === "isolate" ? "Pluck · Independent study · " : "Content · ") +
+        (mode === "isolate" ? "Pluck · Focused study · " : "Content · ") +
         node.title
       }
       onClose={close}
@@ -189,32 +203,16 @@ function Content({ node, mode, data, persist, close, switchMode }) {
             : "The text held inside this idea."}
         </p>
         <p className="muted">
-          Saved as you write in this knowledge object's content. Plucked studies
-          are available in the Knowledge Notebook.
+          Content, action notes and references are saved within this source as you write.
         </p>
-        <VoiceField
-          resourceScope={node.id + ":content"}
-          label={
-            ["life-area", "sub-area"].includes(node.kind)
-              ? "Workspace content"
-              : "Fruit content"
-          }
-        >
-          <textarea
-            rows={12}
-            value={node.description || ""}
-            onChange={(e) => {
-              setSaved(false);
-              persist({ description: e.target.value });
-            }}
-          />
-        </VoiceField>
+        {documents.length > 1 && <Field label="Source content"><select value={node.id} onChange={e=>selectDocument(e.target.value)}>{documents.map((doc,i)=><option key={doc.id} value={doc.id}>{i===0 ? "Original source" : doc.lineage?.action === "plant" ? "Planted idea" : "Earlier Pluck"} · {doc.title}</option>)}</select></Field>}
+        <SourceContentEditor node={node} data={data} persist={patch=>{setSaved(false);persist(patch);}}/>
         {mode === "isolate" && (
           <>
             <h3>Your investigation</h3>
             <p>
               Open an action to write, record audio and attach sources to its
-              components. Your work stays with this independent study.
+              components. Your work stays embedded in this source.
             </p>
             <div className="fruit-actions">
               {[
@@ -231,15 +229,6 @@ function Content({ node, mode, data, persist, close, switchMode }) {
                 </Button>
               ))}
             </div>
-            <h3>Linked notes</h3>
-            {data.notes
-              .filter((n) => n.concepts?.includes(node.id))
-              .map((n) => (
-                <blockquote key={n.id}>
-                  {n.quote && <mark>{n.quote}</mark>}
-                  <p>{n.text}</p>
-                </blockquote>
-              ))}
             <h3>Learning history</h3>
             <p>
               {node.learning?.test?.attempts?.length ??

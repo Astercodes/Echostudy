@@ -16,7 +16,8 @@ export default function KnowledgePlant({
     description: "",
     excerpt: "",
     areaId: node.areaId || data.lifeAreas[0].id,
-    subAreaId: "",
+    subAreaId: node.subAreaId || "",
+    parent: ["life-area", "sub-area"].includes(node.kind) ? "" : node.id,
     newTreeName: "",
   });
   const [destination, setDestination] = useState("existing"),
