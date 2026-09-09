@@ -76,7 +76,6 @@ const NAV = [
   ["24-hour planner", CalendarDays],
   ["Goals", Target],
   ["Study workspace", BookOpen],
-  ["Stretch workspace", Flame],
   ["Knowledge Ecosystem", Network],
   ["Resource library", Library],
   ["Reflection", NotebookPen],
@@ -245,6 +244,9 @@ export default function App({ user, onSignOut }) {
     [query, setQuery] = useState(""),
     [tick, setTick] = useState(Date.now());
   const latestData = useRef(data);
+  const [workspaceMode, setWorkspaceMode] = useState("study");
+  const [stretchDraft, setStretchDraft] = useState(null);
+  const [knowledgeFocus, setKnowledgeFocus] = useState(null);
   const nextKnowledgeStep = useMemo(
     () =>
       page === "Today" ? knowledgeIntelligence(data).suggestions[0] : null,
@@ -300,7 +302,9 @@ export default function App({ user, onSignOut }) {
   }, [toast]);
   const notify = (s) => setToast(s),
     go = (p) => {
-      setPage(p);
+      if (p === "Stretch workspace") setWorkspaceMode("stretch");
+      if (p === "Study workspace") setWorkspaceMode("study");
+      setPage(p === "Stretch workspace" ? "Study workspace" : p);
       setMobile(false);
       setQuery("");
     };
@@ -397,7 +401,7 @@ export default function App({ user, onSignOut }) {
               onClick={() => go(name)}
             >
               <Icon size={19} />
-              {name}
+              {name === "Study workspace" ? "Study & Stretch" : name}
               {name === "Study workspace" && data.timer && (
                 <i className="live-dot" />
               )}
@@ -526,7 +530,7 @@ export default function App({ user, onSignOut }) {
                         : page === "Goals"
                           ? "Give your growth direction."
                           : page === "Study workspace"
-                            ? "Go a little deeper."
+                            ? "Grow what you know. Exercise what you can do."
                             : page === "Reflection"
                               ? "Turn experience into wisdom."
                               : page === "Growth"
@@ -911,17 +915,73 @@ export default function App({ user, onSignOut }) {
             />
           )}
           {page === "Study workspace" && (
-            <Study
-              data={data}
-              save={save}
-              tick={tick}
-              start={() => start(first)}
-              finish={() => setModal({ type: "finish" })}
-              go={go}
-            />
+            <>
+              <section className="card parallel-workspace">
+                <p>
+                  <strong>
+                    Study grows what you know. Stretch grows what you can do
+                    with what you know.
+                  </strong>
+                </p>
+                <p>
+                  Run them in parallel. Practice reveals questions for study;
+                  study informs your next attempt. Harvest records what your
+                  practice produced.
+                </p>
+                <div
+                  className="parallel-modes"
+                  aria-label="Learning workspace mode"
+                >
+                  <Button
+                    primary={workspaceMode === "study"}
+                    onClick={() => setWorkspaceMode("study")}
+                  >
+                    Study
+                  </Button>
+                  <Button
+                    primary={workspaceMode === "stretch"}
+                    onClick={() => setWorkspaceMode("stretch")}
+                  >
+                    Stretch
+                  </Button>
+                </div>
+              </section>
+              <div hidden={workspaceMode !== "study"}>
+                <Study
+                  data={data}
+                  save={save}
+                  tick={tick}
+                  start={() => start(first)}
+                  finish={() => setModal({ type: "finish" })}
+                  go={go}
+                />
+              </div>
+              <div hidden={workspaceMode !== "stretch"}>
+                <Stretch
+                  data={data}
+                  save={save}
+                  go={go}
+                  draft={stretchDraft}
+                  consumeDraft={() => setStretchDraft(null)}
+                  onStudy={(id) => {
+                    setKnowledgeFocus(id);
+                    go("Knowledge Ecosystem");
+                  }}
+                />
+              </div>
+            </>
           )}
           {page === "Knowledge Ecosystem" && (
-            <Knowledge data={data} save={save} notify={notify} />
+            <Knowledge
+              data={data}
+              save={save}
+              notify={notify}
+              initialNodeId={knowledgeFocus}
+              onStretch={(draft) => {
+                setStretchDraft(draft);
+                go("Stretch workspace");
+              }}
+            />
           )}
           {page === "Resource library" && (
             <Resources data={data} save={save} notify={notify} />
@@ -931,9 +991,6 @@ export default function App({ user, onSignOut }) {
           )}
           {page === "Growth" && <Growth data={data} />}
           {page === "Barns" && <Barns data={data} save={save} />}
-          {page === "Stretch workspace" && (
-            <Stretch data={data} save={save} go={go} />
-          )}
           <footer className="page-footer">
             <Sprout size={15} /> Time → goals → study → knowledge → reflection →
             growth <span>One connected life.</span>

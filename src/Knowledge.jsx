@@ -13,6 +13,7 @@ import { Button, Field, Modal } from "./App";
 import { uid, validateBackup } from "./model";
 import KnowledgeIntelligence from "./KnowledgeIntelligence";
 import EcosystemSearch from "./EcosystemSearch";
+import { knowledgeStretch } from "./stretch-engine";
 import {
   isScaffold,
   locationOf,
@@ -82,8 +83,10 @@ function growLayout(nodes, branches) {
   };
 }
 export default function Knowledge(props) {
-  const [tabs, setTabs] = useState([]),
-    [active, setActive] = useState("ecosystem");
+  const [tabs, setTabs] = useState(
+      props.initialNodeId ? [props.initialNodeId] : [],
+    ),
+    [active, setActive] = useState(props.initialNodeId || "ecosystem");
   if (props.compact) return <KnowledgeView {...props} />;
   const entries = knowledgeEntries(props.data);
   const focus = (node) => {
@@ -178,6 +181,7 @@ function KnowledgeView({
   compact = false,
   notify = () => {},
   onFocus,
+  onStretch,
   focusNode,
 }) {
   const barkId = "bark-" + useId().replace(/:/g, "");
@@ -792,6 +796,13 @@ function KnowledgeView({
                   {sel.kind === "seed" && (
                     <Button primary onClick={() => setAction("grow-seed")}>
                       Grow seed
+                    </Button>
+                  )}
+                  {onStretch && !isScaffold(sel) && !sel.trashedAt && (
+                    <Button
+                      onClick={() => onStretch(knowledgeStretch(data, sel))}
+                    >
+                      Stretch this knowledge
                     </Button>
                   )}
                   {onFocus && !isScaffold(sel) && !sel.trashedAt && (

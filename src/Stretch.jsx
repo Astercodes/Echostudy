@@ -1,18 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button, Modal, Field, GoalTrail } from "./App";
 import { CapacityPicker } from "./Barns.jsx";
 import { CAPACITIES } from "./barns.js";
 import { uid, today } from "./model";
 import "./stretch.css";
 import StretchRefiner from "./StretchRefiner.jsx";
+import StretchSuggestions from "./StretchSuggestions";
+import {
+  practiceNodes,
+  PRACTICE_ENVIRONMENTS,
+  STRETCH_SOURCES,
+  nextPracticeDate,
+} from "./stretch-engine";
+import { knowledgeLabel, knowledgeEntries } from "./knowledge-tree";
 
-export default function Stretch({ data, save, go }) {
+export default function Stretch({
+  data,
+  save,
+  go,
+  draft,
+  consumeDraft,
+  onStudy,
+}) {
   const [editor, setEditor] = useState(null),
     [finishing, setFinishing] = useState(false),
     [areaId, setArea] = useState(""),
     [subAreaId, setSub] = useState(""),
     [goalId, setGoal] = useState(""),
     [status, setStatus] = useState("all");
+  const [knowledgeQuery, setKnowledgeQuery] = useState("");
+  const knowledge = useMemo(() => practiceNodes(data), [data]);
+  const allKnowledge = useMemo(() => knowledgeEntries(data), [data]);
   const records = data.stretches || [];
   const area = data.lifeAreas.find((a) => a.id === areaId);
   const filtered = records.filter(
@@ -27,7 +45,7 @@ export default function Stretch({ data, save, go }) {
       ...d,
       stretches: [...(d.stretches || []).filter((x) => x.id !== s.id), s],
     }));
-  const create = () => {
+  const create = (defaults = {}) => {
     const linkedGoal = data.goals.find((g) => g.id === goalId);
     setFinishing(false);
     setEditor({
@@ -46,8 +64,24 @@ export default function Stretch({ data, save, go }) {
       completion: 100,
       outcome: "",
       nextStep: "",
+      source: "user",
+      environment: "internal",
+      challenge: 1,
+      knowledgeIds: [],
+      repeat: "once",
+      studyGap: "",
+      gapResolved: false,
+      evidence: "",
+      harvest: "",
+      ...defaults,
     });
   };
+  useEffect(() => {
+    if (draft) {
+      create(draft);
+      consumeDraft?.();
+    }
+  }, [draft]);
   const chooseGoal = (id) => {
     const g = data.goals.find((g) => g.id === id);
     let p = g,
@@ -61,22 +95,23 @@ export default function Stretch({ data, save, go }) {
     setEditor({
       ...editor,
       goalId: id,
-      areaId: g?.areaId || "",
-      subAreaId: g?.subAreaId || "",
-      capacityIds: [...ids],
+      areaId: g?.areaId || editor.areaId || "",
+      subAreaId: g?.subAreaId || editor.subAreaId || "",
+      capacityIds: [...new Set([...editor.capacityIds, ...ids])],
     });
   };
   return (
     <div className="stretch-workspace">
       <section className="card stretch-intro">
         <span className="eyebrow">PUT YOUR ABILITIES TO WORK</span>
-        <h2>Learn it. Use it. Stretch it.</h2>
+        <h2>Practice now. Grow through doing.</h2>
         <p>
-          Practise a difficult conversation, build a working prototype, lead a
-          meeting, or apply a principle in daily life. Define the challenge, do
-          the work, and capture what happened.
+          Exercise knowledge through internal rehearsal, simulations, social
+          practice and real-world situations. Start small and increase the
+          challenge as you learn. No study completion or ripeness score is
+          required.
         </p>
-        <Button primary onClick={create}>
+        <Button primary onClick={() => create()}>
           Plan a stretch
         </Button>
         <Button onClick={() => go("Barns")}>See capacity growth</Button>
@@ -103,6 +138,7 @@ export default function Stretch({ data, save, go }) {
           </span>
         </div>
       </section>
+      <StretchSuggestions data={data} create={create} />
       <section className="card stretch-filters">
         <Field label="Stretch life area">
           <select
@@ -177,7 +213,32 @@ export default function Stretch({ data, save, go }) {
                     : "Planned"}
               </small>
               <h3>{s.title}</h3>
+              <small>
+                {PRACTICE_ENVIRONMENTS[s.environment] ||
+                  "Environment not recorded"}{" "}
+                · {STRETCH_SOURCES[s.source] || "User-created"} · Challenge{" "}
+                {s.challenge || 1}
+                {s.repeat && s.repeat !== "once"
+                  ? ` · Repeats ${s.repeat}`
+                  : ""}
+              </small>
               <p>{s.objective}</p>
+              {!!s.knowledgeIds?.length && (
+                <div className="stretch-knowledge-links">
+                  {s.knowledgeIds.map((id) => {
+                    const node = allKnowledge.find((n) => n.id === id);
+                    return (
+                      <Button
+                        key={id}
+                        disabled={!knowledge.some((n) => n.id === id)}
+                        onClick={() => onStudy?.(id)}
+                      >
+                        Study: {node?.title || "Unavailable knowledge"}
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
               <small>
                 {data.lifeAreas.find((a) => a.id === s.areaId)?.name}
                 {s.subAreaId
@@ -206,7 +267,49 @@ export default function Stretch({ data, save, go }) {
                     </strong>
                   </p>
                   <p>{s.outcome}</p>
+                  {s.harvest && (
+                    <p>
+                      <strong>Harvest · What it produced:</strong> {s.harvest}
+                    </p>
+                  )}
+                  {s.evidence && (
+                    <p>
+                      <strong>Evidence / feedback:</strong> {s.evidence}
+                    </p>
+                  )}
+                  {s.studyGap && (
+                    <p>
+                      <strong>
+                        {s.gapResolved
+                          ? "Reviewed study gap:"
+                          : "Back to Study:"}
+                      </strong>{" "}
+                      {s.studyGap}
+                    </p>
+                  )}
                   {s.nextStep && <p>Next stretch: {s.nextStep}</p>}
+                  <Button
+                    onClick={() =>
+                      create({
+                        ...s,
+                        id: uid(),
+                        status: "planned",
+                        date: nextPracticeDate(s.date, s.repeat),
+                        actualMinutes: 0,
+                        completedAt: null,
+                        startedAt: null,
+                        outcome: "",
+                        harvest: "",
+                        evidence: "",
+                        studyGap: "",
+                        gapResolved: false,
+                        previousStretchId: s.id,
+                        completion: 100,
+                      })
+                    }
+                  >
+                    Plan next attempt
+                  </Button>
                   <Button
                     onClick={() => {
                       setEditor({ ...s });
@@ -277,8 +380,6 @@ export default function Stretch({ data, save, go }) {
                 !editor.title.trim() ||
                 !editor.objective.trim() ||
                 !editor.success.trim() ||
-                !editor.goalId ||
-                !editor.capacityIds.length ||
                 (finishing && !editor.outcome.trim())
               )
                 return;
@@ -336,11 +437,10 @@ export default function Stretch({ data, save, go }) {
             <Field label="Linked goal">
               <select
                 aria-label="Linked goal"
-                required
                 value={editor.goalId}
                 onChange={(e) => chooseGoal(e.target.value)}
               >
-                <option value="">Choose a goal</option>
+                <option value="">No linked goal yet</option>
                 {data.goals.map((g) => (
                   <option key={g.id} value={g.id}>
                     {data.lifeAreas.find((a) => a.id === g.areaId)?.name} ·{" "}
@@ -349,11 +449,156 @@ export default function Stretch({ data, save, go }) {
                 ))}
               </select>
             </Field>
+            <Field label="Practice life area">
+              <select
+                value={editor.areaId}
+                onChange={(e) =>
+                  setEditor({
+                    ...editor,
+                    areaId: e.target.value,
+                    subAreaId: "",
+                  })
+                }
+              >
+                <option value="">Choose a life area</option>
+                {data.lifeAreas.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <div className="form-grid">
+              <Field label="Practice environment">
+                <select
+                  value={editor.environment || "internal"}
+                  onChange={(e) =>
+                    setEditor({ ...editor, environment: e.target.value })
+                  }
+                >
+                  {Object.entries(PRACTICE_ENVIRONMENTS).map(([id, label]) => (
+                    <option key={id} value={id}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Stretch origin">
+                <select
+                  value={editor.source || "user"}
+                  onChange={(e) =>
+                    setEditor({ ...editor, source: e.target.value })
+                  }
+                >
+                  {Object.entries(STRETCH_SOURCES).map(([id, label]) => (
+                    <option key={id} value={id}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Practice challenge">
+                <select
+                  value={editor.challenge || 1}
+                  onChange={(e) =>
+                    setEditor({ ...editor, challenge: Number(e.target.value) })
+                  }
+                >
+                  <option value={1}>1 · Supported attempt</option>
+                  <option value={2}>2 · Independent repetition</option>
+                  <option value={3}>3 · New constraints</option>
+                  <option value={4}>4 · Integrated complexity</option>
+                </select>
+              </Field>
+              <Field label="Repeat practice">
+                <select
+                  value={editor.repeat || "once"}
+                  onChange={(e) =>
+                    setEditor({ ...editor, repeat: e.target.value })
+                  }
+                >
+                  <option value="once">One time</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly on the chosen day</option>
+                </select>
+              </Field>
+            </div>
             <p className="muted">
-              Life area:{" "}
-              {data.lifeAreas.find((a) => a.id === editor.areaId)?.name ||
-                "Choose a goal"}
+              Environments and challenges are freely selectable. For repeats,
+              Plan next attempt creates the next dated activity after you record
+              a result.
             </p>
+            {editor.source === "life" && (
+              <Field label="Life opportunity">
+                <textarea
+                  value={editor.opportunity || ""}
+                  onChange={(e) =>
+                    setEditor({ ...editor, opportunity: e.target.value })
+                  }
+                />
+              </Field>
+            )}
+            <fieldset className="stretch-linked-knowledge">
+              <legend>Knowledge you will exercise</legend>
+              <Field label="Search knowledge to link">
+                <input
+                  value={knowledgeQuery}
+                  onChange={(e) => setKnowledgeQuery(e.target.value)}
+                  placeholder="Type a concept, forest, grove or tree"
+                />
+              </Field>
+              <Field label="Add linked knowledge">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value)
+                      setEditor({
+                        ...editor,
+                        knowledgeIds: [
+                          ...new Set([
+                            ...(editor.knowledgeIds || []),
+                            e.target.value,
+                          ]),
+                        ],
+                      });
+                  }}
+                >
+                  <option value="">Select a source to link</option>
+                  {knowledge
+                    .filter(
+                      (n) =>
+                        !(editor.knowledgeIds || []).includes(n.id) &&
+                        n.title
+                          .toLowerCase()
+                          .includes(knowledgeQuery.toLowerCase()),
+                    )
+                    .slice(0, 40)
+                    .map((n) => (
+                      <option key={n.id} value={n.id}>
+                        {knowledgeLabel(n, data.concepts)} · {n.title}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+              {(editor.knowledgeIds || []).map((id) => (
+                <div key={id}>
+                  {allKnowledge.find((n) => n.id === id)?.title ||
+                    "Unavailable knowledge"}{" "}
+                  <Button
+                    onClick={() =>
+                      setEditor({
+                        ...editor,
+                        knowledgeIds: editor.knowledgeIds.filter(
+                          (x) => x !== id,
+                        ),
+                      })
+                    }
+                  >
+                    Remove link
+                  </Button>
+                </div>
+              ))}
+            </fieldset>
             <Field label="Practice sub-area">
               <select
                 value={editor.subAreaId}
@@ -376,7 +621,8 @@ export default function Stretch({ data, save, go }) {
               onChange={(capacityIds) => setEditor({ ...editor, capacityIds })}
             />
             <p className="muted">
-              Choose at least one capacity so this practice can fill its Barn.
+              Link capacities to count recorded practice toward their Barns. You
+              can also begin without a capacity or goal and link them later.
             </p>
             <div className="form-grid">
               <Field label="Practice date">
@@ -451,6 +697,49 @@ export default function Stretch({ data, save, go }) {
                     }
                   />
                 </Field>
+                <Field label="Harvest · What did this practice produce?">
+                  <textarea
+                    value={editor.harvest || ""}
+                    onChange={(e) =>
+                      setEditor({ ...editor, harvest: e.target.value })
+                    }
+                    placeholder="An outcome, useful result, decision, artifact or change—not just time spent."
+                  />
+                </Field>
+                <Field label="Evidence, feedback or result references">
+                  <textarea
+                    value={editor.evidence || ""}
+                    onChange={(e) =>
+                      setEditor({ ...editor, evidence: e.target.value })
+                    }
+                    placeholder="Observations, peer feedback, measurements, or a link to your work"
+                  />
+                </Field>
+                <Field label="What do you need to return to Study to understand?">
+                  <textarea
+                    value={editor.studyGap || ""}
+                    onChange={(e) =>
+                      setEditor({
+                        ...editor,
+                        studyGap: e.target.value,
+                        gapResolved: false,
+                      })
+                    }
+                    placeholder="Describe what this attempt revealed. Linked knowledge will surface this gap in Growth suggestions."
+                  />
+                </Field>
+                {editor.studyGap && (
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(editor.gapResolved)}
+                      onChange={(e) =>
+                        setEditor({ ...editor, gapResolved: e.target.checked })
+                      }
+                    />{" "}
+                    I have reviewed and addressed this study gap
+                  </label>
+                )}
                 <p className="muted">
                   Completion earns practice credit in your selected Barns. An
                   attempt or partial result is useful evidence too; record it
@@ -459,11 +748,7 @@ export default function Stretch({ data, save, go }) {
               </>
             )}
             <div className="form-actions">
-              <Button
-                primary
-                type="submit"
-                disabled={!editor.capacityIds.length}
-              >
+              <Button primary type="submit">
                 {finishing ? "Save practice result" : "Save stretch"}
               </Button>
             </div>

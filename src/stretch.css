@@ -102,3 +102,46 @@
 .stretch-ai-preview .btn {
   margin: 6px 8px 0 0;
 }
+.parallel-workspace,
+.stretch-suggestions {
+  padding: 24px;
+  margin-bottom: 22px;
+  border-top: 4px solid #ff7900;
+}
+.parallel-modes {
+  display: flex;
+  gap: 12px;
+}
+.parallel-modes .btn {
+  min-width: 120px;
+}
+.stretch-suggestions summary {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  color: #173dc5;
+}
+.stretch-suggestion {
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.stretch-suggestion .btn {
+  display: block;
+  margin-top: 12px;
+}
+.stretch-linked-knowledge {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 20px 0;
+  min-width: 0;
+}
+.stretch-linked-knowledge select {
+  width: 100%;
+}
+.stretch-knowledge-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}

@@ -172,13 +172,32 @@ export function validateBarns(data) {
           typeof s.success === "string" &&
           s.success.trim() &&
           validCapacityIds(s.capacityIds) &&
-          s.capacityIds.length &&
-          data.goals.some((g) => g.id === s.goalId) &&
-          data.lifeAreas?.some(
-            (a) =>
-              a.id === s.areaId &&
-              (!s.subAreaId ||
-                a.subAreas.some((sub) => sub.id === s.subAreaId)),
+          (!s.goalId || data.goals.some((g) => g.id === s.goalId)) &&
+          (!s.areaId
+            ? !s.subAreaId
+            : data.lifeAreas?.some(
+                (a) =>
+                  a.id === s.areaId &&
+                  (!s.subAreaId ||
+                    a.subAreas.some((sub) => sub.id === s.subAreaId)),
+              )) &&
+          (s.knowledgeIds === undefined ||
+            (Array.isArray(s.knowledgeIds) &&
+              s.knowledgeIds.every((id) => typeof id === "string"))) &&
+          (s.environment === undefined ||
+            ["internal", "simulated", "social", "real"].includes(
+              s.environment,
+            )) &&
+          (s.source === undefined ||
+            ["knowledge", "gap", "goal", "life", "user"].includes(s.source)) &&
+          (s.challenge === undefined ||
+            (Number.isInteger(s.challenge) &&
+              s.challenge >= 1 &&
+              s.challenge <= 4)) &&
+          (s.repeat === undefined ||
+            ["once", "daily", "weekly"].includes(s.repeat)) &&
+          ["studyGap", "evidence", "harvest", "opportunity"].every(
+            (key) => s[key] === undefined || typeof s[key] === "string",
           ) &&
           /^\d{4}-\d{2}-\d{2}$/.test(s.date) &&
           Number.isFinite(s.planned) &&

@@ -216,6 +216,9 @@ export function knowledgeIntelligence(
     );
   };
   for (const n of subjects) {
+    for (const stretch of (data.stretches || []).filter(s => s.status === "completed" && s.knowledgeIds?.includes(n.id) && s.studyGap?.trim() && !s.gapResolved)) {
+      add(n, "practice-gap", `Practice revealed a gap: ${n.title}`, `During “${stretch.title}”: ${stretch.studyGap}`, "Return to the source, investigate the gap with Chew, then try another stretch. Mark the gap addressed in your practice result when ready.", "chew", 94, { topic: stretch.id, basis: "Your recorded Stretch reflection" });
+    }
     const attempts = assessed(n),
       engaged = evidence(n),
       links = outgoing(n),
