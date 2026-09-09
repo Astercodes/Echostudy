@@ -80,21 +80,6 @@
   padding: 16px 0;
   font-size: 14px;
 }
-.ecosystem-search-filters {
-  display: flex;
-  align-items: end;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 14px 0 9px;
-}
-.ecosystem-search-filters .field {
-  flex: 1 1 170px;
-  min-width: 0;
-  margin: 0;
-}
-.ecosystem-search-filters select {
-  width: 100%;
-}
 .ecosystem-search-panel .orchard-results {
   max-height: 360px;
   overflow-y: auto;
@@ -117,9 +102,6 @@
 @media (max-width: 600px) {
   .ecosystem-search-panel {
     padding: 12px;
-  }
-  .ecosystem-search-filters .field {
-    flex-basis: 100%;
   }
 }
 .orchard-workspace {

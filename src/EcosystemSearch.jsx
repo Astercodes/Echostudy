@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { knowledgeLabel } from "./knowledge-tree";
-import { Field, Button } from "./App";
+import { Button } from "./App";
 
 function savedText(value) {
   if (typeof value === "string") return value;
@@ -23,16 +23,11 @@ export default function EcosystemSearch({
   setSearch,
   open,
 }) {
-  const [type, setType] = useState(""),
-    [status, setStatus] = useState(""),
-    [contains, setContains] = useState(""),
-    [limit, setLimit] = useState(20);
-  const active = Boolean(search.trim() || type || status || contains);
+  const [limit, setLimit] = useState(20);
+  const active = Boolean(search.trim());
   const results = useMemo(
     () =>
       nodes.filter((n) => {
-        if (type && knowledgeLabel(n, data.concepts) !== type) return false;
-        if (status && (n.status || "Growing") !== status) return false;
         const notes = (data.notes || []).filter((note) =>
           note.concepts?.includes(n.id),
         );
@@ -51,13 +46,6 @@ export default function EcosystemSearch({
         ]
           .filter(Boolean)
           .join(" ");
-        const grafted = Boolean(
-          n.links?.length || Object.keys(n.grafts || {}).length,
-        );
-        if (contains === "content" && !content.trim()) return false;
-        if (contains === "resources" && !resources.length) return false;
-        if (contains === "grafts" && !grafted) return false;
-        if (contains === "unlinked" && grafted) return false;
         const haystack = [n.title, content, ...resources.map((r) => r.title)]
           .join(" ")
           .toLowerCase();
@@ -68,17 +56,14 @@ export default function EcosystemSearch({
           .filter(Boolean)
           .every((word) => haystack.includes(word));
       }),
-    [nodes, data, search, type, status, contains],
+    [nodes, data, search],
   );
   const change = (setter, value) => {
     setter(value);
     setLimit(20);
   };
   return (
-    <section
-      className="ecosystem-search-panel"
-      aria-label="Search and filter knowledge"
-    >
+    <section className="ecosystem-search-panel" aria-label="Search knowledge">
       <div className="ecosystem-search-row">
         <label className="orchard-search">
           <Search size={19} />
@@ -100,69 +85,7 @@ export default function EcosystemSearch({
           </button>
         )}
       </div>
-      <div className="ecosystem-search-filters">
-        <Field label="Knowledge type">
-          <select
-            value={type}
-            onChange={(e) => change(setType, e.target.value)}
-          >
-            <option value="">All types</option>
-            {[
-              "Forest",
-              "Grove",
-              "Tree",
-              "Root",
-              "Stem",
-              "Branch",
-              "Sub-branch",
-              "Leaf",
-              "Fruit",
-              "Seed",
-            ].map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Knowledge progress">
-          <select
-            value={status}
-            onChange={(e) => change(setStatus, e.target.value)}
-          >
-            <option value="">Any progress</option>
-            <option>Growing</option>
-            <option>Confident</option>
-          </select>
-        </Field>
-        <Field label="Content and connections">
-          <select
-            value={contains}
-            onChange={(e) => change(setContains, e.target.value)}
-          >
-            <option value="">Everything</option>
-            <option value="content">Has saved content</option>
-            <option value="resources">Has linked resources</option>
-            <option value="grafts">Has grafts</option>
-            <option value="unlinked">No grafts yet</option>
-          </select>
-        </Field>
-        {active && (
-          <Button
-            onClick={() => {
-              setSearch("");
-              setType("");
-              setStatus("");
-              setContains("");
-              setLimit(20);
-            }}
-          >
-            Clear search & filters
-          </Button>
-        )}
-      </div>
-      <small>
-        Search within the selected forest, grove or focused tree. Filters
-        combine to narrow your results.
-      </small>
+
       {active && (
         <>
           <p className="ecosystem-result-count" role="status">
@@ -181,8 +104,8 @@ export default function EcosystemSearch({
           </div>
           {!results.length && (
             <p className="ecosystem-search-empty">
-              No sources match. Try fewer filters or choose a broader forest or
-              grove.
+              No sources match. Try another keyword or choose a broader forest
+              or grove.
             </p>
           )}
           {results.length > limit && (

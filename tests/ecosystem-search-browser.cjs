@@ -37,9 +37,7 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
     await btn("Knowledge Ecosystem").click();
     await sel("Life-area tree").selectOption("leadership");
     assert((await query.boundingBox()).width > 700);
-    await sel("Knowledge type").selectOption("Fruit");
-    await sel("Knowledge progress").selectOption("Confident");
-    await sel("Content and connections").selectOption("resources");
+    assert.equal(await p.locator(".ecosystem-search-panel select").count(), 0);
     await query.fill("handbook");
     assert.equal(await p.locator(".orchard-results button").count(), 1);
     await p.locator(".orchard-results button").click();
@@ -50,13 +48,12 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
     await query.fill("no such source");
     await p
       .getByText(
-        "No sources match. Try fewer filters or choose a broader forest or grove.",
+        "No sources match. Try another keyword or choose a broader forest or grove.",
         { exact: true },
       )
       .waitFor();
-    await btn("Clear search & filters").click();
+    await btn("Clear search text").click();
     assert.equal(await query.inputValue(), "");
-    assert.equal(await sel("Knowledge type").inputValue(), "");
     await query.fill("Distinctive research");
     assert.equal(await p.locator(".orchard-results button").count(), 1);
     await p.screenshot({ path: "test-results/ecosystem-search-desktop.png" });
@@ -71,7 +68,7 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
     await p.screenshot({ path: "test-results/ecosystem-search-mobile.png" });
     assert.deepEqual(errors, []);
     console.log(
-      "PASS wide search, combined type/status/resource filters, content search, result selection, reset, grove scope and mobile layout",
+      "PASS wide search, keyword-only interface, content search, result selection, reset, grove scope and mobile layout",
     );
   } finally {
     await b.close();
