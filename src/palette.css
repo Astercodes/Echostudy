@@ -1,0 +1,69 @@
+/* Additive accents: keep the ocean, cobalt, cyan and orange brand colors. */
+:root {
+  --yellow: #ffd43b;
+  --yellow-soft: #fff6cc;
+  --yellow-ink: #765600;
+  --pepper-red: #df352d;
+  --pepper-soft: #fff0ed;
+  --pepper-ink: #b4231c;
+  --growth-spectrum: linear-gradient(90deg, #082b96 0% 22%, #173dc5 22% 40%, #009cde 40% 58%, #ff7900 58% 76%, #ffd43b 76% 88%, #df352d 88%);
+}
+
+/* A shared palette signature on public pages and every workspace. */
+.app .topbar {
+  border-image: var(--growth-spectrum) 1;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+}
+.landing .landing-nav,
+.auth-page .auth-content {
+  border-top: 5px solid transparent;
+  border-image: var(--growth-spectrum) 1;
+}
+.app .sidebar .brand-icon { background: var(--yellow); color: #082b96; }
+.app .sidebar .nav-item.active { box-shadow: inset 3px 0 var(--yellow); }
+.app .welcome { background: var(--yellow-soft); border-color: var(--yellow); }
+.app .welcome strong { color: #102c54; }
+.app .stat:nth-child(3n + 2) { border-top: 3px solid var(--yellow); }
+.app .stat:nth-child(3n + 3) { border-top: 3px solid var(--pepper-red); }
+.app .focus-top .badge { background: var(--yellow); color: #102c54; }
+.app .spark.s1 { color: var(--yellow); }
+.app .spark.s2 { color: var(--pepper-red); }
+
+/* Warm panels and restrained red accents leave content easy to read. */
+.app .goals-overview,
+.app .barns-intro { border-top: 4px solid var(--yellow); }
+.app .goal-horizons .filter > span { background: var(--yellow-soft); color: var(--yellow-ink); }
+.app .stretch-intro { border-top: 4px solid var(--pepper-red); }
+.app .stretch-stats strong { color: var(--pepper-ink); }
+.app .stretch-ai { background: linear-gradient(130deg, #eef6ff, var(--yellow-soft)); border-color: var(--yellow); }
+.app .barn-card:nth-child(4n + 3) { border-top: 3px solid var(--yellow); }
+.app .barn-card:nth-child(4n + 4) { border-top: 3px solid var(--pepper-red); }
+.app .orchard-toolbar { border-bottom: 3px solid var(--yellow); padding-bottom: 12px; }
+.app .fruit-closed { background: var(--yellow-soft); color: var(--yellow-ink); }
+.app .orchard-bin-row { border-left: 3px solid var(--pepper-red); padding-left: 12px; }
+.app .learning-meaning { border-left: 3px solid var(--yellow); padding-left: 12px; }
+.app .planner-banner { background: var(--yellow-soft); border-left: 4px solid var(--yellow); }
+.app .planner-summary { border-bottom: 3px solid var(--pepper-red); }
+.app .timer-card { border-top: 4px solid var(--yellow); }
+.app .library-banner { border-left: 4px solid var(--yellow); }
+.app .resource-cover.cover-1 { background: var(--yellow-soft); color: var(--yellow-ink); }
+.app .resource-cover.cover-2 { background: var(--pepper-soft); color: var(--pepper-ink); }
+.app .danger,
+.app .error,
+.auth-page .error { color: var(--pepper-ink); }
+
+/* Public illustrations carry the full palette; primary buttons stay blue/orange. */
+.landing .showcase-orbit { border-color: var(--yellow); }
+.landing .product-window-bar > span:first-child { color: var(--pepper-red); }
+.landing .showcase-tabs button[aria-selected="true"] { background: var(--yellow); color: #082b96; }
+.landing .living-node:nth-of-type(3) > circle:not(.node-halo) { fill: var(--pepper-red); }
+.landing .living-node:last-of-type > circle:not(.node-halo) { fill: var(--yellow); }
+.landing .capacity-cup-item:nth-child(2) .capacity-water,
+.landing .capacity-cup-item:nth-child(2) .capacity-drop { background: var(--yellow); }
+.landing .capacity-cup-item:nth-child(3) .capacity-water,
+.landing .capacity-cup-item:nth-child(3) .capacity-drop { background: var(--pepper-red); }
+.landing .landing-cta { border-top: 6px solid var(--yellow); }
+.auth-page .auth-flower > span:nth-child(3n) { background: var(--yellow); }
+.auth-page .auth-flower > span:nth-child(4n) { background: var(--pepper-red); }
+.auth-page .auth-notice { background: var(--yellow-soft); border-color: var(--yellow); color: var(--yellow-ink); }

@@ -9,6 +9,8 @@ export const COLORS = [
   "#ff7900",
   "#dcefff",
   "#ffd7b0",
+  "#ffd43b",
+  "#df352d",
 ];
 export const readableAccent = (color) =>
   ({
@@ -18,6 +20,8 @@ export const readableAccent = (color) =>
     "#ff7900": "#984400",
     "#dcefff": "#164c7e",
     "#ffd7b0": "#8a450e",
+    "#ffd43b": "#765600",
+    "#df352d": "#b4231c",
   })[color?.toLowerCase()] || color;
 export const DOMAINS = [
   "Mind & expertise",

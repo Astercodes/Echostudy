@@ -652,11 +652,13 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
                 aria-label={
                   [
                     "Cyan",
-                    "Berry",
-                    "Leaf green",
-                    "Lime",
-                    "Ice aqua",
-                    "Pale gold",
+                    "Cobalt blue",
+                    "Ocean blue",
+                    "Orange",
+                    "Ice blue",
+                    "Peach",
+                    "Yellow",
+                    "Pepper red",
                   ][i]
                 }
                 value={color}

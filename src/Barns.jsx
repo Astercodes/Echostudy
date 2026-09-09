@@ -5,7 +5,7 @@ import {
   capacitySummary,
   capacityProgress,
 } from "./barns.js";
-import { COLORS, readableAccent, uid, today } from "./model";
+import { COLORS, uid, today } from "./model";
 import { Button, Modal, Field } from "./App";
 import "./barns.css";
 
@@ -162,7 +162,7 @@ export default function Barns({ data, save }) {
         {CAPACITIES.map((c, i) => {
           const s = stats(c.id),
             latest = s.evidence.at(-1),
-            color = readableAccent(COLORS[i % COLORS.length]);
+            color = COLORS[i % COLORS.length];
           return (
             <button
               className="card barn-card"
@@ -181,7 +181,7 @@ export default function Barns({ data, save }) {
                 <span style={{ color: "#173dc5" }}>●</span> Practice{" "}
                 {s.practice.toFixed(1)}% · <span style={{ color }}>●</span>{" "}
                 Study {s.study.toFixed(1)}% ·{" "}
-                <span style={{ color: "#07529a" }}>●</span> Goals{" "}
+                <span style={{ color: "#ff7900" }}>●</span> Goals{" "}
                 {s.goal.toFixed(1)}%
               </small>
               <div className="barn-stats">
