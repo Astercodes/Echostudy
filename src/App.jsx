@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { knowledgeIntelligence } from "./knowledge-intelligence";
 import {
   Sprout,
   LayoutDashboard,
@@ -59,7 +60,6 @@ import {
   ancestors,
   goalProgress,
   focusedMs,
-  insights,
   initialState,
   validateBackup,
   migrateWorkspace,
@@ -245,6 +245,11 @@ export default function App({ user, onSignOut }) {
     [query, setQuery] = useState(""),
     [tick, setTick] = useState(Date.now());
   const latestData = useRef(data);
+  const nextKnowledgeStep = useMemo(
+    () =>
+      page === "Today" ? knowledgeIntelligence(data).suggestions[0] : null,
+    [data, page],
+  );
   latestData.current = data;
   useEffect(
     () => () => {
@@ -729,16 +734,19 @@ export default function App({ user, onSignOut }) {
                     <section className="card insight-mini">
                       <div className="section-head">
                         <h2>
-                          <Lightbulb size={19} /> A connection to explore
+                          <Lightbulb size={19} /> Your next knowledge step
                         </h2>
                       </div>
-                      <Badge color="#7C5C14">PREREQUISITE GAP</Badge>
+                      <Badge color="#7C5C14">
+                        {nextKnowledgeStep?.kind?.toUpperCase() ||
+                          "KNOWLEDGE INTELLIGENCE"}
+                      </Badge>
                       <h3>
-                        {insights(data.concepts)[0]?.title ||
+                        {nextKnowledgeStep?.title ||
                           "Give an idea a new connection"}
                       </h3>
                       <p>
-                        {insights(data.concepts)[0]?.body ||
+                        {nextKnowledgeStep?.body ||
                           "Add a concept to begin building your knowledge."}
                       </p>
                       <button

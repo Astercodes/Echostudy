@@ -10,14 +10,17 @@ export default function KnowledgePlant({
   close,
   submit,
   persist,
+  suggestedTopic = "",
 }) {
   const [draft, setDraft] = useState({
-    title: "",
+    title: suggestedTopic,
     description: "",
     excerpt: "",
     areaId: node.areaId || data.lifeAreas[0].id,
     subAreaId: node.subAreaId || "",
-    parent: ["life-area", "sub-area"].includes(node.kind) ? "" : node.id,
+    parent: ["tree", "branch", "sub-branch"].includes(node.kind)
+      ? node.id
+      : node.parent || "",
     newTreeName: "",
   });
   const [destination, setDestination] = useState("existing"),

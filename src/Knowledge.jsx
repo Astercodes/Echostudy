@@ -10,7 +10,8 @@ import {
   Search,
 } from "lucide-react";
 import { Button, Field, Modal } from "./App";
-import { uid, insights, validateBackup } from "./model";
+import { uid, validateBackup } from "./model";
+import KnowledgeIntelligence from "./KnowledgeIntelligence";
 import {
   isScaffold,
   locationOf,
@@ -185,6 +186,7 @@ function KnowledgeView({
   const [selected, setSelected] = useState(focusNode?.id || null),
     [editor, setEditor] = useState(null),
     [action, setAction] = useState(null),
+    [suggestedTopic, setSuggestedTopic] = useState(""),
     [isolated, setIsolated] = useState(false),
     [search, setSearch] = useState(""),
     [zoom, setZoom] = useState(1),
@@ -281,7 +283,9 @@ function KnowledgeView({
           (n) =>
             loc(n).subAreaId === b.subAreaId &&
             Boolean(n.standalone) === Boolean(b.independent) &&
-            (!b.independent || focusNode?.id === n.id || !n.lineage?.action?.startsWith("pluck")) &&
+            (!b.independent ||
+              focusNode?.id === n.id ||
+              !n.lineage?.action?.startsWith("pluck")) &&
             !nodes.some((p) => p.id === n.parent),
         ),
       }))
@@ -842,7 +846,9 @@ function KnowledgeView({
                     </>
                   ) : (
                     <>
-                      <Button primary onClick={() => setAction("content")}>Open content</Button>
+                      <Button primary onClick={() => setAction("content")}>
+                        Open content
+                      </Button>
                       <p className="orchard-text">
                         {sel.description ||
                           "Grow this concept with explanations, examples and knowledge fruits."}
@@ -965,7 +971,10 @@ function KnowledgeView({
                       <Button
                         key={key}
                         disabled={Boolean(sel.trashedAt)}
-                        onClick={() => setAction(key)}
+                        onClick={() => {
+                          setSuggestedTopic("");
+                          setAction(key);
+                        }}
                       >
                         {label}
                       </Button>
@@ -1011,38 +1020,30 @@ function KnowledgeView({
           />
         )}
         {action === "suggestions" && (
-          <Modal
-            title="Growth suggestions for this tree"
-            onClose={() => setAction(null)}
-          >
-            <p>
-              Based on prerequisites, connections, applications and review dates
-              in this life area.
-            </p>
-            <div className="orchard-suggestions">
-              {insights(nodes).map((s) => (
-                <section key={s.id}>
-                  <h3>{s.title}</h3>
-                  <p>{s.body}</p>
-                  <Button
-                    onClick={() => {
-                      const n = nodes.find((n) => n.id === s.concept);
-                      if (n) open(n);
-                      setAction(null);
-                    }}
-                  >
-                    Explore knowledge
-                  </Button>
-                </section>
-              ))}
-              {!insights(nodes).length && (
-                <p>
-                  Grow branches and graft ideas to start finding growth
-                  opportunities.
-                </p>
-              )}
-            </div>
-          </Modal>
+          <KnowledgeIntelligence
+            data={data}
+            focusIds={[
+              ...nodes.map((n) => n.id),
+              scopeId(area.id, displayedGrove),
+            ]}
+            close={() => setAction(null)}
+            act={(s) => {
+              const target = entries.find(
+                (n) =>
+                  n.id ===
+                  (s.targetId && ["test"].includes(s.action)
+                    ? s.targetId
+                    : s.concept),
+              );
+              if (!target) return;
+              open(target);
+              setSuggestedTopic(s.action === "plant" ? s.topic || "" : "");
+              if (s.action === "edit" && !isScopeNode(target)) {
+                setAction(null);
+                setEditor({ ...target, ...loc(target) });
+              } else setAction(s.action === "edit" ? "content" : s.action);
+            }}
+          />
         )}
         {action === "trash" && (
           <Modal title="Pruned knowledge" onClose={() => setAction(null)}>
@@ -1098,7 +1099,8 @@ function KnowledgeView({
             onClose={() => setAction(null)}
           >
             <p>
-              Saved within this source. Editing these notes does not create another seed or copy.
+              Saved within this source. Editing these notes does not create
+              another seed or copy.
             </p>
             <ActionComponents
               mode={action.replace("management-", "")}
@@ -1140,7 +1142,8 @@ function KnowledgeView({
               }
             />
             <p>
-              Study this source without the surrounding ecosystem. Your content, action notes and references stay here.
+              Study this source without the surrounding ecosystem. Your content,
+              action notes and references stay here.
             </p>
             <Button
               primary
@@ -1154,6 +1157,7 @@ function KnowledgeView({
         )}
         {sel && ["plant", "grow-seed"].includes(action) && (
           <KnowledgePlant
+            suggestedTopic={suggestedTopic}
             key={sel.id + action}
             node={sel}
             data={data}
