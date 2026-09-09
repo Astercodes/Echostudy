@@ -87,6 +87,25 @@ function Layers({ node, mode, persist, close }) {
           saved as you go.
         </p>
         <div className="learning-layout">
+          <div className="learning-mobile-selector">
+            <Field label="Study component">
+              <select
+                value={active}
+                onChange={(e) => setActive(e.target.value)}
+              >
+                {[...sections].map(([group, fields]) => (
+                  <optgroup key={group} label={group}>
+                    {fields.map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                        {values[key]?.trim() ? " · Has notes" : ""}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </Field>
+          </div>
           <div
             className="learning-layer-nav"
             role="tablist"

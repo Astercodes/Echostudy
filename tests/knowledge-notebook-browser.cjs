@@ -20,22 +20,22 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
     await btn("Fruit: Giving Effective Corrective Feedback").click();
     await btn("Peel").click();
     await box("Foundations").fill("Preserve the original foundations.");
-    await p.locator(".knowledge-sources > summary").click();
-    await p.getByText("Upload or add a web resource", { exact: true }).click();
-    await box("Resource title").fill("Feedback lecture");
-    await box("Web / YouTube / report URL").fill(
+    await btn("Add source for Foundations").click();
+    await p.getByRole("tab", { name: "Web link", exact: true }).click();
+    await p
+      .getByPlaceholder("Give this source a useful name")
+      .fill("Feedback lecture");
+    await box("Web resource URL").fill(
       "https://www.youtube.com/watch?v=feedback",
     );
-    await box("Page, chapter or timestamp for new reference").fill(
-      "12:40–15:10",
-    );
-    await box("Citation or evidence note for new reference").fill(
+    await btn("Attach web resource").click();
+    await box("Reference location for Feedback lecture").fill("12:40–15:10");
+    await box("Citation for Feedback lecture").fill(
       "Lecture, 2026; examples of useful feedback.",
     );
-    await btn("Save & link web resource").click();
     await p
       .getByRole("dialog")
-      .locator(".source-reference")
+      .locator(".source-card")
       .getByText("Feedback lecture", { exact: true })
       .waitFor();
     await btn("Done").click();
@@ -52,15 +52,13 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
       .locator(".learning-workspace .voice-field textarea")
       .first();
     await studyText.fill("Working the idea with a counterexample.");
-    await p.locator(".knowledge-sources > summary").click();
-    await select("Library resource").selectOption({
-      label: "Feedback lecture",
-    });
-    await box("Page, chapter or timestamp for new reference").fill("18:00");
-    await btn("Link library resource").click();
-    await p.getByText("Upload or add a web resource", { exact: true }).click();
+    await btn("Choose from library").click();
+    await btn("Attach Feedback lecture").click();
+    await box("Reference location for Feedback lecture").fill("18:00");
+    await p.getByRole("button", { name: /^Add source for / }).click();
+    await p.getByRole("tab", { name: "Upload", exact: true }).click();
     await p
-      .getByLabel("Upload PDF, text, audio or video", { exact: true })
+      .getByLabel("Upload learning resource", { exact: true })
       .setInputFiles({
         name: "practice-notes.txt",
         mimeType: "text/plain",
@@ -68,7 +66,7 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
       });
     await p
       .getByRole("dialog")
-      .locator(".source-reference")
+      .locator(".source-card")
       .getByText("practice-notes.txt", { exact: true })
       .waitFor();
     await btn("Done").click();
@@ -88,10 +86,9 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
       await box("Foundations").inputValue(),
       "Preserve the original foundations.",
     );
-    await p.locator(".knowledge-sources > summary").click();
     await p
       .getByRole("dialog")
-      .locator(".source-reference")
+      .locator(".source-card")
       .getByText("Feedback lecture", { exact: true })
       .waitFor();
     await btn("Done").click();
@@ -133,7 +130,6 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
         .length,
       3,
     );
-    await p.locator(".knowledge-sources > summary").click();
     await p.screenshot({
       path: "test-results/notebook-component-resources.png",
     });
@@ -165,15 +161,12 @@ const { installAuthMock, enterWorkspace } = require("./auth-mock.cjs");
     ]) {
       await btn(name).click();
       await btn("Peel").click();
-      await p.locator(".knowledge-sources > summary").click();
       assert.equal(
-        await p.getByRole("dialog").locator(".source-reference").count(),
+        await p.getByRole("dialog").locator(".source-card").count(),
         0,
       );
-      await select("Library resource").selectOption({
-        label: "Feedback lecture",
-      });
-      await btn("Link library resource").click();
+      await btn("Choose from library").click();
+      await btn("Attach Feedback lecture").click();
       await btn("Done").click();
     }
     await btn("Plant").click();
