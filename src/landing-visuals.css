@@ -1,0 +1,67 @@
+.landing .landing-hero { background:radial-gradient(ellipse at 88% 30%,#ffd7b0 0,transparent 48%); }
+.landing .hero-garden { background:linear-gradient(145deg,#ffd7b0,#ff9133); border-radius:46% 42% 38% 45%; isolation:isolate; }
+.landing .hero-garden .garden-card { box-shadow:0 18px 50px #082b9624; }
+.landing .garden-concept { animation:landing-float 5s ease-in-out infinite; }
+.landing .gc-two { animation-delay:-2s; }.landing .gc-three { animation-delay:-3.5s; }
+.landing .garden-star { color:#082b96; animation:landing-turn 18s linear infinite; }
+.landing .garden-lines>path:first-child { stroke-dasharray:1000; stroke-dashoffset:1000; animation:landing-draw 2.5s ease forwards; }
+.landing .hero-copy h1 em { color:#d55d00; }
+.landing .landing-feature:nth-child(4n+2) { background:#fff0df; border-color:#ffc187; }
+.landing .landing-feature:nth-child(4n+2) .feature-top>div { background:#ff7900; color:#082b96; }
+.landing .landing-feature { transition:transform .2s,box-shadow .2s; }
+.landing .landing-feature:hover { transform:translateY(-5px);box-shadow:0 15px 32px #082b9612; }
+.landing .landing-manifesto { background:#082b96; color:white; position:relative; overflow:hidden; }
+.landing .landing-manifesto::after { content:"";position:absolute;width:270px;height:270px;border:45px solid #ff7900;border-radius:50%;right:-180px;top:20px; }
+.landing .landing-manifesto .eyebrow,.landing .landing-manifesto em,.landing .landing-manifesto>div { color:#ffae62; }
+.landing .landing-cta { background:#ff7900; color:#082b96; }
+.landing .landing-cta h2 em { color:#082b96; }
+.product-showcase { position:relative; isolation:isolate; max-width:1320px; margin:40px auto 90px; padding:60px 55px 38px; border-radius:32px; background:#ff7900; color:#082b96; overflow:hidden; }
+.showcase-orbit { position:absolute; z-index:-1; width:630px;height:630px;border:1px solid #ffffff80;border-radius:50%;right:-240px;top:-140px; }
+.showcase-orbit::after { content:"";position:absolute;inset:55px;border:50px solid #ffd7b060;border-radius:50%; }
+.showcase-heading { display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:24px; }
+.showcase-heading>.eyebrow { flex-basis:100%;color:#082b96; }
+.showcase-heading h2 { margin:0;font-size:clamp(32px,4vw,55px);line-height:1.08;letter-spacing:-2px;font-weight:600; }
+.showcase-heading h2 em { font-style:normal;color:#fff; }
+.showcase-heading p { font-size:15px;line-height:1.8; }
+.showcase-tabs { display:flex;gap:10px;overflow:auto;margin:28px 0 20px; }
+.showcase-tabs button { display:flex;align-items:center;gap:9px;border:1px solid #082b9650;border-radius:24px;background:#fff0df;color:#082b96;font:inherit;font-size:14px;padding:12px 20px;cursor:pointer;white-space:nowrap; }
+.showcase-tabs [aria-selected="true"] { background:#082b96;color:#fff; }
+.product-window { border:7px solid #082b96;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 28px 60px #7e31004d; }
+.product-window-bar { display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 15px;background:#082b96;color:#dcefff;font-size:11px; }
+.product-window-bar>span:first-child { color:#ff7900;letter-spacing:5px; }
+.product-image-button { position:relative;display:block;border:0;background:#fff;padding:0;width:100%;cursor:zoom-in; }
+.product-image-button img { display:block;width:100%;height:auto;aspect-ratio:1190/820;object-fit:cover;object-position:top;animation:landing-preview .35s ease; }
+.preview-zoom { position:absolute;right:18px;bottom:18px;display:flex;align-items:center;gap:8px;background:#082b96;color:#fff;padding:12px 16px;border-radius:24px;font-size:12px;box-shadow:0 5px 18px #082b9633; }
+.showcase-caption { display:grid;grid-template-columns:1fr 1fr;gap:12px 30px;margin-top:30px; }
+.showcase-caption h3 { margin:0;font-size:22px;line-height:1.35; }
+.showcase-caption p { margin:0;font-size:14px;line-height:1.7; }
+.showcase-caption>span { grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:11px; }
+.preview-lightbox { position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:#031239ed;padding:65px 20px 20px; }
+.preview-lightbox img { max-width:100%;max-height:100%;object-fit:contain;border-radius:8px; }
+.preview-lightbox button { position:absolute;right:22px;top:18px;display:grid;place-items:center;border:0;border-radius:50%;padding:10px;background:#ff7900;color:#082b96;cursor:pointer; }
+.living-tree { background:linear-gradient(160deg,#f3f8ff,#dcefff);border-radius:20px;padding:18px 12px 12px;overflow:hidden; }
+.living-tree-label { display:block;text-align:center;font-size:10px;letter-spacing:1.5px;color:#07529a; }
+.living-tree svg { width:100%;height:auto;display:block; }
+.living-tree p { text-align:center;margin:0;font-size:13px;min-height:48px; }
+.living-tree>small { display:block;text-align:center;font-size:10px;color:#586e8a; }
+.living-node { cursor:pointer;outline:none; }.living-node:focus .node-halo { fill:#ffd7b0;stroke:#082b96;stroke-width:2; }
+.living-branches path:first-child { stroke-dasharray:1;stroke-dashoffset:1;animation:landing-draw 2.4s ease forwards; }
+.living-graft { animation:landing-flow 5s linear infinite; }
+.landing .landing-ecosystem-example { background:#fff0df;border:2px solid #ffb26d;padding:20px; }
+.landing .landing-ecosystem-example>.eyebrow { margin:8px 10px 20px;display:block; }
+.landing .landing-knowledge-path { display:none; }
+.capacity-illustration { border-radius:18px;background:#082b96;padding:25px 20px;margin:20px 0;color:white;text-align:center; }
+.capacity-illustration .eyebrow { color:#ffb26d;font-size:10px; }
+.capacity-cups { display:flex;justify-content:space-evenly;gap:18px;padding:38px 0 20px; }
+.capacity-cup-item { position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0; }
+.capacity-cup-item strong { font-size:11px; }
+.capacity-glass { position:relative;width:76px;height:110px;border:3px solid #dcefff;border-top:2px solid #dcefff;border-radius:5px 5px 23px 23px;overflow:hidden;background:#ffffff12; }
+.capacity-water { position:absolute;bottom:0;left:0;right:0;height:var(--fill);background:linear-gradient(#ffae62,#ff7900);animation:landing-fill 4s ease both;animation-delay:var(--delay); }
+.capacity-water::before { content:"";position:absolute;top:-9px;left:-50%;width:200%;height:20px;border-radius:45%;background:#ffae62;animation:landing-wave 3s ease-in-out infinite alternate; }
+.cup-shine { position:absolute;top:12px;bottom:18px;left:9px;width:5px;border-radius:10px;background:#ffffff50; }
+.capacity-drop { position:absolute;top:-25px;width:9px;height:14px;border-radius:60% 40% 60% 40%;background:#ff7900;animation:landing-drop 2.3s ease-in infinite;animation-delay:var(--delay); }
+.capacity-illustration>small { color:#a9c5e5;font-size:10px; }
+@keyframes landing-float { 50% { translate:0 -8px; } }@keyframes landing-turn { to { rotate:360deg; } }@keyframes landing-draw { to {stroke-dashoffset:0;} }@keyframes landing-flow { to {stroke-dashoffset:-65;} }@keyframes landing-preview { from {opacity:.3;} to {opacity:1;} }@keyframes landing-fill { from {height:8%;} to {height:var(--fill);} }@keyframes landing-wave { to {transform:translateX(8px) rotate(5deg);} }@keyframes landing-drop { 0% {opacity:0;transform:translateY(-12px);} 25% {opacity:1;} 80%,100% {opacity:0;transform:translateY(48px);} }
+@media(max-width:900px) { .product-showcase { margin:30px 20px 60px;padding:32px 24px; } }
+@media(max-width:650px) { .product-showcase { margin:25px 12px 50px;padding:28px 14px;border-radius:20px; } .showcase-heading { gap:15px; }.showcase-heading h2 {letter-spacing:-1px;} .showcase-heading p {font-size:13px;} .showcase-tabs button {padding:10px 14px;font-size:12px;} .product-window {border-width:4px;} .product-window-bar {font-size:9px;padding:8px;} .product-window-bar>span:last-child {display:none;} .preview-zoom {font-size:10px;padding:7px 10px;right:8px;bottom:8px;} .showcase-caption {grid-template-columns:1fr;} .showcase-caption h3 {font-size:20px;} .capacity-glass {width:60px;height:93px;} .capacity-cups {gap:10px;} .capacity-cup-item strong {font-size:9px;} }
+@media(prefers-reduced-motion:reduce) { .landing *, .landing *::before,.landing *::after {animation:none!important;transition:none!important;} .landing .garden-lines>path:first-child,.living-branches path:first-child {stroke-dashoffset:0;} }

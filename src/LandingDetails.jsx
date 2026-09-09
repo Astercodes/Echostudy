@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowRight, Network, Mic, BookOpen, Target } from "lucide-react";
 import "./landing-details.css";
+import { ProductShowcase, LivingTree, CapacityIllustration } from "./LandingVisuals";
 const actions = [
   [
     "Taste",
@@ -163,6 +164,8 @@ export default function LandingDetails({ navigate }) {
           </div>
         </div>
       </section>
+      <LivingTree />
+      <ProductShowcase />
       <section
         className="landing-section landing-action-section"
         id="study-actions"
@@ -283,6 +286,7 @@ export default function LandingDetails({ navigate }) {
             </div>
           </article>
         </div>
+        <CapacityIllustration />
         <details className="landing-capacity-details">
           <summary>Explore the 16 dimensions of capacity</summary>
           <div>
