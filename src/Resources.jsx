@@ -20,6 +20,44 @@ import { putFile, getFile } from "./files";
 import { Button, Badge, Modal, Field, GoalSelect } from "./App";
 import "./pdf-text-layer.css";
 import { ResourceTrace } from "./KnowledgeSources";
+import { knowledgeEntries, locationOf, knowledgeLabel } from "./knowledge-tree";
+const RESOURCE_TYPES = [
+  "pdf",
+  "book",
+  "article",
+  "report",
+  "research-paper",
+  "video",
+  "audio",
+  "image",
+  "course",
+  "url",
+  "text",
+  "note",
+];
+const resourceLocations = (r) => [
+  ...new Set([
+    ...(r.knowledgeIds || []),
+    ...(r.concepts || []),
+    ...(r.knowledgeRefs || []).map((x) => x.nodeId || x.key).filter(Boolean),
+  ]),
+];
+const resourceTags = (r) =>
+  Array.isArray(r.tags)
+    ? r.tags
+    : String(r.tags || "")
+        .split(",")
+        .map((x) => x.trim())
+        .filter(Boolean);
+const resourceType = (r) => r.kind || "other";
+const inferLocation = (r, data) => {
+  const node = knowledgeEntries(data).find((n) =>
+    resourceLocations(r).includes(n.id),
+  );
+  return node
+    ? locationOf(node, knowledgeEntries(data), data.lifeAreas)
+    : { areaId: r.areaId || "", subAreaId: r.subAreaId || "" };
+};
 const pdfEngine = () =>
   import("pdfjs-dist").then(async (p) => {
     p.GlobalWorkerOptions.workerSrc = new URL(
@@ -33,8 +71,41 @@ export default function Resources({ data, save, notify }) {
     [selected, setSelected] = useState(null),
     [query, setQuery] = useState(""),
     [note, setNote] = useState(null),
-    [tab, setTab] = useState("resources");
+    [tab, setTab] = useState("resources"),
+    [areaFilter, setAreaFilter] = useState(""),
+    [groveFilter, setGroveFilter] = useState(""),
+    [nodeFilter, setNodeFilter] = useState(""),
+    [typeFilter, setTypeFilter] = useState(""),
+    [statusFilter, setStatusFilter] = useState(""),
+    [tagFilter, setTagFilter] = useState(""),
+    [moreFilters, setMoreFilters] = useState(false);
   const resource = data.resources.find((r) => r.id === selected);
+  const nodes = knowledgeEntries(data);
+  const groves =
+    data.lifeAreas.find((a) => a.id === areaFilter)?.subAreas || [];
+  const visibleNodes = nodes.filter((n) => {
+    const loc = locationOf(n, nodes, data.lifeAreas);
+    return (
+      (!areaFilter || loc.areaId === areaFilter) &&
+      (!groveFilter || loc.subAreaId === groveFilter) &&
+      !["life-area", "sub-area"].includes(n.kind)
+    );
+  });
+  const filteredResources = data.resources.filter((r) => {
+    const loc = inferLocation(r, data),
+      ids = resourceLocations(r),
+      tags = resourceTags(r);
+    return (
+      r.title.toLowerCase().includes(query.toLowerCase()) &&
+      (!areaFilter || loc.areaId === areaFilter) &&
+      (!groveFilter || loc.subAreaId === groveFilter) &&
+      (!nodeFilter || ids.includes(nodeFilter)) &&
+      (!typeFilter || resourceType(r) === typeFilter) &&
+      (!statusFilter || (r.status || "not-started") === statusFilter) &&
+      (!tagFilter ||
+        tags.some((t) => t.toLowerCase().includes(tagFilter.toLowerCase())))
+    );
+  });
   return (
     <>
       {resource ? (
@@ -97,6 +168,101 @@ export default function Resources({ data, save, notify }) {
           </div>
           {tab === "resources" ? (
             <>
+              <div className="resource-filters card">
+                <div className="resource-filter-row">
+                  <Field label="Forest / Life area">
+                    <select
+                      value={areaFilter}
+                      onChange={(e) => {
+                        setAreaFilter(e.target.value);
+                        setGroveFilter("");
+                        setNodeFilter("");
+                      }}
+                    >
+                      <option value="">All life areas</option>
+                      {data.lifeAreas.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Grove / Sub-life area">
+                    <select
+                      value={groveFilter}
+                      disabled={!areaFilter}
+                      onChange={(e) => {
+                        setGroveFilter(e.target.value);
+                        setNodeFilter("");
+                      }}
+                    >
+                      <option value="">
+                        {areaFilter ? "All groves" : "Choose a forest first"}
+                      </option>
+                      {groves.map((g) => (
+                        <option key={g.id} value={g.id}>
+                          {g.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Resource type">
+                    <select
+                      value={typeFilter}
+                      onChange={(e) => setTypeFilter(e.target.value)}
+                    >
+                      <option value="">All types</option>
+                      {RESOURCE_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t.replaceAll("-", " ")}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  <button
+                    className="text-btn resource-more"
+                    onClick={() => setMoreFilters(!moreFilters)}
+                  >
+                    {moreFilters ? "Hide" : "More"} filters
+                  </button>
+                </div>
+                {moreFilters && (
+                  <div className="resource-filter-row resource-filter-more">
+                    <Field label="Knowledge node">
+                      <select
+                        value={nodeFilter}
+                        disabled={!areaFilter}
+                        onChange={(e) => setNodeFilter(e.target.value)}
+                      >
+                        <option value="">All nodes</option>
+                        {visibleNodes.map((n) => (
+                          <option key={n.id} value={n.id}>
+                            {knowledgeLabel(n)} · {n.title}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field label="Study status">
+                      <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                      >
+                        <option value="">Any status</option>
+                        <option value="not-started">Not started</option>
+                        <option value="in-progress">In progress</option>
+                        <option value="studied">Studied</option>
+                      </select>
+                    </Field>
+                    <Field label="Tag">
+                      <input
+                        value={tagFilter}
+                        placeholder="e.g. feedback"
+                        onChange={(e) => setTagFilter(e.target.value)}
+                      />
+                    </Field>
+                  </div>
+                )}
+              </div>
               <div className="library-banner">
                 <BookOpen size={35} />
                 <div>
@@ -108,55 +274,55 @@ export default function Resources({ data, save, notify }) {
                 </div>
               </div>
               <div className="resource-grid">
-                {data.resources
-                  .filter((r) =>
-                    r.title.toLowerCase().includes(query.toLowerCase()),
-                  )
-                  .map((r, i) => {
-                    const Icon =
-                      r.kind === "audio"
-                        ? Headphones
-                        : r.kind === "video"
-                          ? Video
-                          : r.kind === "url"
-                            ? Link
-                            : FileText;
-                    return (
-                      <button
-                        className="card resource-card"
-                        key={r.id}
-                        onClick={() => setSelected(r.id)}
-                      >
-                        <div className={"resource-cover cover-" + (i % 3)}>
-                          <Icon size={40} strokeWidth={1.2} />
-                          <span>{r.kind.toUpperCase()}</span>
-                          <h3>{r.title}</h3>
-                        </div>
-                        <div className="resource-info">
-                          <Badge
-                            color={
-                              COLORS[
-                                data.concepts.find(
-                                  (c) => c.id === r.concepts?.[0],
-                                )?.domain || 0
-                              ]
-                            }
-                          >
-                            {data.concepts.find((c) => c.id === r.concepts?.[0])
-                              ?.title || "Unfiled resource"}
-                          </Badge>
-                          <h3>{r.title}</h3>
-                          <small>
-                            {
-                              data.notes.filter((n) => n.resourceId === r.id)
-                                .length
-                            }{" "}
-                            notes & highlights · Open to study
-                          </small>
-                        </div>
-                      </button>
-                    );
-                  })}
+                {filteredResources.map((r, i) => {
+                  const Icon =
+                    r.kind === "audio"
+                      ? Headphones
+                      : r.kind === "video"
+                        ? Video
+                        : r.kind === "url"
+                          ? Link
+                          : FileText;
+                  return (
+                    <button
+                      className="card resource-card"
+                      key={r.id}
+                      onClick={() => setSelected(r.id)}
+                    >
+                      <div className={"resource-cover cover-" + (i % 3)}>
+                        <Icon size={40} strokeWidth={1.2} />
+                        <span>{r.kind.toUpperCase()}</span>
+                        <h3>{r.title}</h3>
+                      </div>
+                      <div className="resource-info">
+                        <Badge
+                          color={
+                            COLORS[
+                              data.concepts.find(
+                                (c) => c.id === r.concepts?.[0],
+                              )?.domain || 0
+                            ]
+                          }
+                        >
+                          {data.lifeAreas.find(
+                            (a) => a.id === inferLocation(r, data).areaId,
+                          )?.name ||
+                            data.concepts.find((c) => c.id === r.concepts?.[0])
+                              ?.title ||
+                            "Unfiled resource"}
+                        </Badge>
+                        <h3>{r.title}</h3>
+                        <small>
+                          {
+                            data.notes.filter((n) => n.resourceId === r.id)
+                              .length
+                          }{" "}
+                          notes & highlights · Open to study
+                        </small>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
               {!data.resources.length && (
                 <section className="card empty">
@@ -259,6 +425,12 @@ function AddResource({ data, close, submit, notify }) {
       title: "",
       kind: "pdf",
       concepts: [],
+      knowledgeIds: [],
+      areaId: "",
+      subAreaId: "",
+      tags: [],
+      status: "not-started",
+      notes: "",
       goalId: "",
       url: "",
     }),
@@ -367,11 +539,87 @@ function AddResource({ data, close, submit, notify }) {
             onChange={(v) => setR({ ...r, goalId: v })}
           />
         </Field>
+        <div className="resource-filter-row">
+          <Field label="Forest / Life area">
+            <select
+              value={r.areaId}
+              onChange={(e) =>
+                setR({ ...r, areaId: e.target.value, subAreaId: "" })
+              }
+            >
+              <option value="">Choose a life area</option>
+              {data.lifeAreas.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Grove / Sub-life area">
+            <select
+              value={r.subAreaId}
+              disabled={!r.areaId}
+              onChange={(e) => setR({ ...r, subAreaId: e.target.value })}
+            >
+              <option value="">Choose a grove</option>
+              {(
+                data.lifeAreas.find((a) => a.id === r.areaId)?.subAreas || []
+              ).map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+        <Field label="Study status">
+          <select
+            value={r.status}
+            onChange={(e) => setR({ ...r, status: e.target.value })}
+          >
+            <option value="not-started">Not started</option>
+            <option value="in-progress">In progress</option>
+            <option value="studied">Studied</option>
+          </select>
+        </Field>
+        <Field label="Tags">
+          <input
+            placeholder="feedback, leadership, review"
+            value={r.tags.join(", ")}
+            onChange={(e) =>
+              setR({
+                ...r,
+                tags: e.target.value
+                  .split(",")
+                  .map((x) => x.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
+        </Field>
         <Field label="Where does this knowledge belong?">
           <ConceptChecks
             concepts={data.concepts}
             value={r.concepts}
             change={(v) => setR({ ...r, concepts: v })}
+          />
+        </Field>
+        {r.areaId && (
+          <Field label="Additional ecosystem locations">
+            <ConceptChecks
+              concepts={data.concepts.filter(
+                (c) => !c.areaId || c.areaId === r.areaId,
+              )}
+              value={r.knowledgeIds}
+              change={(v) => setR({ ...r, knowledgeIds: v })}
+            />
+          </Field>
+        )}
+        <Field label="Library note">
+          <textarea
+            value={r.notes}
+            onChange={(e) => setR({ ...r, notes: e.target.value })}
+            placeholder="Why is this resource useful?"
           />
         </Field>
         {error && (
