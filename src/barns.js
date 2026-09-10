@@ -199,6 +199,19 @@ export function validateBarns(data) {
           ["studyGap", "evidence", "harvest", "opportunity"].every(
             (key) => s[key] === undefined || typeof s[key] === "string",
           ) &&
+          (s.practiceMs === undefined ||
+            (Number.isFinite(s.practiceMs) && s.practiceMs >= 0)) &&
+          (!s.practiceStartedAt ||
+            (typeof s.practiceStartedAt === "string" &&
+              Number.isFinite(Date.parse(s.practiceStartedAt)))) &&
+          ["practiceResponses", "rubric"].every(
+            (key) =>
+              s[key] === undefined ||
+              (s[key] &&
+                typeof s[key] === "object" &&
+                !Array.isArray(s[key]) &&
+                Object.values(s[key]).every((v) => typeof v === "string")),
+          ) &&
           /^\d{4}-\d{2}-\d{2}$/.test(s.date) &&
           Number.isFinite(s.planned) &&
           s.planned > 0 &&
