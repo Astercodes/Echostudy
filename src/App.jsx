@@ -625,6 +625,114 @@ export default function App({ user, onSignOut }) {
           )}
           {page === "Today" && (
             <>
+              <section className="dashboard-today card">
+                <div>
+                  <span className="eyebrow">TODAY · {date}</span>
+                  <h2>Here's what you're growing today.</h2>
+                  <p>
+                    Move one meaningful goal forward through intentional Study
+                    and Stretch.
+                  </p>
+                </div>
+                <div className="dashboard-today-actions">
+                  <Button
+                    primary
+                    onClick={() =>
+                      first ? start(first) : go("24-hour planner")
+                    }
+                  >
+                    <Play size={15} fill="currentColor" /> Start Study
+                  </Button>
+                  <Button onClick={() => go("Stretch workspace")}>
+                    <Sprout size={16} /> Start Stretch
+                  </Button>
+                </div>
+              </section>
+              <section className="dashboard-plan card">
+                <div className="section-head">
+                  <div>
+                    <span className="eyebrow">TODAY'S PLAN</span>
+                    <h2>What is next</h2>
+                  </div>
+                  <button
+                    className="text-btn"
+                    onClick={() => go("24-hour planner")}
+                  >
+                    Plan the day <ArrowRight size={15} />
+                  </button>
+                </div>
+                <div className="dashboard-plan-grid">
+                  <div>
+                    <Badge color="#009cde">STUDY</Badge>
+                    {studyBlocks.slice(0, 3).map((b) => (
+                      <button
+                        className="dashboard-plan-item"
+                        key={b.id}
+                        onClick={() => start(b)}
+                      >
+                        <span>🍊</span>
+                        <strong>{b.title}</strong>
+                        <small>
+                          {duration(b.end - b.start)} ·{" "}
+                          {b.objective || "Open intentional study"}
+                        </small>
+                        <em>Start</em>
+                      </button>
+                    ))}
+                    {!studyBlocks.length && (
+                      <p className="muted">No Study block planned yet.</p>
+                    )}
+                  </div>
+                  <div>
+                    <Badge color="#ff7900">STRETCH</Badge>
+                    {(data.learningPlanner || [])
+                      .filter((x) => !x.completed)
+                      .slice(0, 3)
+                      .map((x) => (
+                        <button
+                          className="dashboard-plan-item"
+                          key={x.id}
+                          onClick={() => go("Stretch Planner")}
+                        >
+                          <span>🧪</span>
+                          <strong>{x.title}</strong>
+                          <small>
+                            {x.horizon || "Practice"} ·{" "}
+                            {x.objective || "Build capability through practice"}
+                          </small>
+                          <em>Open</em>
+                        </button>
+                      ))}
+                    {!(data.learningPlanner || []).filter((x) => !x.completed)
+                      .length && (
+                      <p className="muted">No Stretch planned yet.</p>
+                    )}
+                  </div>
+                  <div>
+                    <Badge color="#173dc5">GOALS</Badge>
+                    {data.goals
+                      .filter((g) => g.level === "Day" || g.due === date)
+                      .slice(0, 3)
+                      .map((g) => (
+                        <button
+                          className="dashboard-plan-item"
+                          key={g.id}
+                          onClick={() => go("Goals")}
+                        >
+                          <span>🎯</span>
+                          <strong>{g.title}</strong>
+                          <small>
+                            {g.due === date ? "Due today" : "Daily objective"}
+                          </small>
+                          <em>{g.progress || 0}%</em>
+                        </button>
+                      ))}
+                    {!data.goals.some(
+                      (g) => g.level === "Day" || g.due === date,
+                    ) && <p className="muted">No goal due today.</p>}
+                  </div>
+                </div>
+              </section>
               <div className="stats">
                 <Stat
                   icon={Clock}
@@ -891,6 +999,98 @@ export default function App({ user, onSignOut }) {
                     life goal forward.”
                   </p>
                 </aside>
+              </div>
+              <div className="dashboard-secondary-grid">
+                <section className="card dashboard-list-card">
+                  <div className="section-head">
+                    <h2>Continue growing</h2>
+                    <button
+                      className="text-btn"
+                      onClick={() => go("Resource library")}
+                    >
+                      Resources <ArrowRight size={15} />
+                    </button>
+                  </div>
+                  {data.sessions
+                    .slice(-3)
+                    .reverse()
+                    .map((s) => (
+                      <button
+                        className="dashboard-list-item"
+                        key={s.id}
+                        onClick={() => go("Study workspace")}
+                      >
+                        <span>📖</span>
+                        <div>
+                          <strong>{s.topic}</strong>
+                          <small>
+                            Last session ·{" "}
+                            {duration(Math.floor(s.actualMs / 60000))}
+                          </small>
+                        </div>
+                        <ArrowRight size={15} />
+                      </button>
+                    ))}
+                  {!data.sessions.length && (
+                    <p className="muted">
+                      Complete a session to build your continuation trail.
+                    </p>
+                  )}
+                </section>
+                <section className="card dashboard-list-card">
+                  <div className="section-head">
+                    <h2>Needs attention</h2>
+                    <button
+                      className="text-btn"
+                      onClick={() => go("Knowledge Ecosystem")}
+                    >
+                      Review <ArrowRight size={15} />
+                    </button>
+                  </div>
+                  {data.concepts
+                    .filter((c) => c.status !== "Confident")
+                    .slice(0, 3)
+                    .map((c) => (
+                      <button
+                        className="dashboard-list-item"
+                        key={c.id}
+                        onClick={() => go("Knowledge Ecosystem")}
+                      >
+                        <span>🌱</span>
+                        <div>
+                          <strong>{c.title}</strong>
+                          <small>
+                            {c.reviewed
+                              ? "Review again soon"
+                              : "Needs a first review"}
+                          </small>
+                        </div>
+                        <ArrowRight size={15} />
+                      </button>
+                    ))}
+                  {!data.concepts.some((c) => c.status !== "Confident") && (
+                    <p className="muted">Your knowledge is up to date.</p>
+                  )}
+                </section>
+                <section className="card dashboard-list-card">
+                  <div className="section-head">
+                    <h2>Quick capture</h2>
+                    <Plus size={17} />
+                  </div>
+                  <p>Something worth growing?</p>
+                  <div className="quick-capture-actions">
+                    <button onClick={() => go("Knowledge Ecosystem")}>
+                      Plant a seed
+                    </button>
+                    <button onClick={() => go("Resource library")}>
+                      Save resource
+                    </button>
+                    <button onClick={() => go("Goals")}>Create goal</button>
+                    <button onClick={() => go("Stretch workspace")}>
+                      Create Stretch
+                    </button>
+                  </div>
+                </section>
               </div>
             </>
           )}
