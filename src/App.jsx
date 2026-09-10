@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
 import {
   Sprout,
+  Sparkles,
   LayoutDashboard,
   CalendarDays,
   Target,
