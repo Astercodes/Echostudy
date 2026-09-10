@@ -137,6 +137,7 @@ export function contextualizePractice(data, node, base) {
     title: example[2],
     objective: `${example[3]} ${ENVIRONMENTS[base.environment].subtitle}: adapt this activity to your chosen environment. ${base.practiceDemand || ""}`,
     success: example[4],
+    applyAction: `Perform this practice: ${example[2]}.`,
     scenario: example[3],
   };
 }
@@ -228,6 +229,7 @@ export function finishPracticeRecord(
       completion: 100,
       outcome: "",
       harvest: "",
+      harvests: [],
       evidence: "",
       studyGap: "",
       gapResolved: false,

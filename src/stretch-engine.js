@@ -7,6 +7,7 @@ import {
 } from "./knowledge-tree.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence.js";
 import { contextualizePractice } from "./stretch-practice.js";
+import { goalHorizon } from "./stretch-plans.js";
 
 export const PRACTICE_ENVIRONMENTS = {
   internal: "Internal",
@@ -130,6 +131,7 @@ export function knowledgeStretch(
     practiceDemand: demand,
     success:
       "Record what you did, the evidence of your performance, and one improvement or question for further study.",
+    applyAction: `Perform the ${label.toLowerCase()} practice described here.`,
     planned: spec[2],
     rationale: `${label}-level practice: ${spec[1]}`,
   });
@@ -180,6 +182,9 @@ export function goalStretch(goal) {
     objective: `Identify one capability needed for “${goal.title}”, then perform a small task that demonstrates it. Identify the supporting knowledge and link it below.`,
     success:
       "Produce one observable result that advances this goal; record evidence and what to improve.",
+    applyAction:
+      "Perform the smallest real task that demonstrates movement toward this goal.",
+    horizon: goalHorizon(goal),
     planned: 30,
     rationale:
       "Working backward from your selected goal; edit this starting point to match your situation.",

@@ -14,6 +14,8 @@ import {
 } from "./stretch-engine";
 import { knowledgeLabel, knowledgeEntries } from "./knowledge-tree";
 import StretchPlayer from "./StretchPlayer";
+import HarvestBoard, { HarvestEditor } from "./StretchHarvest";
+import { HORIZONS, validatePlanHierarchy } from "./stretch-plans";
 import {
   ENVIRONMENTS,
   finishPracticeRecord,
@@ -47,6 +49,9 @@ export default function Stretch({
     [playing, setPlaying] = useState(null),
     [recordQuery, setRecordQuery] = useState("");
   const [comparison, setComparison] = useState(null);
+  const [harvesting, setHarvesting] = useState(null),
+    [horizon, setHorizon] = useState(""),
+    [planError, setPlanError] = useState("");
   const knowledge = useMemo(() => practiceNodes(data), [data]);
   const allKnowledge = useMemo(() => knowledgeEntries(data), [data]);
   const records = data.stretches || [];
@@ -57,6 +62,7 @@ export default function Stretch({
       (!subAreaId || s.subAreaId === subAreaId) &&
       (!goalId || s.goalId === goalId) &&
       (status === "all" || s.status === status) &&
+      (!horizon || s.horizon === horizon) &&
       (view === "history"
         ? s.status === "completed"
         : s.status !== "completed") &&
@@ -72,6 +78,7 @@ export default function Stretch({
   const create = (defaults = {}) => {
     const linkedGoal = data.goals.find((g) => g.id === goalId);
     setFinishing(false);
+    setPlanError("");
     setKnowledgeQuery("");
     setEditor({
       id: uid(),
@@ -98,6 +105,11 @@ export default function Stretch({
       gapResolved: false,
       evidence: "",
       harvest: "",
+      harvests: [],
+      applyAction: "",
+      horizon: horizon || "weekly",
+      parentStretchId: "",
+      targetDate: "",
       ...defaults,
     });
   };
@@ -171,7 +183,7 @@ export default function Stretch({
                 ripeness score is required.
               </p>
               <Button primary onClick={() => create()}>
-                Plan a stretch
+                Create Stretch plan
               </Button>
               <Button onClick={() => setView("discover")}>
                 Find an opportunity <ArrowUpRight size={16} />
@@ -242,88 +254,40 @@ export default function Stretch({
             <StretchSuggestions data={data} create={create} />
           )}
           {view === "harvest" && (
-            <section className="stretch-harvest">
-              <div className="stretch-section-heading">
-                <div>
-                  <span className="eyebrow">WHAT YOUR PRACTICE PRODUCED</span>
-                  <h2>Harvest your results.</h2>
-                  <p>
-                    Outcomes, evidence and new questions—kept with the attempt
-                    that produced them.
-                  </p>
-                </div>
-                <Button onClick={() => go("Barns")}>
-                  View Barns <ArrowUpRight size={16} />
-                </Button>
-              </div>
-              {!completed.length && (
-                <div className="card stretch-empty">
-                  <Sprout size={36} />
-                  <h3>Your first result belongs here.</h3>
-                  <p>
-                    Complete an attempt and record what happened. Small results
-                    and unsuccessful attempts count as learning evidence.
-                  </p>
-                  <Button onClick={() => setView("practice")}>
-                    Go to practice
-                  </Button>
-                </div>
-              )}
-              <div className="stretch-harvest-grid">
-                {completed.map((s) => (
-                  <article className="card stretch-harvest-card" key={s.id}>
-                    <small>
-                      {s.date} ·{" "}
-                      {PRACTICE_ENVIRONMENTS[s.environment] || "Practice"}
-                    </small>
-                    <h3>{s.title}</h3>
-                    <h4>Result</h4>
-                    <p>{s.harvest || s.outcome}</p>
-                    {s.evidence && (
-                      <>
-                        <h4>Evidence / feedback</h4>
-                        <p>{s.evidence}</p>
-                      </>
-                    )}
-                    {s.studyGap && (
-                      <div className="stretch-study-gap">
-                        <h4>
-                          {s.gapResolved
-                            ? "Study gap addressed"
-                            : "Return to Study"}
-                        </h4>
-                        <p>{s.studyGap}</p>
-                        {(s.knowledgeIds || [])
-                          .filter((id) => knowledge.some((n) => n.id === id))
-                          .map((id) => (
-                            <Button key={id} onClick={() => onStudy(id)}>
-                              {knowledge.find((n) => n.id === id)?.title}
-                            </Button>
-                          ))}
-                        <Button
-                          onClick={() =>
-                            store({ ...s, gapResolved: !s.gapResolved })
-                          }
-                        >
-                          {s.gapResolved ? "Reopen gap" : "Mark gap addressed"}
-                        </Button>
-                      </div>
-                    )}
-                    <Button
-                      onClick={() => {
-                        setEditor(s);
-                        setFinishing(true);
-                      }}
-                    >
-                      Edit result
-                    </Button>
-                  </article>
-                ))}
-              </div>
-            </section>
+            <HarvestBoard
+              data={data}
+              save={save}
+              onStudy={onStudy}
+              go={go}
+              openHarvest={(plan, entry) => setHarvesting({ plan, entry })}
+            />
           )}
           {["practice", "history"].includes(view) && (
             <>
+              <div className="stretch-horizons" aria-label="Practice horizons">
+                <button aria-pressed={!horizon} onClick={() => setHorizon("")}>
+                  <strong>All plans</strong>
+                  <small>Every horizon</small>
+                </button>
+                {Object.entries(HORIZONS).map(([id, spec]) => (
+                  <button
+                    key={id}
+                    aria-pressed={horizon === id}
+                    onClick={() => setHorizon(horizon === id ? "" : id)}
+                  >
+                    <strong>{spec.name}</strong>
+                    <small>{spec.title}</small>
+                    <span>
+                      {records.filter((s) => s.horizon === id).length} plans
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {horizon && (
+                <p className="muted">
+                  {HORIZONS[horizon].description}. {HORIZONS[horizon].example}
+                </p>
+              )}
               <div className="stretch-section-heading">
                 <div>
                   <h2>
@@ -429,6 +393,34 @@ export default function Stretch({
                       </small>
                       <h3>{s.title}</h3>
                       <small>
+                        {HORIZONS[s.horizon]?.title || "Horizon not set"}
+                        {s.targetDate ? ` · Target ${s.targetDate}` : ""}
+                      </small>
+                      {s.parentStretchId && (
+                        <p className="stretch-plan-lineage">
+                          Contributes to:{" "}
+                          <strong>
+                            {records.find((r) => r.id === s.parentStretchId)
+                              ?.title || "Unavailable parent plan"}
+                          </strong>
+                        </p>
+                      )}
+                      {!!records.filter((r) => r.parentStretchId === s.id)
+                        .length && (
+                        <p>
+                          {
+                            records.filter((r) => r.parentStretchId === s.id)
+                              .length
+                          }{" "}
+                          supporting plans
+                        </p>
+                      )}
+                      {s.applyAction && (
+                        <p>
+                          <strong>Apply:</strong> {s.applyAction}
+                        </p>
+                      )}
+                      <small>
                         {PRACTICE_ENVIRONMENTS[s.environment] ||
                           "Environment not recorded"}{" "}
                         · {STRETCH_SOURCES[s.source] || "User-created"} ·
@@ -474,6 +466,34 @@ export default function Stretch({
                       <p>
                         <strong>Success looks like:</strong> {s.success}
                       </p>
+                      <Button onClick={() => setHarvesting({ plan: s })}>
+                        Record Harvest
+                      </Button>
+                      {HORIZONS[s.horizon]?.rank > 1 && (
+                        <Button
+                          onClick={() =>
+                            create({
+                              title: "",
+                              objective: "",
+                              success: s.success,
+                              parentStretchId: s.id,
+                              horizon: Object.keys(HORIZONS).find(
+                                (key) =>
+                                  HORIZONS[key].rank ===
+                                  HORIZONS[s.horizon].rank - 1,
+                              ),
+                              goalId: s.goalId,
+                              areaId: s.areaId,
+                              subAreaId: s.subAreaId,
+                              capacityIds: s.capacityIds,
+                              knowledgeIds: s.knowledgeIds || [],
+                              source: s.source || "user",
+                            })
+                          }
+                        >
+                          Add supporting plan
+                        </Button>
+                      )}
                       {s.status === "completed" ? (
                         <>
                           <p>
@@ -539,6 +559,7 @@ export default function Stretch({
                                 startedAt: null,
                                 outcome: "",
                                 harvest: "",
+                                harvests: [],
                                 evidence: "",
                                 studyGap: "",
                                 gapResolved: false,
@@ -574,6 +595,7 @@ export default function Stretch({
                                 actualMinutes: 0,
                                 outcome: "",
                                 harvest: "",
+                                harvests: [],
                                 evidence: "",
                                 studyGap: "",
                                 gapResolved: false,
@@ -618,9 +640,7 @@ export default function Stretch({
                         <>
                           <p>{s.planned} planned minutes</p>
                           <Button primary onClick={() => begin(s)}>
-                            {s.status === "active"
-                              ? "Resume practice"
-                              : "Start stretch"}
+                            {s.status === "active" ? "Resume Apply" : "Apply"}
                           </Button>
                           <Button
                             onClick={() => {
@@ -729,6 +749,17 @@ export default function Stretch({
             </Modal>
           ) : null;
         })()}
+      {harvesting && (
+        <HarvestEditor
+          data={data}
+          save={save}
+          plan={
+            records.find((r) => r.id === harvesting.plan.id) || harvesting.plan
+          }
+          entry={harvesting.entry}
+          close={() => setHarvesting(null)}
+        />
+      )}
       {editor && (
         <Modal
           title={
@@ -740,6 +771,11 @@ export default function Stretch({
             className="stretch-editor"
             onSubmit={(e) => {
               e.preventDefault();
+              const hierarchyError = validatePlanHierarchy(records, editor);
+              if (hierarchyError) {
+                setPlanError(hierarchyError);
+                return;
+              }
               if (
                 !editor.title.trim() ||
                 !editor.objective.trim() ||
@@ -761,12 +797,12 @@ export default function Stretch({
               else store(result);
               setEditor(null);
               setPlaying(null);
-              setView(finishing ? "harvest" : "practice");
+              setView(finishing ? "history" : "practice");
             }}
           >
             <details open={!finishing} className="stretch-plan-details">
               <summary>Practice plan · purpose and success</summary>
-              <Field label="Practical activity">
+              <Field label="Stretch plan">
                 <input
                   required
                   value={editor.title}
@@ -774,6 +810,74 @@ export default function Stretch({
                     setEditor({ ...editor, title: e.target.value })
                   }
                   placeholder="Lead a ten-minute team discussion"
+                />
+              </Field>
+              <Field label="Apply — what will you actually do?">
+                <input
+                  value={editor.applyAction || ""}
+                  onChange={(e) =>
+                    setEditor({ ...editor, applyAction: e.target.value })
+                  }
+                  placeholder="Conduct the difficult-feedback conversation"
+                />
+              </Field>
+              <div className="form-grid">
+                <Field label="Practice horizon">
+                  <select
+                    value={editor.horizon || ""}
+                    onChange={(e) =>
+                      setEditor({
+                        ...editor,
+                        horizon: e.target.value,
+                        parentStretchId: "",
+                      })
+                    }
+                  >
+                    <option value="">Choose a horizon</option>
+                    {Object.entries(HORIZONS).map(([id, spec]) => (
+                      <option key={id} value={id}>
+                        {spec.name} — {spec.title}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Larger Stretch plan">
+                  <select
+                    value={editor.parentStretchId || ""}
+                    onChange={(e) =>
+                      setEditor({ ...editor, parentStretchId: e.target.value })
+                    }
+                  >
+                    <option value="">Independent plan</option>
+                    {records
+                      .filter(
+                        (r) =>
+                          r.id !== editor.id &&
+                          HORIZONS[r.horizon]?.rank >
+                            HORIZONS[editor.horizon]?.rank,
+                      )
+                      .map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {HORIZONS[r.horizon].name} · {r.title}
+                        </option>
+                      ))}
+                  </select>
+                </Field>
+              </div>
+              {HORIZONS[editor.horizon] && (
+                <p className="muted">
+                  {HORIZONS[editor.horizon].description}.{" "}
+                  {HORIZONS[editor.horizon].example}
+                </p>
+              )}
+              <Field label="Target date (optional)">
+                <input
+                  type="date"
+                  min={editor.date}
+                  value={editor.targetDate || ""}
+                  onChange={(e) =>
+                    setEditor({ ...editor, targetDate: e.target.value })
+                  }
                 />
               </Field>
               <Field label="What ability will you use or stretch?">
@@ -1090,15 +1194,11 @@ export default function Stretch({
                     }
                   />
                 </Field>
-                <Field label="Harvest · What did this practice produce?">
-                  <textarea
-                    value={editor.harvest || ""}
-                    onChange={(e) =>
-                      setEditor({ ...editor, harvest: e.target.value })
-                    }
-                    placeholder="An outcome, useful result, decision, artifact or change—not just time spent."
-                  />
-                </Field>
+                <p className="muted">
+                  Completing Apply records the attempt. Use Record Harvest
+                  separately when it has produced something you can describe and
+                  support with evidence.
+                </p>
                 <Field label="Evidence, feedback or result references">
                   <textarea
                     value={editor.evidence || ""}
@@ -1141,6 +1241,7 @@ export default function Stretch({
               </>
             )}
             <div className="form-actions">
+              {planError && <p role="alert">{planError}</p>}
               <Button primary type="submit">
                 {finishing ? "Save practice result" : "Save stretch"}
               </Button>

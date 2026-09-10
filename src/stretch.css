@@ -664,3 +664,57 @@
     transition: none;
   }
 }
+.stretch-horizons {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.stretch-horizons button {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 13px 12px;
+  text-align: left;
+  border: 1px solid #dce5f1;
+  border-radius: 10px;
+  background: #fff;
+  color: #173dc5;
+  cursor: pointer;
+}
+.stretch-horizons button small,
+.stretch-horizons button span {
+  color: #6a7e96;
+  font-size: 10px;
+}
+.stretch-horizons button[aria-pressed="true"] {
+  border-color: #ff7900;
+  box-shadow: inset 0 -3px #ff7900;
+  background: #fffaf3;
+}
+.stretch-plan-lineage {
+  color: #60758d;
+  font-size: 12px;
+}
+.stretch-harvest-purpose {
+  border-left: 3px solid #ffd43b;
+  padding: 11px 14px;
+  background: #fffaf0;
+}
+.stretch-harvest-purpose small {
+  color: #60758d;
+}
+.stretch-record .btn,
+.stretch-harvest-card > .btn {
+  margin-right: 6px;
+}
+@media (max-width: 900px) {
+  .stretch-horizons {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .stretch-horizons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

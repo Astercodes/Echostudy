@@ -1,3 +1,8 @@
+import {
+  harvestEntries,
+  HARVEST_TYPES,
+  validatePlanHierarchy,
+} from "./stretch-plans.js";
 export const CAPACITIES = [
   ["spiritual", "Spiritual", "What can I carry spiritually?"],
   ["intellectual", "Intellectual", "How deeply and broadly can I understand?"],
@@ -146,6 +151,10 @@ export function capacitySummary(data, id, areaId = "", subAreaId = "") {
   return {
     sessions,
     evidence,
+    harvestEvidence: harvestEntries(data).filter(
+      (h) =>
+        h.type === "capability" && h.capacityIds?.includes(id) && context(h),
+    ),
     minutes: Math.round(
       sessions.reduce((sum, s) => sum + Math.max(0, s.actualMs || 0), 0) /
         60000,
@@ -223,6 +232,30 @@ export function validateBarns(data) {
           s.completion >= 0 &&
           s.completion <= 100 &&
           typeof s.outcome === "string" &&
+          !validatePlanHierarchy(data.stretches, s) &&
+          (s.applyAction === undefined || typeof s.applyAction === "string") &&
+          (s.harvests === undefined ||
+            (Array.isArray(s.harvests) &&
+              new Set(s.harvests.map((h) => h?.id)).size ===
+                s.harvests.length &&
+              s.harvests.every(
+                (h) =>
+                  h &&
+                  typeof h.id === "string" &&
+                  HARVEST_TYPES[h.type] &&
+                  typeof h.title === "string" &&
+                  h.title.trim() &&
+                  typeof h.description === "string" &&
+                  h.description.trim() &&
+                  typeof h.evidence === "string" &&
+                  /^\d{4}-\d{2}-\d{2}$/.test(h.date) &&
+                  [h.knowledgeIds, h.resourceIds].every(
+                    (ids) =>
+                      Array.isArray(ids) &&
+                      ids.every((id) => typeof id === "string"),
+                  ) &&
+                  validCapacityIds(h.capacityIds),
+              ))) &&
           (s.status !== "completed" || s.outcome.trim()),
       )
     )

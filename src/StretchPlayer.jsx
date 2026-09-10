@@ -40,6 +40,10 @@ export default function StretchPlayer({
         <aside className="card stretch-player-brief">
           <span className="eyebrow">{env.title.toUpperCase()} PRACTICE</span>
           <h2>{record.title}</h2>
+          <h3>Apply</h3>
+          <p>
+            {record.applyAction || "Use this knowledge in the activity below."}
+          </p>
           <p>{record.objective}</p>
           <div
             className="practice-clock"
@@ -187,7 +191,7 @@ export default function StretchPlayer({
                 finish(next);
               }}
             >
-              <CheckCircle2 size={18} /> Review result & harvest
+              <CheckCircle2 size={18} /> Review Apply
             </Button>
             <small>
               An incomplete attempt can still reveal something useful.

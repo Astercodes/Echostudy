@@ -245,6 +245,27 @@ export default function Barns({ data, save }) {
             Record capacity evidence
           </Button>
           <h3>Your evidence over time</h3>
+          {!!stats(selected).harvestEvidence.length && (
+            <section>
+              <h3>Capability Harvest</h3>
+              <p className="muted">
+                Evidence recorded through practice. These claims do not
+                automatically change your self-assessment stage.
+              </p>
+              {stats(selected).harvestEvidence.map((h) => (
+                <article className="barn-entry" key={`${h.planId}:${h.id}`}>
+                  <small>
+                    {h.date} · {h.planTitle}
+                  </small>
+                  <h4>{h.title}</h4>
+                  <p>{h.description}</p>
+                  <p>
+                    <strong>Evidence:</strong> {h.evidence}
+                  </p>
+                </article>
+              ))}
+            </section>
+          )}
           <p className="muted">
             Compare stages within the same life area and sub-area. A lower stage
             in a harder context does not mean you have regressed.
