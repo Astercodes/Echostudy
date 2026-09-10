@@ -75,6 +75,34 @@ const features = [
     body: "Review 16 dimensions of capacity. Pair your self-assessment with visual indicators of linked study, completed practice and goal progress.",
     tone: "gold",
   },
+  {
+    icon: Network,
+    n: "09",
+    title: "Turn knowledge into an ecosystem.",
+    body: "Forests, groves, trees, roots, stems, branches, leaves, fruits and seeds give every idea a home while grafts reveal the connections between them.",
+    tone: "cyan",
+  },
+  {
+    icon: Target,
+    n: "10",
+    title: "Build goals in both directions.",
+    body: "Start with the person you want to become and work backward to knowledge and practice—or promote an important discovery into a larger goal.",
+    tone: "berry",
+  },
+  {
+    icon: Leaf,
+    n: "11",
+    title: "See what your learning produces.",
+    body: "Growth tracks durable knowledge, practice environments, capacity evidence, completed goals and Harvests: insights, artifacts, outcomes and proof.",
+    tone: "leaf",
+  },
+  {
+    icon: Sun,
+    n: "12",
+    title: "Let intelligence guide the next step.",
+    body: "Find weak prerequisites, declining retrieval, study–practice imbalances and the next meaningful action without losing your own judgment.",
+    tone: "gold",
+  },
 ];
 export default function Landing({ navigate }) {
   const [menu, setMenu] = useState(false);
@@ -289,6 +317,44 @@ export default function Landing({ navigate }) {
                 <p>{body}</p>
               </article>
             ))}
+          </div>
+        </section>
+        <section className="landing-system" id="ecosystem">
+          <div className="landing-section-head">
+            <div>
+              <span className="eyebrow">ONE LIVING SYSTEM</span>
+              <h2>From intention to evidence.</h2>
+            </div>
+            <p>
+              EcoStudy keeps the parts of growth connected without making them
+              feel like one crowded screen.
+            </p>
+          </div>
+          <div className="system-loop">
+            {[
+              ["TIME", "Make room in your day"],
+              ["GOALS", "Choose what matters"],
+              ["STUDY", "Grow what you know"],
+              ["ECOSYSTEM", "Connect the ideas"],
+              ["STRETCH", "Exercise what you can do"],
+              ["BARNS", "Enlarge your capacity"],
+              ["HARVEST", "Record what it produced"],
+              ["GROWTH", "See what is changing"],
+            ].map(([name, body], i) => (
+              <article key={name} className={"system-step step-" + (i % 4)}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <strong>{name}</strong>
+                <p>{body}</p>
+              </article>
+            ))}
+          </div>
+          <div className="system-note">
+            <Sprout size={20} />
+            <span>
+              Study and Stretch run in parallel. A practice can reveal a gap, a
+              gap can reshape Study, and a Harvest can become evidence for a
+              larger goal.
+            </span>
           </div>
         </section>
         <section className="landing-study" id="grow">
