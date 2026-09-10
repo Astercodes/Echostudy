@@ -70,11 +70,13 @@ import Resources from "./Resources";
 import Goals, { GoalModal } from "./Goals";
 import Barns, { CapacityPicker } from "./Barns.jsx";
 import Stretch from "./Stretch.jsx";
+import StretchPlanner from "./StretchPlanner.jsx";
 import { workspaceKey } from "./auth";
 const NAV = [
   ["Today", LayoutDashboard],
   ["24-hour planner", CalendarDays],
   ["Goals", Target],
+  ["Stretch Planner", Sparkles],
   ["Study workspace", BookOpen],
   ["Stretch workspace", Flame],
   ["Knowledge Ecosystem", Network],
@@ -911,6 +913,9 @@ export default function App({ user, onSignOut }) {
               create={(defaults) => setModal({ type: "goal", defaults })}
               notify={notify}
             />
+          )}
+          {page === "Stretch Planner" && (
+            <StretchPlanner data={data} save={save} go={go} />
           )}
           {page === "Study workspace" && (
             <Study
