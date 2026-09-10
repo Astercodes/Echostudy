@@ -2286,6 +2286,105 @@ audio {
     padding: 22px;
   }
 }
+.study-resource-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 22px;
+  margin: 16px 0;
+  background: #f7fbff;
+  border: 1px solid #dbe8f4;
+  border-radius: 12px;
+}
+.study-resource-strip h2 {
+  margin: 4px 0;
+  font-size: 20px;
+  color: #102c54;
+}
+.study-resource-strip small {
+  color: #667b94;
+}
+.study-intention-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #fffaf0;
+  border: 1px solid #ffe0a3;
+  border-radius: 10px;
+}
+.study-intention-bar > span {
+  font-size: 11px;
+  color: #6a7e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.study-intention-bar strong {
+  color: #173dc5;
+  font-size: 17px;
+}
+.study-intention-bar select {
+  width: auto;
+  min-width: 170px;
+}
+.study-intention-bar small {
+  color: #6a7e96;
+}
+.study-intention-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.study-intention-picker button {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 11px;
+  border: 1px solid #d9e5f1;
+  border-radius: 9px;
+  background: #fff;
+  cursor: pointer;
+}
+.study-intention-picker button small {
+  color: #71849a;
+  margin-top: 4px;
+}
+.study-intention-picker button.selected {
+  border-color: #ff7900;
+  background: #fff8ed;
+  box-shadow: inset 0 -3px #ff7900;
+}
+.study-panel-details {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #e1eaf3;
+}
+.study-panel-details summary {
+  cursor: pointer;
+  color: #173dc5;
+  font-size: 12px;
+}
+.intention-chip {
+  display: inline-block;
+  padding: 5px 9px;
+  margin: 3px;
+  background: #e9f4ff;
+  border-radius: 12px;
+  color: #173dc5;
+  font-size: 11px;
+}
+@media (max-width: 650px) {
+  .study-resource-strip {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .study-intention-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 /* Citrus palette from the supplied reference. Dark ink/tints preserve readability. */
 :root {
   --berry: #173dc5;

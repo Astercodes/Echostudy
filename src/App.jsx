@@ -1450,7 +1450,18 @@ function SessionModal({ block, data, close, submit }) {
     [mins, setMins] = useState(block ? block.end - block.start : 45),
     [topic, setTopic] = useState(block?.title || ""),
     [concept, setConcept] = useState(""),
-    [resource, setResource] = useState("");
+    [resource, setResource] = useState(""),
+    [intention, setIntention] = useState("peel");
+  const intentions = [
+    ["taste", "Taste", "Explore"],
+    ["peel", "Peel", "Understand"],
+    ["squeeze", "Squeeze", "Deepen"],
+    ["chew", "Chew", "Process"],
+    ["regurgitate", "Regurgitate", "Retrieve"],
+    ["absorb", "Absorb", "Integrate"],
+    ["take-root", "Take Root", "Retain"],
+    ["test", "Test", "Assess"],
+  ];
   const [capacityIds, setCapacityIds] = useState(
     data.goals.find((g) => g.id === block?.goalId)?.capacityIds || [],
   );
@@ -1477,6 +1488,10 @@ function SessionModal({ block, data, close, submit }) {
             started: Date.now(),
             pauses: [],
             notes: "",
+            intention,
+            intentionHistory: [
+              { id: intention, startedAt: Date.now(), minutes: 0 },
+            ],
           });
         }}
       >
@@ -1495,6 +1510,21 @@ function SessionModal({ block, data, close, submit }) {
             onChange={(e) => setObjective(e.target.value)}
             placeholder="Explain how transformers change voltage, using a diagram."
           />
+        </Field>
+        <Field label="Study intention">
+          <div className="study-intention-picker">
+            {intentions.map(([id, label, hint]) => (
+              <button
+                type="button"
+                key={id}
+                className={intention === id ? "selected" : ""}
+                onClick={() => setIntention(id)}
+              >
+                <strong>{label}</strong>
+                <small>{hint}</small>
+              </button>
+            ))}
+          </div>
         </Field>
         <Field label="This session contributes to">
           <GoalSelect
@@ -1592,6 +1622,29 @@ function Study({ data, save, tick, start, finish, go }) {
       String(Math.floor(shown / 60)).padStart(2, "0") +
       ":" +
       String(shown % 60).padStart(2, "0");
+  const intentionLabels = {
+    taste: ["Taste", "Explore"],
+    peel: ["Peel", "Understand"],
+    squeeze: ["Squeeze", "Deepen"],
+    chew: ["Chew", "Process"],
+    regurgitate: ["Regurgitate", "Retrieve"],
+    absorb: ["Absorb", "Integrate"],
+    "take-root": ["Take Root", "Retain"],
+    test: ["Test", "Assess"],
+  };
+  const resource = data.resources.find((r) => r.id === t.resourceId);
+  const switchIntention = (id) =>
+    save((d) => ({
+      ...d,
+      timer: {
+        ...d.timer,
+        intention: id,
+        intentionHistory: [
+          ...(d.timer.intentionHistory || []),
+          { id, startedAt: Date.now(), minutes: 0 },
+        ],
+      },
+    }));
   const pause = () =>
     save((d) => {
       const v = d.timer;
@@ -1626,6 +1679,35 @@ function Study({ data, save, tick, start, finish, go }) {
         </button>
       </div>
       <GoalTrail id={t.goalId} goals={data.goals} />
+      <section className="study-resource-strip">
+        <div>
+          <span className="eyebrow">STUDY RESOURCE</span>
+          <h2>{resource?.title || t.topic}</h2>
+          <small>
+            {resource?.filename ||
+              "No resource attached · use your notes and objective"}
+          </small>
+        </div>
+        <Button onClick={() => go("Resource library")}>
+          <BookOpen size={16} /> Change resource
+        </Button>
+      </section>
+      <section className="study-intention-bar">
+        <span>Current intention</span>
+        <strong>{intentionLabels[t.intention || "peel"]?.[0] || "Peel"}</strong>
+        <select
+          aria-label="Change study intention"
+          value={t.intention || "peel"}
+          onChange={(e) => switchIntention(e.target.value)}
+        >
+          {Object.entries(intentionLabels).map(([id, [label, hint]]) => (
+            <option key={id} value={id}>
+              {label} · {hint}
+            </option>
+          ))}
+        </select>
+        <small>Timer continues when your intention changes.</small>
+      </section>
       <div className="study-layout">
         <section className="card timer-card">
           <div className="eyebrow">YOUR OBJECTIVE</div>
@@ -1707,6 +1789,20 @@ function Study({ data, save, tick, start, finish, go }) {
             }
           />
           <small>Notes save automatically with this session.</small>
+          <details className="study-panel-details">
+            <summary>Session trail</summary>
+            <p>
+              {(t.intentionHistory || []).map((h, i) => (
+                <span key={i} className="intention-chip">
+                  {intentionLabels[h.id]?.[0] || h.id}
+                </span>
+              ))}
+            </p>
+            <small>
+              Temporary notes stay with this session until you save them in the
+              end reflection.
+            </small>
+          </details>
           <div className="session-context">
             <Badge>
               {data.concepts.find((c) => c.id === t.conceptId)?.title ||
