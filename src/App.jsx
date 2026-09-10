@@ -2180,6 +2180,7 @@ function Reflection({ data, save, date, notify }) {
   );
 }
 function Growth({ data }) {
+  const [view, setView] = useState("Overview");
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - 6 + i);
@@ -2201,8 +2202,191 @@ function Growth({ data }) {
   });
   const max = Math.max(60, ...days.flatMap((d) => [d.actual, d.planned]));
   const total = days.reduce((n, d) => n + d.actual, 0);
+  const monthKey = new Date().toISOString().slice(0, 7);
+  const monthSessions = data.sessions.filter((s) =>
+    String(s.date || "").startsWith(monthKey),
+  );
+  const studyMinutes = Math.round(
+    monthSessions.reduce((n, s) => n + (s.actualMs || 0) / 60000, 0),
+  );
+  const completedStretch = (
+    data.stretchPlans ||
+    data.learningPlanner ||
+    []
+  ).filter((x) => x.completed || x.status === "completed").length;
+  const ripe = data.concepts.filter((c) =>
+    ["Confident", "Ripe", "Mature"].includes(c.status),
+  ).length;
+  const growing = data.concepts.filter(
+    (c) => !c.trashedAt && !["Confident", "Ripe", "Mature"].includes(c.status),
+  ).length;
+  const areas = (data.lifeAreas || [])
+    .map((a) => ({
+      ...a,
+      minutes: monthSessions
+        .filter((s) => s.areaId === a.id)
+        .reduce((n, s) => n + (s.actualMs || 0) / 60000, 0),
+    }))
+    .sort((a, b) => b.minutes - a.minutes);
+  const maxArea = Math.max(1, ...areas.map((a) => a.minutes));
   return (
     <>
+      <div className="growth-header card">
+        <div>
+          <span className="eyebrow">YOUR DEVELOPMENT STORY</span>
+          <h2>What is actually changing because you use EcoStudy?</h2>
+          <p>
+            Knowledge, Study, Capacity, Stretch, Goals and Harvest over time.
+          </p>
+        </div>
+        <div className="growth-period">
+          <strong>This month</strong>
+          <span>
+            {studyMinutes}m studied · {completedStretch} Stretch completed
+          </span>
+        </div>
+      </div>
+      <div className="growth-tabs" role="tablist">
+        {[
+          "Overview",
+          "Knowledge",
+          "Study",
+          "Stretch",
+          "Capacity",
+          "Goals",
+          "Harvest",
+        ].map((t) => (
+          <button
+            key={t}
+            className={view === t ? "active" : ""}
+            onClick={() => setView(t)}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      {view !== "Overview" && (
+        <section className="growth-focus card">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">{view.toUpperCase()}</span>
+              <h2>
+                {view === "Knowledge"
+                  ? "Knowledge is becoming durable."
+                  : view === "Study"
+                    ? "Study behavior, not just hours."
+                    : view === "Stretch"
+                      ? "Practice is where knowledge becomes capability."
+                      : view === "Capacity"
+                        ? "Capacity follows demonstrated doing."
+                        : view === "Goals"
+                          ? "Small actions contribute upward."
+                          : "What has learning produced?"}
+              </h2>
+            </div>
+          </div>
+          <div className="growth-metric-grid">
+            <div>
+              <strong>
+                {view === "Knowledge"
+                  ? ripe
+                  : view === "Study"
+                    ? studyMinutes + "m"
+                    : view === "Stretch"
+                      ? completedStretch
+                      : view === "Goals"
+                        ? data.goals.filter((g) => g.progress >= 100).length
+                        : view === "Harvest"
+                          ? (data.harvests || []).length
+                          : "—"}
+              </strong>
+              <span>
+                {view === "Knowledge"
+                  ? "ripe or mature fruits"
+                  : view === "Study"
+                    ? "focused minutes this month"
+                    : view === "Stretch"
+                      ? "completed practices"
+                      : view === "Goals"
+                        ? "goals achieved"
+                        : view === "Harvest"
+                          ? "recorded harvests"
+                          : "capacity evidence"}
+              </span>
+            </div>
+            <div>
+              <strong>{growing}</strong>
+              <span>knowledge items still developing</span>
+            </div>
+            <div>
+              <strong>
+                {
+                  data.goals.filter((g) => g.progress > 0 && g.progress < 100)
+                    .length
+                }
+              </strong>
+              <span>goals in motion</span>
+            </div>
+          </div>
+        </section>
+      )}
+      {view === "Overview" && (
+        <section className="growth-summary-grid">
+          <div className="card">
+            <span className="eyebrow">THIS MONTH</span>
+            <strong>
+              {Math.floor(studyMinutes / 60)}h {studyMinutes % 60}m
+            </strong>
+            <p>Studied · {completedStretch} Stretch experiences completed</p>
+          </div>
+          <div className="card">
+            <span className="eyebrow">KNOWLEDGE GROWTH</span>
+            <strong>{growing + ripe}</strong>
+            <p>
+              {growing} developing · {ripe} ripe or mature
+            </p>
+          </div>
+          <div className="card">
+            <span className="eyebrow">GOALS</span>
+            <strong>
+              {data.goals.filter((g) => g.progress >= 100).length}
+            </strong>
+            <p>
+              goals achieved ·{" "}
+              {
+                data.goals.filter((g) => g.progress > 0 && g.progress < 100)
+                  .length
+              }{" "}
+              in motion
+            </p>
+          </div>
+        </section>
+      )}
+      {view === "Overview" && (
+        <section className="card growth-areas">
+          <div className="section-head">
+            <div>
+              <h2>Where your growth is occurring</h2>
+              <p>Actual Study activity by Forest this month.</p>
+            </div>
+          </div>
+          {areas.slice(0, 8).map((a) => (
+            <div className="growth-area-row" key={a.id}>
+              <strong>{a.name}</strong>
+              <div className="progress">
+                <i style={{ width: (a.minutes / maxArea) * 100 + "%" }} />
+              </div>
+              <span>{Math.round(a.minutes)}m</span>
+            </div>
+          ))}
+          {!areas.some((a) => a.minutes) && (
+            <p className="muted">
+              Complete intentional sessions to see where your growth energy is
+              going.
+            </p>
+          )}
+        </section>
+      )}
       <div className="stats">
         <Stat
           icon={Clock}

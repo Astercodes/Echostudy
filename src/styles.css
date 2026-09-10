@@ -4368,3 +4368,124 @@ input[type="time"] {
     justify-content: flex-start;
   }
 }
+.growth-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 24px;
+  margin-bottom: 16px;
+  background: linear-gradient(110deg, #fffdf6, #eef8ff);
+}
+.growth-header h2 {
+  margin: 6px 0;
+  max-width: 650px;
+}
+.growth-header p {
+  margin: 0;
+  color: var(--muted, #586e8a);
+}
+.growth-period {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 15px;
+  border-left: 3px solid var(--yellow, #ffd400);
+}
+.growth-period span {
+  font-size: 11px;
+  color: var(--muted, #586e8a);
+}
+.growth-tabs {
+  display: flex;
+  gap: 5px;
+  overflow: auto;
+  margin-bottom: 18px;
+  padding: 4px;
+  background: #edf4fc;
+  border-radius: 9px;
+}
+.growth-tabs button {
+  padding: 10px 14px;
+  border-radius: 7px;
+  white-space: nowrap;
+}
+.growth-tabs button.active {
+  background: #fff;
+  box-shadow: 0 1px 5px #102c5415;
+  color: #07529a;
+  font-weight: 700;
+}
+.growth-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.growth-summary-grid .card {
+  padding: 20px;
+}
+.growth-summary-grid strong {
+  display: block;
+  font-size: 28px;
+  margin: 8px 0 4px;
+}
+.growth-summary-grid p {
+  margin: 0;
+  color: var(--muted, #586e8a);
+  font-size: 12px;
+}
+.growth-focus {
+  padding: 22px;
+  margin-bottom: 18px;
+}
+.growth-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.growth-metric-grid > div {
+  padding: 14px;
+  border-radius: 10px;
+  background: #f7faff;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.growth-metric-grid strong {
+  font-size: 24px;
+}
+.growth-metric-grid span {
+  color: var(--muted, #586e8a);
+  font-size: 11px;
+}
+.growth-areas {
+  padding: 22px;
+  margin-bottom: 18px;
+}
+.growth-area-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 60px;
+  gap: 12px;
+  align-items: center;
+  margin: 13px 0;
+  font-size: 12px;
+}
+.growth-area-row .progress {
+  height: 9px;
+}
+.growth-area-row span {
+  text-align: right;
+  color: var(--muted, #586e8a);
+}
+@media (max-width: 800px) {
+  .growth-header,
+  .growth-summary-grid,
+  .growth-metric-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .growth-area-row {
+    grid-template-columns: 120px 1fr 45px;
+  }
+}
