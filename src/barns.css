@@ -307,3 +307,13 @@
     min-height: 0;
   }
 }
+.organic-signal {
+  color: #087f73;
+  font-weight: 700;
+}
+.organic-callout {
+  padding: 12px;
+  border-left: 3px solid #0aa68a;
+  background: #effaf7;
+  color: #17665b;
+}

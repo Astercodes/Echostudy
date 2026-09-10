@@ -184,6 +184,12 @@ export default function Barns({ data, save }) {
                 <span style={{ color: "#ff7900" }}>●</span> Goals{" "}
                 {s.goal.toFixed(1)}%
               </small>
+              {s.organic > 0 && (
+                <small className="organic-signal">
+                  ✦ Organic evidence detected · {s.organicSignals} activity
+                  signals
+                </small>
+              )}
               <div className="barn-stats">
                 <span>{s.minutes} min invested</span>
                 <span>{s.completedGoals} goals achieved</span>
@@ -213,6 +219,14 @@ export default function Barns({ data, save }) {
             {stats(selected).studyUnits.toFixed(1)} / 10 study credits ·{" "}
             {stats(selected).goalUnits.toFixed(1)} / 5 goal credits
           </p>
+          {stats(selected).organicSignals > 0 && (
+            <p className="organic-callout">
+              EcoStudy also detected {stats(selected).organicSignals} organic
+              evidence signal{stats(selected).organicSignals === 1 ? "" : "s"}{" "}
+              from activity elsewhere in your workspace. This is supporting
+              evidence, not a self-assessment.
+            </p>
+          )}
           <h3>Practical activities</h3>
           {stats(selected).stretches.map((s) => (
             <article className="barn-entry" key={s.id}>

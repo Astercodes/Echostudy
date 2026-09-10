@@ -116,6 +116,10 @@ export function capacityProgress(data, id, areaId = "", subAreaId = "") {
   const practice = Math.min(60, (practiceUnits / 10) * 60);
   const study = Math.min(20, (studyUnits / 10) * 20);
   const goal = Math.min(20, (goalUnits / 5) * 20);
+  // Organic evidence is deliberately capped and weaker than explicit links.
+  // It spots repeated activity whose language clearly signals a capacity,
+  // without treating reading alone as proof of capability.
+  const organic = Math.min(15, summary.organicSignals * 3);
   return {
     ...summary,
     goals,
@@ -123,11 +127,12 @@ export function capacityProgress(data, id, areaId = "", subAreaId = "") {
     studyUnits,
     study,
     goal,
+    organic,
     stretches,
     practiceUnits,
     practice,
     practiceMinutes: stretches.reduce((n, s) => n + s.actualMinutes, 0),
-    percent: Math.round(study + goal + practice),
+    percent: Math.round(Math.min(100, study + goal + practice + organic)),
     completedGoals: goals.filter((g) => g.progress >= 100).length,
   };
 }
@@ -148,6 +153,36 @@ export function capacitySummary(data, id, areaId = "", subAreaId = "") {
       (a, b) =>
         a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt),
     );
+  const capacity = CAPACITIES.find((c) => c.id === id);
+  const terms =
+    {
+      communication:
+        "feedback presentation conversation speaking listening writing",
+      leadership: "lead manager management delegate initiative team",
+      learning: "study learn review recall test practice",
+      execution: "deliver complete plan execute project",
+      emotional: "conflict emotion pressure regulate resilience",
+      relational: "relationship family colleague mentor conversation",
+      intellectual: "theory analysis research concept principle",
+      cognitive: "reason solve decision problem memory focus",
+    }[id] || capacity?.name.toLowerCase();
+  const organicSignals = [
+    ...sessions,
+    ...(data.stretches || []),
+    ...harvestEntries(data),
+  ].filter((item) => {
+    const text =
+      `${item.title || ""} ${item.topic || ""} ${item.objective || ""} ${item.outcome || ""}`.toLowerCase();
+    const contextMatch =
+      !areaId ||
+      (item.areaId ?? data.goals.find((g) => g.id === item.goalId)?.areaId) ===
+        areaId;
+    return (
+      contextMatch &&
+      !item.capacityIds?.includes(id) &&
+      terms?.split(" ").some((term) => text.includes(term))
+    );
+  }).length;
   return {
     sessions,
     evidence,
@@ -159,6 +194,7 @@ export function capacitySummary(data, id, areaId = "", subAreaId = "") {
       sessions.reduce((sum, s) => sum + Math.max(0, s.actualMs || 0), 0) /
         60000,
     ),
+    organicSignals,
   };
 }
 export function validateBarns(data) {
