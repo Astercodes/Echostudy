@@ -972,6 +972,28 @@ function KnowledgeView({
                     </>
                   )}
                   <div className="fruit-actions" aria-label="Knowledge actions">
+                    <Button
+                      onClick={() => {
+                        const loc = locationOf(sel, entries, data.lifeAreas);
+                        const goal = {
+                          id: uid(),
+                          title: `Grow: ${sel.title}`,
+                          level: "Year",
+                          parent: "",
+                          areaId: loc.areaId,
+                          subAreaId: loc.subAreaId || "",
+                          progress: 0,
+                          due: "",
+                          capacityIds: [],
+                          knowledgeIds: [sel.id],
+                          source: "knowledge-ecosystem",
+                        };
+                        props.save((d) => ({ ...d, goals: [...d.goals, goal] }));
+                        props.notify("Knowledge promoted into a yearly goal.");
+                      }}
+                    >
+                      <Sprout size={15} /> Make this a goal
+                    </Button>
                     {[
                       ["peel", "Peel"],
                       ["squeeze", "Squeeze"],

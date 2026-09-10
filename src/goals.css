@@ -432,3 +432,4 @@
     font-size: 18px;
   }
 }
+.goal-ecosystem-link { color: var(--blue, #07529a); font-weight: 650; }

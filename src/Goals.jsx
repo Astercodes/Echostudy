@@ -87,6 +87,11 @@ export default function Goals({ data, save, edit, create, notify }) {
               {goalLocation(g, areas)}
               {g.due ? " · Due " + g.due : ""}
             </small>
+            {g.knowledgeIds?.length > 0 && (
+              <small className="goal-ecosystem-link">
+                ↗ Ecosystem pathway · {g.knowledgeIds.length} linked knowledge {g.knowledgeIds.length === 1 ? "node" : "nodes"}
+              </small>
+            )}
             <div className="progress">
               <i
                 style={{
