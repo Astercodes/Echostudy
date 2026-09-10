@@ -68,6 +68,71 @@ export const STAGES = [
   "Sustaining under complexity",
   "Helping others develop",
 ];
+export const CAPACITY_INDICATORS = {
+  communication: [
+    "Clarity",
+    "Listening",
+    "Difficult conversations",
+    "Persuasion",
+    "Written communication",
+    "Presentation",
+  ],
+  leadership: [
+    "Decision making",
+    "Delegation",
+    "Conflict navigation",
+    "Initiative",
+    "Team development",
+  ],
+  learning: ["Focus", "Retrieval", "Retention", "Integration", "Adaptation"],
+  emotional: [
+    "Self-regulation",
+    "Resilience",
+    "Perspective-taking",
+    "Pressure tolerance",
+  ],
+  execution: ["Planning", "Consistency", "Follow-through", "Adaptation"],
+};
+export function capacityAssessment(data, id, areaId = "", subAreaId = "") {
+  const s = capacityProgress(data, id, areaId, subAreaId);
+  const evidenceUnits =
+    s.practiceUnits +
+    s.studyUnits * 0.35 +
+    s.goalUnits * 0.25 +
+    s.harvestEvidence.length * 1.5;
+  const stage =
+    evidenceUnits >= 24
+      ? 5
+      : evidenceUnits >= 16
+        ? 4
+        : evidenceUnits >= 9
+          ? 3
+          : evidenceUnits >= 3
+            ? 2
+            : 1;
+  const confidence =
+    s.harvestEvidence.length ||
+    s.stretches.filter((x) => x.environment === "real").length >= 2
+      ? "Strong"
+      : s.stretches.length || s.sessions.length
+        ? "Moderate"
+        : "Limited";
+  const intentional = Math.round(s.practice + s.study + s.goal);
+  return {
+    ...s,
+    stage,
+    stageLabel: STAGES[stage - 1],
+    confidence,
+    intentional,
+    organic: Math.round(s.organic),
+    indicators: CAPACITY_INDICATORS[id] || [
+      "Understanding",
+      "Practice",
+      "Consistency",
+      "Results",
+    ],
+  };
+}
 export const validCapacityIds = (ids) =>
   Array.isArray(ids) &&
   new Set(ids).size === ids.length &&

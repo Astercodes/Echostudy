@@ -4,6 +4,7 @@ import {
   STAGES,
   capacitySummary,
   capacityProgress,
+  capacityAssessment,
 } from "./barns.js";
 import { COLORS, uid, today } from "./model";
 import { Button, Modal, Field } from "./App";
@@ -80,7 +81,7 @@ export default function Barns({ data, save }) {
     [selected, setSelected] = useState(null),
     [editing, setEditing] = useState(null);
   const area = data.lifeAreas.find((a) => a.id === areaId);
-  const stats = (id) => capacityProgress(data, id, areaId, subAreaId);
+  const stats = (id) => capacityAssessment(data, id, areaId, subAreaId);
   const add = (capacityId) =>
     setEditing({
       id: uid(),
@@ -177,6 +178,14 @@ export default function Barns({ data, save }) {
                 {latest ? STAGES[latest.stage - 1] : "Not yet assessed"} ·
                 personal assessment
               </small>
+              <small className="barn-evidence-line">
+                {s.stageLabel} · Evidence confidence: {s.confidence}
+              </small>
+              <div className="barn-indicators">
+                {s.indicators.slice(0, 4).map((indicator) => (
+                  <span key={indicator}>{indicator}</span>
+                ))}
+              </div>
               <small>
                 <span style={{ color: "#173dc5" }}>●</span> Practice{" "}
                 {s.practice.toFixed(1)}% · <span style={{ color }}>●</span>{" "}
@@ -219,6 +228,25 @@ export default function Barns({ data, save }) {
             {stats(selected).studyUnits.toFixed(1)} / 10 study credits ·{" "}
             {stats(selected).goalUnits.toFixed(1)} / 5 goal credits
           </p>
+          <div className="barn-assessment card">
+            <strong>{stats(selected).stageLabel}</strong>
+            <span>Evidence confidence: {stats(selected).confidence}</span>
+            <p>
+              Intentional evidence: {stats(selected).intentional}% · Organic
+              evidence: {stats(selected).organic}%
+            </p>
+          </div>
+          <h3>Capacity indicators</h3>
+          <div className="barn-indicators detail">
+            {stats(selected).indicators.map((indicator) => (
+              <span key={indicator}>{indicator}</span>
+            ))}
+          </div>
+          <p className="muted">
+            The strongest evidence comes from repeated, increasingly difficult
+            practice that produces outcomes. Study informs readiness; it does
+            not prove capability by itself.
+          </p>
           {stats(selected).organicSignals > 0 && (
             <p className="organic-callout">
               EcoStudy also detected {stats(selected).organicSignals} organic
@@ -227,6 +255,18 @@ export default function Barns({ data, save }) {
               evidence, not a self-assessment.
             </p>
           )}
+          <div className="barn-next-step">
+            <strong>Next enlargement</strong>
+            <p>
+              {stats(selected).confidence === "Limited"
+                ? "Start a small Stretch and record what it produces."
+                : stats(selected).stage < 3
+                  ? "Move from understanding into repeated practice."
+                  : stats(selected).stage < 5
+                    ? "Increase difficulty or practice in a less familiar environment."
+                    : "Use this capacity to help someone else develop."}
+            </p>
+          </div>
           <h3>Practical activities</h3>
           {stats(selected).stretches.map((s) => (
             <article className="barn-entry" key={s.id}>

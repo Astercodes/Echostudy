@@ -317,3 +317,47 @@
   background: #effaf7;
   color: #17665b;
 }
+.barn-evidence-line {
+  color: #07529a;
+  font-weight: 700;
+}
+.barn-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 6px 0;
+}
+.barn-indicators span {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #edf4fc;
+  color: #315879;
+  font-size: 10px;
+}
+.barn-indicators.detail span {
+  background: #fff3d6;
+  color: #76540a;
+}
+.barn-assessment {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #f7faff;
+}
+.barn-assessment span,
+.barn-assessment p {
+  font-size: 11px;
+  color: #586e8a;
+  margin: 0;
+}
+.barn-next-step {
+  margin-top: 14px;
+  padding: 13px;
+  border-left: 3px solid #ff7900;
+  background: #fff8ed;
+}
+.barn-next-step p {
+  margin: 4px 0 0;
+  color: #76540a;
+}
