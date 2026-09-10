@@ -89,7 +89,8 @@ export default function Goals({ data, save, edit, create, notify }) {
             </small>
             {g.knowledgeIds?.length > 0 && (
               <small className="goal-ecosystem-link">
-                ↗ Ecosystem pathway · {g.knowledgeIds.length} linked knowledge {g.knowledgeIds.length === 1 ? "node" : "nodes"}
+                ↗ Ecosystem pathway · {g.knowledgeIds.length} linked knowledge{" "}
+                {g.knowledgeIds.length === 1 ? "node" : "nodes"}
               </small>
             )}
             <div className="progress">
@@ -106,6 +107,48 @@ export default function Goals({ data, save, edit, create, notify }) {
           </div>
           <span className="percent">{goalProgress(g.id, data.goals)}%</span>
           <div className="goal-row-actions">
+            <button
+              className="text-btn goal-pathway-btn"
+              onClick={() => {
+                const pathway = [
+                  {
+                    title: `Study toward: ${g.title}`,
+                    objective: `Identify the knowledge required to make progress on ${g.title}.`,
+                    kind: "study",
+                    horizon: g.level,
+                    goalId: g.id,
+                    source: "goal",
+                  },
+                  {
+                    title: `Stretch toward: ${g.title}`,
+                    objective: `Practise one capability that would demonstrate progress on ${g.title}.`,
+                    kind: "stretch",
+                    horizon: g.level,
+                    goalId: g.id,
+                    source: "goal",
+                  },
+                ].map((x) => ({
+                  ...x,
+                  id: uid(),
+                  status: "planned",
+                  createdAt: new Date().toISOString(),
+                }));
+                save((d) => ({
+                  ...d,
+                  learningPlanner: [
+                    ...(d.learningPlanner || []).filter(
+                      (x) => x.goalId !== g.id || x.status === "completed",
+                    ),
+                    ...pathway,
+                  ],
+                }));
+                notify(
+                  "Goal pathway created: Study and Stretch actions are ready.",
+                );
+              }}
+            >
+              Build pathway
+            </button>
             <button className="text-btn" onClick={() => edit(g)}>
               Edit
             </button>
@@ -157,6 +200,29 @@ export default function Goals({ data, save, edit, create, notify }) {
           </small>
         </div>
       </div>
+      <section className="goals-pathway-banner card">
+        <div>
+          <span className="eyebrow">GOAL → GROWTH PATHWAYS</span>
+          <h3>Every goal can direct what you Study and Stretch next.</h3>
+          <p>
+            Build a pathway from any goal to create intentional Study and
+            Stretch actions. Complete actions remain as evidence of
+            contribution.
+          </p>
+        </div>
+        <div className="goals-pathway-stats">
+          <strong>{data.goals.filter((g) => g.progress > 0).length}</strong>
+          <span>goals in motion</span>
+          <strong>
+            {
+              (data.learningPlanner || []).filter(
+                (x) => x.source === "goal" && x.status !== "completed",
+              ).length
+            }
+          </strong>
+          <span>pathway actions ready</span>
+        </div>
+      </section>
       <div className="knowledge-toolbar">
         <div className="segmented">
           <button
