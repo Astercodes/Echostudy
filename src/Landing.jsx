@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Brand } from "./AuthShell";
 import LandingDetails from "./LandingDetails";
+import LandingCopy from "./LandingCopy";
 import { LivingTree } from "./LandingVisuals";
 import { EcosystemSculpture } from "./EcosystemSculpture";
 import "./landing-polish.css";
@@ -47,9 +48,8 @@ export default function Landing({ navigate }) {
           <a href="#barns-story" onClick={() => setMenu(false)}>
             BARNS
           </a>
-          <a href="#learners" onClick={() => setMenu(false)}>
-            Who it's for
-          </a>
+          <a href="#students" onClick={() => setMenu(false)}>For Students</a>
+          <a href="#lifelong-learners" onClick={() => setMenu(false)}>For Lifelong Learners</a>
           <a href="#questions" onClick={() => setMenu(false)}>
             Questions
           </a>
@@ -105,141 +105,7 @@ export default function Landing({ navigate }) {
               <EcosystemSculpture />
           </div>
         </section>
-        <section className="life-strip" aria-label="Every life area">
-          <span>GROW ACROSS YOUR WHOLE LIFE</span>
-          <div>
-            {[
-              "Mind & expertise",
-              "Spirit & faith",
-              "Health & energy",
-              "Career & craft",
-              "Relationships",
-              "Life & finances",
-            ].map((s, i) => (
-              <span key={s}>
-                <i className={"life-dot dot-" + i} />
-                {s}
-              </span>
-            ))}
-          </div>
-        </section>
-        <section className="story-problem" id="how-it-works">
-          <span className="eyebrow">FROM INFORMATION TO UNDERSTANDING</span>
-          <h2>
-            You read it. You saved it.
-            <br />
-            What stays with you?
-          </h2>
-          <p>
-            A book, a video, a highlighted paragraph. Weeks later, the idea can
-            be difficult to recall, disconnected from what you already know, and
-            harder to use.
-          </p>
-          <p>
-            <strong>
-              Give what you learn somewhere to grow roots, form connections, and
-              become useful.
-            </strong>
-          </p>
-        </section>
-        <EcosystemStory />
-        <section className="story-resources" id="resources">
-          <div>
-            <span className="eyebrow">EVERYTHING YOU ARE LEARNING FROM</span>
-            <h2>Bring your resources with you.</h2>
-            <p>
-              Save learning materials and links in your Resource Library.
-              Organize them by the life areas and knowledge they support, then
-              find them again through search and filters.
-            </p>
-            <p>
-              Read PDFs and text, save connected highlights, and keep the source
-              close to your notes.
-            </p>
-            <button className="text-btn" onClick={() => navigate("signup")}>
-              Build your Resource Library <ArrowRight size={17} />
-            </button>
-          </div>
-          <div
-            className="resource-formats"
-            aria-label="Learning resource formats"
-          >
-            {[
-              "Books",
-              "PDFs",
-              "Videos",
-              "Articles",
-              "Audio",
-              "Courses",
-              "Reports",
-              "Notes",
-              "Web links",
-            ].map((format) => (
-              <span key={format}>{format}</span>
-            ))}
-          </div>
-        </section>
-        <section className="landing-study" id="grow">
-          <div className="study-example">
-            <div className="example-top">
-              <span>
-                <span />
-                YOUR INTENTIONAL STUDY SPACE
-              </span>
-              <small>ILLUSTRATIVE SESSION</small>
-            </div>
-            <div className="example-goals">
-              <span>Yearly goal</span>
-              <ArrowRight size={13} />
-              <span>Weekly priority</span>
-              <ArrowRight size={13} />
-              <strong>Today’s objective</strong>
-            </div>
-            <div className="example-session">
-              <div>
-                <span className="eyebrow">TODAY, I WANT TO UNDERSTAND</span>
-                <h3>
-                  How systems connect
-                  <br />
-                  to create something greater.
-                </h3>
-                <p>One clear objective. A little space to think.</p>
-                <div className="example-tags">
-                  <span>Systems thinking</span>
-                  <span>Deep study</span>
-                </div>
-              </div>
-              <div className="example-timer">
-                <span>45:00</span>
-                <small>A MOMENT TO GO DEEPER</small>
-              </div>
-            </div>
-            <div className="example-bottom">
-              <BookOpen size={17} /> Read with purpose <span /> Connect an idea{" "}
-              <span /> Reflect & grow
-            </div>
-          </div>
-          <div className="study-copy">
-            <span className="eyebrow">LESS DRIFTING. MORE BECOMING.</span>
-            <h2>
-              Not just another
-              <br />
-              hour of study.
-              <br />
-              <em>A step toward you.</em>
-            </h2>
-            <p>
-              Before the timer begins, know what you want to learn and why it
-              matters. When it ends, capture what changed—and where your
-              curiosity wants to go next.
-            </p>
-            <button className="text-btn" onClick={() => navigate("signup")}>
-              Give your next hour a purpose <ArrowRight size={17} />
-            </button>
-          </div>
-        </section>
-        <LandingDetails navigate={navigate} />
-        <GrowthStory navigate={navigate} />
+        <LandingCopy navigate={navigate} />
         <section className="landing-manifesto">
           <span className="eyebrow">THE ECHOSTUDY WAY</span>
           <blockquote>
@@ -337,7 +203,8 @@ export default function Landing({ navigate }) {
       </main>
       <footer className="landing-footer">
         <Brand onClick={() => navigate("landing")} />
-        <span>Grow with intention. Live with depth.</span>
+        <span>Your knowledge is an ecosystem. Grow it.</span>
+        <div className="footer-links"><nav aria-label="Platform"><strong>Platform</strong>{[["Study","grow"],["Knowledge Ecosystem","ecosystem"],["Resource Library","resources"],["Stretch","practice"],["BARNS","barns-story"],["Goals","goals-story"],["Growth","growth-story"]].map(([name,id])=><a key={id} href={`#${id}`}>{name}</a>)}</nav><nav aria-label="Learn"><strong>Learn</strong><a href="#how-it-works">How ecostudy works</a><a href="#study-actions">Study method</a><a href="#whole-system">The connected ecosystem</a><a href="#barns-story">Capacity building</a></nav></div>
         <div>
           <button onClick={() => navigate("login")}>Log in</button>
           <button onClick={() => navigate("signup")}>Create an account</button>
