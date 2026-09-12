@@ -18,92 +18,8 @@ import {
 } from "lucide-react";
 import { Brand } from "./AuthShell";
 import LandingDetails from "./LandingDetails";
-const features = [
-  {
-    icon: Clock,
-    n: "01",
-    title: "Give your time a purpose.",
-    body: "Build a realistic 24-hour plan around your life. Protect rest, honor commitments, and find room for deep study.",
-    tone: "cyan",
-  },
-  {
-    icon: Target,
-    n: "02",
-    title: "Study toward something.",
-    body: "Connect today’s objective to a weekly priority, a yearly goal, and the person you want to become.",
-    tone: "berry",
-  },
-  {
-    icon: Network,
-    n: "03",
-    title: "Grow a connected mind.",
-    body: "Build your Knowledge Ecosystem: forests for life areas, groves for sub-areas, and topic trees with roots, branches, leaves, fruits and seeds.",
-    tone: "leaf",
-  },
-  {
-    icon: NotebookPen,
-    n: "04",
-    title: "Give each session an objective.",
-    body: "Know what you want to understand before the timer starts. Track focused time, pauses and reflections alongside your larger goals.",
-    tone: "gold",
-  },
-  {
-    icon: BookOpen,
-    n: "05",
-    title: "Keep resources close.",
-    body: "Read PDFs and text, highlight passages, and connect notes to the knowledge they support. Keep resource links and learning materials in your workspace.",
-    tone: "cyan",
-  },
-  {
-    icon: NotebookPen,
-    n: "06",
-    title: "Work through your thinking.",
-    body: "Peel a subject into layers, Chew on its reasoning, recall it from memory, and Test for gaps. Expanded components give your writing direction.",
-    tone: "berry",
-  },
-  {
-    icon: Target,
-    n: "07",
-    title: "Stretch through doing.",
-    body: "Plan practical activities across goals and life areas. Name the abilities you will use, define success, and record what happened.",
-    tone: "leaf",
-  },
-  {
-    icon: Sprout,
-    n: "08",
-    title: "See growth in Barns.",
-    body: "Review 16 dimensions of capacity. Pair your self-assessment with visual indicators of linked study, completed practice and goal progress.",
-    tone: "gold",
-  },
-  {
-    icon: Network,
-    n: "09",
-    title: "Turn knowledge into an ecosystem.",
-    body: "Forests, groves, trees, roots, stems, branches, leaves, fruits and seeds give every idea a home while grafts reveal the connections between them.",
-    tone: "cyan",
-  },
-  {
-    icon: Target,
-    n: "10",
-    title: "Build goals in both directions.",
-    body: "Start with the person you want to become and work backward to knowledge and practice—or promote an important discovery into a larger goal.",
-    tone: "berry",
-  },
-  {
-    icon: Leaf,
-    n: "11",
-    title: "See what your learning produces.",
-    body: "Growth tracks durable knowledge, practice environments, capacity evidence, completed goals and Harvests: insights, artifacts, outcomes and proof.",
-    tone: "leaf",
-  },
-  {
-    icon: Sun,
-    n: "12",
-    title: "Let intelligence guide the next step.",
-    body: "Find weak prerequisites, declining retrieval, study–practice imbalances and the next meaningful action without losing your own judgment.",
-    tone: "gold",
-  },
-];
+import { LivingTree } from "./LandingVisuals";
+import { EcosystemStory, GrowthStory } from "./LandingStory";
 export default function Landing({ navigate }) {
   const [menu, setMenu] = useState(false);
   return (
@@ -120,8 +36,17 @@ export default function Landing({ navigate }) {
           <a href="#ecosystem" onClick={() => setMenu(false)}>
             Knowledge Ecosystem
           </a>
+          <a href="#grow" onClick={() => setMenu(false)}>
+            Study
+          </a>
           <a href="#practice" onClick={() => setMenu(false)}>
-            Stretch & Barns
+            Stretch
+          </a>
+          <a href="#barns-story" onClick={() => setMenu(false)}>
+            BARNS
+          </a>
+          <a href="#learners" onClick={() => setMenu(false)}>
+            Who it's for
           </a>
           <a href="#questions" onClick={() => setMenu(false)}>
             Questions
@@ -132,7 +57,7 @@ export default function Landing({ navigate }) {
             Log in <ArrowUpRight size={15} />
           </button>
           <button className="btn primary" onClick={() => navigate("signup")}>
-            Get started <ArrowRight size={15} />
+            Start growing <ArrowRight size={15} />
           </button>
           <button
             className="icon-btn landing-menu"
@@ -151,119 +76,31 @@ export default function Landing({ navigate }) {
               FOR A LIFE THAT KEEPS GROWING
             </span>
             <h1>
-              Make time.
+              Your knowledge is an ecosystem.
               <br />
-              Grow your mind.
-              <br />
-              <em>Become more.</em>
+              <em>Grow it.</em>
             </h1>
             <p>
-              Plan your day. Study deeply. Connect what you learn and put it
-              into practice. EchoStudy brings time, goals, knowledge, practical
-              growth and self-reflection into one workspace.
+              Turn what you read, watch, hear, and experience into knowledge you
+              understand, remember, connect, practice, and use.
             </p>
             <div className="hero-actions">
               <button
                 className="btn primary"
                 onClick={() => navigate("signup")}
               >
-                Start growing with intention <ArrowRight size={18} />
+                Start growing <ArrowRight size={18} />
               </button>
-              <a href="#how-it-works" className="text-btn">
-                Explore EchoStudy <ArrowUpRight size={16} />
-              </a>
             </div>
             <div className="hero-note">
               <Sprout size={18} />
-              <span>One connected workspace. Every area of your life.</span>
+              <span>
+                Study deeply. Practice what you learn. Grow your capacity.
+              </span>
             </div>
           </div>
-          <div
-            className="hero-garden"
-            aria-label="Illustration of time, goals, and knowledge growing together"
-          >
-            <div className="garden-label">
-              <span />
-              YOUR GROWTH, CONNECTED
-            </div>
-            <svg
-              className="garden-lines"
-              viewBox="0 0 600 550"
-              aria-hidden="true"
-            >
-              <path
-                d="M300 430C300 380 285 330 287 270M287 300C230 300 225 230 150 230M287 310C370 310 360 205 450 205M287 365C220 365 210 390 130 370M287 260C287 180 330 170 340 100"
-                fill="none"
-                stroke="#07529a"
-                strokeWidth="5"
-                strokeLinecap="round"
-              />
-              <path
-                d="M150 230C95 240 120 165 74 152M450 205C490 170 470 128 530 110M340 140C390 140 376 80 420 65"
-                fill="none"
-                stroke="#009cde"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-              <path
-                d="M297 389Q358 329 423 356Q380 420 297 411"
-                fill="#ff7900"
-              />
-              <path
-                d="M278 292Q220 227 192 291Q210 324 278 321"
-                fill="#dcefff"
-              />
-              <path
-                d="M300 222Q370 152 370 219Q363 251 297 255"
-                fill="#ffd7b0"
-              />
-            </svg>
-            <div className="garden-card garden-time">
-              <div>
-                <Clock size={17} />
-                <span>MAKE ROOM</span>
-              </div>
-              <strong>
-                24 hours.
-                <br />A little more intention.
-              </strong>
-              <div className="mini-timebar">
-                <i />
-                <i />
-                <i />
-                <i />
-                <i />
-              </div>
-              <small>Rest. Live. Learn. Repeat.</small>
-            </div>
-            <div className="garden-card garden-goal">
-              <Target size={19} />
-              <span>THIS YEAR → THIS DAY</span>
-              <strong>Become a deeper thinker.</strong>
-              <small>
-                <Check size={13} />
-                One purposeful session at a time
-              </small>
-            </div>
-            <div className="garden-concept gc-one">
-              <span />A new perspective
-            </div>
-            <div className="garden-concept gc-two">
-              <Plus size={13} />
-              An unexpected connection
-            </div>
-            <div className="garden-concept gc-three">
-              <Leaf size={15} />A stronger capacity
-            </div>
-            <div className="garden-root">
-              <Sprout size={25} />
-              <strong>Your growing mind</strong>
-            </div>
-            <span className="garden-star star-a">✦</span>
-            <span className="garden-star star-b">✧</span>
-            <div className="garden-caption">
-              Small seeds. Extraordinary possibilities.
-            </div>
+          <div className="hero-ecosystem">
+            <LivingTree />
           </div>
         </section>
         <section className="life-strip" aria-label="Every life area">
@@ -284,77 +121,60 @@ export default function Landing({ navigate }) {
             ))}
           </div>
         </section>
-        <section className="landing-section" id="how-it-works">
-          <div className="landing-section-head">
-            <div>
-              <span className="eyebrow">
-                FROM BUSY DAYS TO MEANINGFUL GROWTH
-              </span>
-              <h2>
-                Everything you need.
-                <br />
-                <em>Connected by intention.</em>
-              </h2>
-            </div>
-            <p>
-              You don’t need another place to collect information.
-              <br />
-              You need a place to turn it into understanding,
-              <br />
-              competence, and a life that keeps expanding.
-            </p>
-          </div>
-          <div className="landing-features">
-            {features.map(({ icon: Icon, n, title, body, tone }) => (
-              <article className={"landing-feature tone-" + tone} key={n}>
-                <div className="feature-top">
-                  <div>
-                    <Icon size={25} />
-                  </div>
-                  <span>{n}</span>
-                </div>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </article>
-            ))}
-          </div>
+        <section className="story-problem" id="how-it-works">
+          <span className="eyebrow">FROM INFORMATION TO UNDERSTANDING</span>
+          <h2>
+            You read it. You saved it.
+            <br />
+            What stays with you?
+          </h2>
+          <p>
+            A book, a video, a highlighted paragraph. Weeks later, the idea can
+            be difficult to recall, disconnected from what you already know, and
+            harder to use.
+          </p>
+          <p>
+            <strong>
+              Give what you learn somewhere to grow roots, form connections, and
+              become useful.
+            </strong>
+          </p>
         </section>
-        <section className="landing-system" id="ecosystem">
-          <div className="landing-section-head">
-            <div>
-              <span className="eyebrow">ONE LIVING SYSTEM</span>
-              <h2>From intention to evidence.</h2>
-            </div>
+        <EcosystemStory />
+        <section className="story-resources" id="resources">
+          <div>
+            <span className="eyebrow">EVERYTHING YOU ARE LEARNING FROM</span>
+            <h2>Bring your resources with you.</h2>
             <p>
-              EcoStudy keeps the parts of growth connected without making them
-              feel like one crowded screen.
+              Save learning materials and links in your Resource Library.
+              Organize them by the life areas and knowledge they support, then
+              find them again through search and filters.
             </p>
+            <p>
+              Read PDFs and text, save connected highlights, and keep the source
+              close to your notes.
+            </p>
+            <button className="text-btn" onClick={() => navigate("signup")}>
+              Build your Resource Library <ArrowRight size={17} />
+            </button>
           </div>
-          <div className="system-loop">
+          <div
+            className="resource-formats"
+            aria-label="Learning resource formats"
+          >
             {[
-              ["TIME", "Make room in your day"],
-              ["GOALS", "Choose what matters"],
-              ["STUDY", "Grow what you know"],
-              ["ECOSYSTEM", "Connect the ideas"],
-              ["STRETCH", "Exercise what you can do"],
-              ["BARNS", "Enlarge your capacity"],
-              ["HARVEST", "Record what it produced"],
-              ["GROWTH", "See what is changing"],
-            ].map(([name, body], i) => (
-              <article key={name} className={"system-step step-" + (i % 4)}>
-                <span>{String(i + 1).padStart(2, "0")}</span>
-                <strong>{name}</strong>
-                <p>{body}</p>
-              </article>
+              "Books",
+              "PDFs",
+              "Videos",
+              "Articles",
+              "Audio",
+              "Courses",
+              "Reports",
+              "Notes",
+              "Web links",
+            ].map((format) => (
+              <span key={format}>{format}</span>
             ))}
-          </div>
-          <div className="system-note">
-            <Sprout size={20} />
-            <span>
-              Study and Stretch run in parallel. A practice can reveal a gap, a
-              gap can reshape Study, and a Harvest can become evidence for a
-              larger goal.
-            </span>
           </div>
         </section>
         <section className="landing-study" id="grow">
@@ -417,6 +237,7 @@ export default function Landing({ navigate }) {
           </div>
         </section>
         <LandingDetails navigate={navigate} />
+        <GrowthStory navigate={navigate} />
         <section className="landing-manifesto">
           <span className="eyebrow">THE ECHOSTUDY WAY</span>
           <blockquote>
@@ -498,14 +319,17 @@ export default function Landing({ navigate }) {
           <div>
             <Sprout size={29} />
             <h2>
-              Your next chapter
+              Your knowledge is an ecosystem.
               <br />
-              starts with <em>one intentional day.</em>
+              <em>Grow it.</em>
             </h2>
-            <p>Make room for the mind—and life—you want to grow.</p>
+            <p>
+              Plant the question. Grow the knowledge. Stretch the capability.
+              Harvest the result.
+            </p>
           </div>
           <button className="btn" onClick={() => navigate("signup")}>
-            Plant the first seed <ArrowRight size={18} />
+            Start growing with EcoStudy <ArrowRight size={18} />
           </button>
         </section>
       </main>
