@@ -82,13 +82,6 @@ const intentions = [
     "Find your next study step",
     Check,
   ],
-  [
-    "Check Ripeness",
-    "Prepare for a deeper challenge.",
-    "A planned readiness view bringing understanding, retrieval, reasoning and durability together.",
-    "Planned readiness assessment",
-    Leaf,
-  ],
 ];
 const environments = [
   [

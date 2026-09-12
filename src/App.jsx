@@ -1295,9 +1295,9 @@ export default function App({ user, onSignOut }) {
       {modal?.type === "settings" && (
         <Modal title="Your workspace & backup" onClose={() => setModal(null)}>
           <p>
-            ecostudy stores plans, goals, notes and reflections in this
-            browser. Uploaded files stay in this browser's IndexedDB. There is
-            no account or cloud sync in this version.
+            ecostudy stores plans, goals, notes and reflections in this browser.
+            Uploaded files stay in this browser's IndexedDB. There is no account
+            or cloud sync in this version.
           </p>
           <div className="notice">
             Export regularly. Clearing browser data removes your workspace. JSON
@@ -2215,11 +2215,11 @@ function Growth({ data }) {
     data.learningPlanner ||
     []
   ).filter((x) => x.completed || x.status === "completed").length;
-  const ripe = data.concepts.filter((c) =>
-    ["Confident", "Ripe", "Mature"].includes(c.status),
+  const established = data.concepts.filter((c) =>
+    ["Confident", "Mature"].includes(c.status),
   ).length;
   const growing = data.concepts.filter(
-    (c) => !c.trashedAt && !["Confident", "Ripe", "Mature"].includes(c.status),
+    (c) => !c.trashedAt && !["Confident", "Mature"].includes(c.status),
   ).length;
   const areas = (data.lifeAreas || [])
     .map((a) => ({
@@ -2290,7 +2290,7 @@ function Growth({ data }) {
             <div>
               <strong>
                 {view === "Knowledge"
-                  ? ripe
+                  ? established
                   : view === "Study"
                     ? studyMinutes + "m"
                     : view === "Stretch"
@@ -2303,7 +2303,7 @@ function Growth({ data }) {
               </strong>
               <span>
                 {view === "Knowledge"
-                  ? "ripe or mature fruits"
+                  ? "established fruits"
                   : view === "Study"
                     ? "focused minutes this month"
                     : view === "Stretch"
@@ -2342,9 +2342,9 @@ function Growth({ data }) {
           </div>
           <div className="card">
             <span className="eyebrow">KNOWLEDGE GROWTH</span>
-            <strong>{growing + ripe}</strong>
+            <strong>{growing + established}</strong>
             <p>
-              {growing} developing · {ripe} ripe or mature
+              {growing} developing · {established} established
             </p>
           </div>
           <div className="card">

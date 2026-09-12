@@ -179,8 +179,8 @@ export default function Stretch({
               <p>
                 Exercise knowledge through internal rehearsal, simulations,
                 social practice and real-world situations. Start small and
-                increase the challenge as you learn. No study completion or
-                ripeness score is required.
+                increase the challenge as you learn. No study completion score
+                is required.
               </p>
               <Button primary onClick={() => create()}>
                 Create Stretch plan

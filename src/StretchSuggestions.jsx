@@ -291,7 +291,7 @@ export default function StretchSuggestions({ data, create }) {
               <textarea
                 value={opportunity}
                 onChange={(e) => setOpportunity(e.target.value)}
-                placeholder="From Test, Check Ripeness, Chew, recall or your own experience: what can you not do yet?"
+                placeholder="From Test, Chew, recall or your own experience: what can you not do yet?"
               />
             </Field>
             {opportunity.trim() && (

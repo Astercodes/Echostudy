@@ -90,9 +90,6 @@ function Section({ section, navigate, index }) {
             }
           >
             {group.title && <h3>{text(group.title)}</h3>}
-            {group.title === "Check Ripeness" && (
-              <span className="copy-planned">Planned readiness assessment</span>
-            )}
             {group.lines.map((line, j) =>
               line.includes("→**") && !line.includes("Study →") ? (
                 <button

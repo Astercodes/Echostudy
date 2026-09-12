@@ -91,7 +91,7 @@ export default function KnowledgeTest({ node, persist, close }) {
         </p>
         <p>
           Test at any point. These results are self-assessed against your
-          references. They do not mark a fruit ripe or move it into Stretch.
+          references. They do not move a fruit into Stretch.
         </p>
         <div className="segmented">
           {["practice", "questions", "profile"].map((s) => (
