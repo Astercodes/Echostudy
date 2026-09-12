@@ -77,7 +77,7 @@ const NAV = [
   ["Today", LayoutDashboard],
   ["24-hour planner", CalendarDays],
   ["Goals", Target],
-  ["Stretch Planner", Sparkles],
+  ["Growth Planner", Sparkles],
   ["Study workspace", BookOpen],
   ["Stretch workspace", Flame],
   ["Knowledge Ecosystem", Network],
@@ -391,7 +391,7 @@ export default function App({ user, onSignOut }) {
           <div className="brand-icon">
             <Sprout />
           </div>
-          echo<span>study</span>
+          eco<span>study</span>
         </a>
         <div className="workspace-label">YOUR GROWTH WORKSPACE</div>
         <nav>
@@ -693,7 +693,7 @@ export default function App({ user, onSignOut }) {
                         <button
                           className="dashboard-plan-item"
                           key={x.id}
-                          onClick={() => go("Stretch Planner")}
+                          onClick={() => go("Growth Planner")}
                         >
                           <span>🧪</span>
                           <strong>{x.title}</strong>
@@ -1115,7 +1115,7 @@ export default function App({ user, onSignOut }) {
               notify={notify}
             />
           )}
-          {page === "Stretch Planner" && (
+          {page === "Growth Planner" && (
             <StretchPlanner data={data} save={save} go={go} />
           )}
           {page === "Study workspace" && (
@@ -1295,7 +1295,7 @@ export default function App({ user, onSignOut }) {
       {modal?.type === "settings" && (
         <Modal title="Your workspace & backup" onClose={() => setModal(null)}>
           <p>
-            EchoStudy stores plans, goals, notes and reflections in this
+            ecostudy stores plans, goals, notes and reflections in this
             browser. Uploaded files stay in this browser's IndexedDB. There is
             no account or cloud sync in this version.
           </p>
@@ -1316,7 +1316,7 @@ export default function App({ user, onSignOut }) {
                 try {
                   const s = JSON.parse(await e.target.files[0].text());
                   if (!validateBackup(s))
-                    throw Error("Invalid EchoStudy backup");
+                    throw Error("Invalid ecostudy backup");
                   setModal({ type: "import", data: migrateWorkspace(s) });
                 } catch (err) {
                   notify("Could not import: " + err.message);
@@ -2235,7 +2235,7 @@ function Growth({ data }) {
       <div className="growth-header card">
         <div>
           <span className="eyebrow">YOUR DEVELOPMENT STORY</span>
-          <h2>What is actually changing because you use EcoStudy?</h2>
+          <h2>What is actually changing because you use ecostudy?</h2>
           <p>
             Knowledge, Study, Capacity, Stretch, Goals and Harvest over time.
           </p>

@@ -159,7 +159,7 @@ export default function AuthShell() {
           onClick={() => navigate("landing")}
         >
           <ArrowLeft size={16} />
-          Back to EchoStudy
+          Back to ecostudy
         </button>
         <AuthForm
           key={mode}
@@ -187,7 +187,7 @@ export function Brand({ onClick }) {
       }}
     >
       <Sprout size={30} />
-      echo<span>study</span>
+      eco<span>study</span>
     </a>
   );
 }
@@ -441,7 +441,7 @@ function AuthForm({ mode, navigate, verifiedUser, externalMessage }) {
       )}
       {!update && (
         <p className="auth-switch">
-          {signup ? "Already growing with us?" : "New to EchoStudy?"}{" "}
+          {signup ? "Already growing with us?" : "New to ecostudy?"}{" "}
           <button onClick={() => navigate(signup ? "login" : "signup")}>
             {signup ? "Sign in" : "Create an account"}
             <ArrowRight size={13} />

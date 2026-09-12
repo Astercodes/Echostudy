@@ -165,7 +165,6 @@ export default function LandingDetails({ navigate }) {
         </div>
       </section>
       <LivingTree />
-      <ProductShowcase />
       <section
         className="landing-section landing-action-section"
         id="study-actions"

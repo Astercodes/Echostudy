@@ -19,6 +19,8 @@ import {
 import { Brand } from "./AuthShell";
 import LandingDetails from "./LandingDetails";
 import { LivingTree } from "./LandingVisuals";
+import { EcosystemSculpture } from "./EcosystemSculpture";
+import "./landing-polish.css";
 import { EcosystemStory, GrowthStory } from "./LandingStory";
 export default function Landing({ navigate }) {
   const [menu, setMenu] = useState(false);
@@ -100,7 +102,7 @@ export default function Landing({ navigate }) {
             </div>
           </div>
           <div className="hero-ecosystem">
-            <LivingTree />
+              <EcosystemSculpture />
           </div>
         </section>
         <section className="life-strip" aria-label="Every life area">
@@ -269,7 +271,7 @@ export default function Landing({ navigate }) {
           <div>
             {[
               [
-                "Is EchoStudy only for academic study?",
+                "Is ecostudy only for academic study?",
                 "No. Goals start with 24 life areas and 428 sub-areas, from faith and intellectual growth to civic life, digital wellbeing, safety, creativity, and legacy. Add your own areas and decide what growth means in each one.",
               ],
               [
@@ -329,7 +331,7 @@ export default function Landing({ navigate }) {
             </p>
           </div>
           <button className="btn" onClick={() => navigate("signup")}>
-            Start growing with EcoStudy <ArrowRight size={18} />
+            Start growing with ecostudy <ArrowRight size={18} />
           </button>
         </section>
       </main>
@@ -341,7 +343,7 @@ export default function Landing({ navigate }) {
           <button onClick={() => navigate("signup")}>Create an account</button>
           <a href="#questions">Data & questions</a>
         </div>
-        <small>© {new Date().getFullYear()} EchoStudy</small>
+        <small>© {new Date().getFullYear()} ecostudy</small>
       </footer>
     </div>
   );

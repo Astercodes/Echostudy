@@ -1,0 +1,45 @@
+.landing { --ink: #112d56; background: #fcfcfa; }
+.landing .landing-nav { max-width: none; padding: 20px 4vw; border-bottom: 1px solid #dde5ec; background: #fcfcfaf2; backdrop-filter: blur(16px); }
+.landing .landing-links { gap: 19px; }
+.landing .landing-links a { font-size: 11px; }
+.landing .landing-hero { max-width: 1440px; margin: auto; grid-template-columns: 1fr 1.08fr; gap: 5vw; padding: 64px 4vw 76px; min-height: 730px; }
+.landing .hero-copy h1 { font-size: clamp(46px, 4.6vw, 70px); line-height: 1.02; letter-spacing: -.055em; font-weight: 600; }
+.landing .hero-copy h1 em { color: #ed632b; font-style: normal; }
+.landing .hero-copy > p { max-width: 460px; font-size: 17px; line-height: 1.8; color: #52647b; }
+.landing .hero-note { font-size: 11px; max-width: 370px; line-height: 1.6; }
+.landing .btn.primary { background: #123f91; border-radius: 100px; padding: 15px 23px; box-shadow: 0 6px 20px #133c9120; transition: transform .2s, background .2s; }
+.landing .btn.primary:hover { transform: translateY(-2px); background: #0b2b68; }
+.landing .hero-label { font-size: 10px; letter-spacing: .18em; color: #61728b; }
+.eco-sculpture { background: linear-gradient(140deg, #102e63, #08192e); color: #fff; border-radius: 26px; padding: 22px 24px 16px; box-shadow: 0 30px 80px #102e6326; position: relative; overflow: hidden; }
+.sculpture-top { display: flex; justify-content: space-between; gap: 15px; font-size: 8px; letter-spacing: .14em; color: #b7cce7; }
+.sculpture-top i { display: inline-block; width: 5px; height: 5px; background: #ffd43b; border-radius: 50%; margin-right: 7px; }
+.eco-sculpture svg { width: 100%; display: block; margin: -8px 0 -32px; }
+.sculpture-caption { position: relative; padding: 15px 4px; }
+.sculpture-caption strong { font-size: 20px; font-weight: 500; }
+.sculpture-caption p { font-size: 11px; line-height: 1.6; color: #b5c8e2; min-height: 35px; margin: 8px 0; }
+.sculpture-controls { display: flex; border-top: 1px solid #ffffff24; }
+.sculpture-controls button { flex: 1; font-size: 10px; color: #b5c8e2; padding: 16px 6px 7px; background: none; border: 0; text-align: left; }
+.sculpture-controls button span { margin-right: 6px; color: #6087b2; }
+.sculpture-controls button[aria-pressed="true"] { color: #ffcf32; }
+.sculpture-controls button:focus-visible { outline: 2px solid #ffcf32; outline-offset: -2px; }
+.sculpture-pulse { transform-origin: 300px 248px; animation: sculpture-pulse 4s ease-out infinite; }
+.sculpture-fruit { animation: sculpture-breathe 6s ease-in-out infinite alternate; transform-origin: center; }
+.sculpture-branches { stroke-dasharray: 900; animation: sculpture-grow 3s ease-out both; }
+.phase-1 .sculpture-fruit { filter: drop-shadow(0 0 10px #ff790099); }
+.phase-2 .sculpture-pulse { stroke: #ff7049; }
+.landing .ecosystem-story { background: #0b2348; border-radius: 32px; margin: 30px 3vw; padding: 70px 5vw; }
+.landing .ecosystem-route button { border-radius: 14px; background: #14305a; border-color: #426085; }
+.landing .ecosystem-route button[aria-selected="true"] { background: #ffca36; color: #0b2348; }
+.landing .story-panel { border: 0; border-radius: 17px; }
+.landing .story-example { background: #fff3d6; }
+.landing .story-problem { padding-top: 90px; padding-bottom: 65px; }
+.landing .story-heading h2, .landing .story-problem h2 { font-weight: 500; letter-spacing: -.04em; }
+.landing .life-strip { background: #f0f4f8; border-top: 1px solid #dce5ef; border-bottom: 1px solid #dce5ef; }
+.landing .landing-feature, .landing .development-grid article, .landing .harvest-examples article { box-shadow: none; }
+.landing .landing-cta { background: #0b2348; border-radius: 26px; }
+@keyframes sculpture-pulse { 0% { transform: scale(.94); opacity: .7; } 85%,100% { transform: scale(1.35); opacity: 0; } }
+@keyframes sculpture-grow { from { stroke-dashoffset: 900; } to { stroke-dashoffset: 0; } }
+@keyframes sculpture-breathe { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+@media(max-width:1100px) { .landing .landing-links { gap: 10px; } .landing .landing-nav { padding: 16px 22px; } .landing .landing-links a { font-size: 10px; } }
+@media(max-width:800px) { .landing .landing-hero { grid-template-columns: 1fr; gap: 40px; padding: 38px 24px 50px; } .landing .hero-copy h1 { font-size: clamp(43px, 9vw, 66px); max-width: 620px; } .hero-ecosystem { max-width: 560px; width: 100%; margin: auto; } .landing .ecosystem-story { margin: 20px 12px; padding: 48px 20px; } .eco-sculpture { padding: 18px; } }
+@media(prefers-reduced-motion:reduce) { .sculpture-pulse, .sculpture-fruit, .sculpture-branches { animation: none; } .landing .btn.primary { transition: none; } }

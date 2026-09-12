@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-// Public browser configuration for EchoStudy. This publishable key is not an
+// Public browser configuration for ecostudy. This publishable key is not an
 // admin credential. Environment overrides must supply a complete project pair.
 const defaultProject = {
   url: "https://efgeyhovbidwvaxcyyzk.supabase.co",
