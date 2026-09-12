@@ -153,7 +153,7 @@ export function EcosystemStory() {
         aria-labelledby={`system-tab-${active}`}
       >
         <div className="story-panel-copy">
-          <span className="story-index">0{active + 1} / 07</span>
+          <span className="story-index">{current.name}</span>
           <h3>{current.question}</h3>
           <p>{current.copy}</p>
           <small>{current.next}</small>
