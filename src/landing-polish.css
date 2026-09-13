@@ -1,4 +1,9 @@
 .landing { --ink: #112d56; background: #fcfcfa; }
+.sculpture-caption { animation: caption-slide .65s ease both; }
+.sculpture-pause { display: block; margin: 10px 0 0 auto; background: none; border: 0; color: #b5c8e2; font-size: 10px; cursor: pointer; padding: 8px; }
+@keyframes caption-slide { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+.landing .hero-label > span, .landing .reader-focus i, .landing .sculpture-top i { display: none; }
+.landing .eyebrow::before, .landing .hero-label::before { content: none; }
 .landing .landing-nav { max-width: none; padding: 20px 4vw; border-bottom: 1px solid #dde5ec; background: #fcfcfaf2; backdrop-filter: blur(16px); }
 .landing .landing-links { gap: 19px; }
 .landing .landing-links a { font-size: 11px; }

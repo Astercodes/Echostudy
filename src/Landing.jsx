@@ -48,11 +48,6 @@ export default function Landing({ navigate }) {
           <a href="#barns-story" onClick={() => setMenu(false)}>
             BARNS
           </a>
-          <a href="#students" onClick={() => setMenu(false)}>For Students</a>
-          <a href="#lifelong-learners" onClick={() => setMenu(false)}>For Lifelong Learners</a>
-          <a href="#questions" onClick={() => setMenu(false)}>
-            Questions
-          </a>
         </nav>
         <div className="landing-nav-actions">
           <button className="text-btn" onClick={() => navigate("login")}>
@@ -74,7 +69,6 @@ export default function Landing({ navigate }) {
         <section className="landing-hero">
           <div className="hero-copy">
             <span className="hero-label">
-              <span />
               FOR A LIFE THAT KEEPS GROWING
             </span>
             <h1>
@@ -107,7 +101,7 @@ export default function Landing({ navigate }) {
         </section>
         <LandingCopy navigate={navigate} />
         <section className="landing-manifesto">
-          <span className="eyebrow">THE ECHOSTUDY WAY</span>
+          <span className="eyebrow">THE ECOSTUDY WAY</span>
           <blockquote>
             “Every hour should serve a purpose.
             <br />

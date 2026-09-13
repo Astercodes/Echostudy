@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 const growth = [
   {
     label: "Understand",
@@ -20,11 +20,18 @@ const growth = [
 ];
 export function EcosystemSculpture() {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (paused || motion.matches) return;
+    const timer = window.setInterval(() => setActive((value) => (value + 1) % growth.length), 5000);
+    return () => window.clearInterval(timer);
+  }, [paused]);
   return (
     <div className={`eco-sculpture phase-${active}`}>
       <div className="sculpture-top">
         <span>
-          <i /> A LIVING BODY OF KNOWLEDGE
+          A LIVING BODY OF KNOWLEDGE
         </span>
       </div>
       <svg
@@ -126,7 +133,7 @@ export function EcosystemSculpture() {
           strokeOpacity=".6"
         />
       </svg>
-      <div className="sculpture-caption" aria-live="polite">
+      <div key={active} className="sculpture-caption" aria-live={paused ? "polite" : "off"}>
         <strong>{growth[active].title}</strong>
         <p>{growth[active].detail}</p>
       </div>
@@ -142,6 +149,7 @@ export function EcosystemSculpture() {
           </button>
         ))}
       </div>
+      <button className="sculpture-pause" onClick={() => setPaused(!paused)} aria-label={paused ? "Resume growth cycle" : "Pause growth cycle"}>{paused ? "Play cycle" : "Pause cycle"}</button>
     </div>
   );
 }

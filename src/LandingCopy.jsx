@@ -3,7 +3,7 @@ import copy from "./landing-copy.json";
 import { ArrowRight } from "lucide-react";
 import { EcosystemStory } from "./LandingStory";
 import "./landing-copy.css";
-import { editorialSections } from "./LandingEditorial";
+import { editorialSections, AnalyticsScene } from "./LandingEditorial";
 
 const ids = {
   "THE PROBLEM": "how-it-works",
@@ -135,6 +135,7 @@ export default function LandingCopy({ navigate }) {
               <Section section={section} navigate={navigate} />
             )}{" "}
             {section.name === "THE IDEA" && <EcosystemStory />}
+            {section.name === "GROWTH" && <AnalyticsScene navigate={navigate} />}
           </React.Fragment>
         );
       })}

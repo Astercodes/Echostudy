@@ -191,6 +191,56 @@ function Art({ name, alt, children }) {
   );
 }
 
+export function ProblemScene() {
+  return <Frame id="how-it-works" className="problem-scene">
+    <Intro tag="THE GAP BETWEEN SAVING AND KNOWING" title={<>So much collected.<br /><em>How much stays with you?</em></>}>
+      You finish a book feeling inspired. Save a video for later. Highlight a sentence you never want to forget. But when you need the idea—in a conversation, a decision, a difficult moment—it slips away.
+    </Intro>
+    <div className="problem-composition">
+      <div className="scattered-learning" aria-label="Saved resources without a connected learning process">
+        <div className="loose-resource"><BookOpen /><span>The book you finished</span><small>What was the central idea?</small></div>
+        <div className="loose-resource"><FileText /><span>The highlight you saved</span><small>Where does it belong?</small></div>
+        <div className="loose-resource"><Headphones /><span>The lesson you heard</span><small>When will you use it?</small></div>
+        <strong>Collected.<br /><em>Then disconnected.</em></strong>
+      </div>
+      <div className="problem-insights">
+        <article><Brain /><div><h3>Familiar isn't understood.</h3><p>Recognizing an idea on the page isn't the same as explaining it in your own words.</p></div></article>
+        <article><Network /><div><h3>Saved isn't connected.</h3><p>A folder can hold a hundred notes without showing how one idea strengthens another.</p></div></article>
+        <article><FlaskConical /><div><h3>Known isn't yet practised.</h3><p>Knowledge needs encounters with real situations to become something you can use.</p></div></article>
+      </div>
+    </div>
+    <p className="problem-resolution">You don't need another place to collect more.<br /><strong>You need a way to grow what you already take in.</strong></p>
+  </Frame>;
+}
+
+export function AnalyticsScene({ navigate }) {
+  return <Frame id="growth-analytics" className="analytics-scene">
+    <Intro tag="GROWTH ANALYTICS" title={<>Your effort has a story.<br /><em>See it taking shape.</em></>}>
+      Bring studying, doing and capacity development into one view. See where your time goes, follow your practice, and reflect on the evidence building in your BARNS.
+    </Intro>
+    <div className="analytics-canvas">
+      <header><div><span>YOUR GROWTH, CONNECTED</span><h3>A season of becoming.</h3></div><small>Illustrative data · January–June</small></header>
+      <div className="analytics-layout">
+        <div className="analytics-main-chart">
+          <div className="analytics-legend"><span>Study hours</span><span>Stretch hours</span></div>
+          <svg viewBox="0 0 640 290" role="img" aria-label="Illustrative monthly study hours rise from 8 to 32, while Stretch hours rise from 3 to 22, January to June">
+            <defs><linearGradient id="analytics-fill" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#009cde" stopOpacity=".32"/><stop offset="1" stopColor="#009cde" stopOpacity="0"/></linearGradient></defs>
+            {[40,100,160,220].map((y,i)=><g key={y}><line x1="36" x2="620" y1={y} y2={y} stroke="#ffffff18"/><text x="0" y={y+4} fill="#b5c8e2" fontSize="11">{40-i*10}h</text></g>)}
+            <path d="M40 232 C90 230 110 194 156 190 S225 205 272 166 S340 150 388 130 S460 149 504 112 S572 99 620 88 L620 250 L40 250Z" fill="url(#analytics-fill)"/>
+            <path className="analytics-curve" d="M40 232 C90 230 110 194 156 190 S225 205 272 166 S340 150 388 130 S460 149 504 112 S572 99 620 88" fill="none" stroke="#4cc6ff" strokeWidth="4"/>
+            <path className="analytics-curve" d="M40 262 C90 262 110 244 156 244 S225 221 272 226 S340 210 388 196 S460 205 504 178 S572 166 620 148" fill="none" stroke="#ff9a38" strokeWidth="4"/>
+            {["Jan","Feb","Mar","Apr","May","Jun"].map((m,i)=><text key={m} x={40+i*116} y="288" textAnchor="middle" fill="#b5c8e2" fontSize="12">{m}</text>)}
+          </svg>
+          <p>Different rhythms. One direction.</p>
+        </div>
+        <aside className="analytics-capacity"><span>CAPACITY EVIDENCE</span><h4>More than hours logged.</h4>{[["Communication",78],["Learning",86],["Leadership",64],["Execution",71]].map(([name,value])=><div key={name}><label>{name}<span>{value}%</span></label><div className="analytics-meter"><i style={{width:`${value}%`}}/></div></div>)}<small>Illustrative activity indicators, alongside self-assessment.</small></aside>
+      </div>
+      <div className="analytics-bottom"><div><BookOpen/><strong>Study</strong><span>Time & knowledge development</span></div><div><FlaskConical/><strong>Stretch</strong><span>Practice & recorded results</span></div><div><Wheat/><strong>BARNS</strong><span>Evidence & capacity reflection</span></div></div>
+    </div>
+    <Start navigate={navigate}>See the bigger picture</Start>
+  </Frame>;
+}
+
 export function IdeaScene({ navigate }) {
   return (
     <Frame id="ecosystem" className="idea-scene">
@@ -759,6 +809,7 @@ export function AudienceScene({ navigate }) {
 }
 
 export const editorialSections = {
+  "THE PROBLEM": ProblemScene,
   "THE IDEA": IdeaScene,
   STUDY: StudyScene,
   "STUDY WORKSPACE": WorkspaceScene,
