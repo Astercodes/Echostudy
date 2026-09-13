@@ -1,0 +1,61 @@
+/* Mobile sections sit on a quiet canvas with visible space between them. */
+@media (max-width: 800px) {
+  .landing .landing-main { background: #e8edf3; }
+  .landing .landing-hero { background: #fcfcfa; padding: 38px 24px 42px; margin-bottom: 20px; border-radius: 0 0 24px 24px; }
+  .landing .landing-copy { display: flow-root; padding: 0 10px; }
+  .landing .landing-copy > section,
+  .landing .landing-main > .landing-manifesto,
+  .landing .landing-main > .landing-faq,
+  .landing .landing-main > .landing-cta {
+    margin: 0 0 22px;
+    padding: 34px 22px;
+    border: 1px solid #cbd6e2;
+    border-top: 4px solid #3f75b5;
+    border-radius: 22px;
+    box-shadow: 0 5px 14px #19365708;
+    scroll-margin-top: 90px;
+    min-width: 0;
+  }
+  .landing .landing-main > .landing-manifesto,
+  .landing .landing-main > .landing-faq,
+  .landing .landing-main > .landing-cta { margin-left: 10px; margin-right: 10px; }
+  .landing .landing-copy > .problem-scene { background: #fff5e7; border-top-color: #eb8e38; }
+  .landing .landing-copy > .idea-scene { background: #fff; }
+  .landing .landing-copy > .copy-section { background: #fff; }
+  .landing .landing-copy > .study-scene { background: #f4f8ff; }
+  .landing .landing-copy > .cultivate-scene { background: #fff9e8; border-top-color: #e7b32a; }
+  .landing .landing-copy > .stretch-scene { background: #fff; border-top-color: #ef8435; }
+  .landing .landing-copy > .harvest-scene { background: #fff4e8; border-top-color: #e88336; }
+  .landing .landing-copy > .barns-scene { background: #eef5ff; }
+  .landing .landing-copy > .goals-scene { background: #fff; border-top-color: #df7654; }
+  .landing .landing-copy > .growth-scene { background: #f7f9fc; }
+  .landing .landing-copy > .analytics-scene { background: #fff; }
+  .landing .landing-copy > .audience-scene { background: #fff8ea; border-top-color: #e7b32a; }
+  .landing .landing-copy > .ecosystem-story,
+  .landing .landing-copy > .workspace-scene,
+  .landing .landing-copy > .loop-scene { border-color: #233f64; border-top-color: #ffb74e; }
+  .landing .landing-main > .landing-faq { background: #fff; }
+  .landing .editorial-intro, .landing .copy-section > header { margin-bottom: 26px; }
+  .landing .editorial-intro h2, .landing .copy-section header h2 { font-size: clamp(28px, 7.6vw, 40px); line-height: 1.12; margin-top: 15px; }
+  .landing .editorial-intro p, .landing .editorial-support { font-size: 14px; line-height: 1.8; }
+  .landing .editorial-intro > .eyebrow, .landing .copy-section header > .eyebrow { display: block; max-width: 100%; font-size: 9px; line-height: 1.8; letter-spacing: .12em; }
+  .landing .editorial-link { min-height: 44px; margin-top: 22px; }
+  .landing .problem-composition { margin-top: 20px; gap: 18px; }
+  .landing .problem-resolution { margin-top: 26px; font-size: 19px; }
+  .landing .scattered-learning { padding: 10px 0; }
+  .landing .loose-resource { width: 88%; }
+  .landing .analytics-canvas { margin-top: 22px; padding: 24px 14px; border-radius: 16px; }
+  .landing .analytics-canvas h3 { font-size: 23px; }
+  .landing .learning-loop-visual { flex-wrap: wrap; gap: 12px; }
+  .landing .feedback-bridge { padding: 0; }
+  .landing .audience-tiles { grid-template-columns: 1fr; }
+  .landing .audience-tiles article { padding: 22px; }
+  .landing .landing-faq summary { min-height: 48px; }
+  .landing .landing-footer { padding-top: 32px; }
+}
+@media (max-width: 380px) {
+  .landing .landing-copy > section { padding-left: 16px; padding-right: 16px; }
+  .landing .learning-loop-visual { flex-direction: column; }
+  .landing .learning-loop-visual > div:not(.feedback-bridge) { width: 100%; }
+  .landing .environment-body { padding: 16px; }
+}

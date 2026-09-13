@@ -22,6 +22,7 @@ import LandingCopy from "./LandingCopy";
 import { LivingTree } from "./LandingVisuals";
 import { EcosystemSculpture } from "./EcosystemSculpture";
 import "./landing-polish.css";
+import "./landing-mobile.css";
 import { EcosystemStory, GrowthStory } from "./LandingStory";
 export default function Landing({ navigate }) {
   const [menu, setMenu] = useState(false);
