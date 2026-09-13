@@ -18,6 +18,34 @@ const growth = [
     detail: "Keep the evidence of what your learning and practice produce.",
   },
 ];
+function PracticeArt() {
+  return <svg viewBox="0 0 600 460" role="img" aria-label="A golden idea travels over blue stepping stones through practice and feedback toward a real-world doorway">
+    <defs><linearGradient id="practice-step" x2="0" y2="1"><stop stopColor="#29b4f1"/><stop offset="1" stopColor="#133d94"/></linearGradient><radialGradient id="practice-light"><stop stopColor="#ffab36" stopOpacity=".25"/><stop offset="1" stopColor="#ffab36" stopOpacity="0"/></radialGradient></defs>
+    <circle cx="390" cy="200" r="210" fill="url(#practice-light)"/>
+    <g fill="none" stroke="#86cfff" strokeOpacity=".16"><ellipse cx="300" cy="330" rx="250" ry="85"/><ellipse cx="300" cy="330" rx="195" ry="55"/></g>
+    <g className="practice-door"><path d="M418 286V105Q418 62 463 62Q508 62 508 105V286" fill="#ff932d"/><path d="M436 286V110Q436 82 463 82Q490 82 490 110V286" fill="#081d39"/><path d="M449 154l13-13 13 13m-13-13v53" fill="none" stroke="#ffd43b" strokeWidth="3"/></g>
+    {[[90,320,66],[192,280,66],[294,240,66],[396,200,66]].map(([x,y,w],i)=><g key={x} className="practice-stone" style={{animationDelay:`${i*.12}s`}}><path d={`M${x} ${y}l40-20 ${w} 20-40 22Z`} fill="#64c9ff"/><path d={`M${x} ${y}v35l66 24 40-24v-35l-40 22Z`} fill="url(#practice-step)"/></g>)}
+    <path className="practice-feedback" d="M437 313C380 419 154 413 104 368" fill="none" stroke="#ffad45" strokeWidth="2" strokeDasharray="7 8"/>
+    <path d="M106 384l-6-19 20 3" fill="none" stroke="#ffad45" strokeWidth="2"/>
+    <g className="practice-idea"><circle r="24" fill="#ffab32"/><circle cx="-7" cy="-8" r="7" fill="#ffe5a0"/><circle r="33" fill="none" stroke="#ffd43b" strokeOpacity=".3"/></g>
+    <g fill="#c8def4" fontSize="10" letterSpacing="2"><text x="87" y="398">TRY</text><text x="240" y="418">REFLECT & RETURN</text><text x="404" y="40">REAL LIFE</text></g>
+  </svg>;
+}
+function BecomeArt() {
+  return <svg viewBox="0 0 600 460" role="img" aria-label="Drops of practice and evidence fill a blue glass capacity vessel as golden rings expand outward">
+    <defs><linearGradient id="capacity-glass" x2="1" y2="1"><stop stopColor="#54c9ff" stopOpacity=".35"/><stop offset=".5" stopColor="#258bdf" stopOpacity=".08"/><stop offset="1" stopColor="#70d6ff" stopOpacity=".4"/></linearGradient><linearGradient id="capacity-water" x2="0" y2="1"><stop stopColor="#ffce49"/><stop offset="1" stopColor="#f36b27"/></linearGradient><clipPath id="capacity-clip"><path d="M190 170L211 348Q300 405 389 348L410 170Z"/></clipPath></defs>
+    <g className="capacity-halo" fill="none" stroke="#62baff" strokeOpacity=".24"><ellipse cx="300" cy="357" rx="235" ry="65"/><ellipse cx="300" cy="357" rx="190" ry="45"/></g>
+    <path d="M190 170L211 348Q300 405 389 348L410 170" fill="url(#capacity-glass)" stroke="#80cdff" strokeWidth="2"/>
+    <g clipPath="url(#capacity-clip)"><g className="hero-water"><path d="M180 260Q240 243 300 260T420 260V410H180Z" fill="url(#capacity-water)" opacity=".9"/><ellipse cx="300" cy="260" rx="118" ry="14" fill="#ffe28b"/></g></g>
+    <ellipse cx="300" cy="170" rx="110" ry="29" fill="#0b2c55" fillOpacity=".6" stroke="#a0dcff" strokeWidth="2"/>
+    <path d="M206 193l18 141" stroke="#daf2ff" strokeWidth="5" opacity=".4" strokeLinecap="round"/>
+    <path className="hero-capacity-drop" d="M300 73Q274 108 300 113Q326 108 300 73" fill="#ffce49"/>
+    <g className="capacity-evidence" fill="#102f59" stroke="#63bbef"><rect x="77" y="112" width="95" height="66" rx="12"/><rect x="424" y="224" width="95" height="66" rx="12"/></g>
+    <g fill="none" stroke="#ffd43b" strokeWidth="3"><path d="M110 140l8 8 19-20M457 252l8 8 19-20"/></g>
+    <g fill="#c8def4" fontSize="10" letterSpacing="2"><text x="74" y="98">EXPERIENCE</text><text x="426" y="315">EVIDENCE</text><text x="223" y="431">ROOM FOR MORE</text></g>
+    <path d="M172 146Q200 112 255 116M424 256h-24" fill="none" stroke="#7ecbfa" strokeDasharray="4 6"/>
+  </svg>;
+}
 export function EcosystemSculpture() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -34,7 +62,8 @@ export function EcosystemSculpture() {
           A LIVING BODY OF KNOWLEDGE
         </span>
       </div>
-      <svg
+      <div key={active} className="sculpture-slide" data-scene={growth[active].label}>
+      {active === 1 ? <PracticeArt /> : active === 2 ? <BecomeArt /> : <svg
         viewBox="0 0 600 460"
         role="img"
         aria-label="Knowledge growing from blue roots into branching orange and yellow fruit"
@@ -132,10 +161,11 @@ export function EcosystemSculpture() {
           stroke="#ffd43b"
           strokeOpacity=".6"
         />
-      </svg>
+      </svg>}
       <div key={active} className="sculpture-caption" aria-live={paused ? "polite" : "off"}>
         <strong>{growth[active].title}</strong>
         <p>{growth[active].detail}</p>
+      </div>
       </div>
       <div className="sculpture-controls" aria-label="Explore the growth cycle">
         {growth.map((item, i) => (

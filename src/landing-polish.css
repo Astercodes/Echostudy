@@ -1,4 +1,21 @@
 .landing { --ink: #112d56; background: #fcfcfa; }
+.sculpture-slide { animation: sculpture-slide-in .7s cubic-bezier(.22,1,.36,1) both; }
+.sculpture-slide .sculpture-caption { animation: none; }
+.practice-idea { animation: practice-journey 4.8s ease-in-out infinite; }
+.practice-stone { animation: stepping-stone .8s ease both; }
+.practice-feedback { animation: feedback-flow 3s linear infinite; }
+.hero-water { animation: capacity-rise 4.8s ease-in-out both; }
+.hero-capacity-drop { animation: capacity-drop 1.6s ease-in infinite; }
+.capacity-halo { transform-origin: 300px 357px; animation: capacity-expand 3s ease-in-out infinite alternate; }
+@keyframes sculpture-slide-in { from { opacity: 0; transform: translateX(65px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes practice-journey { 0%,10% { transform: translate(140px,278px); } 30% { transform: translate(242px,238px); } 50% { transform: translate(344px,198px); } 70%,85% { transform: translate(446px,158px); } 100% { transform: translate(140px,278px); } }
+@keyframes stepping-stone { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes feedback-flow { to { stroke-dashoffset: -60; } }
+@keyframes capacity-rise { from { transform: translateY(80px); } to { transform: translateY(-20px); } }
+@keyframes capacity-drop { 0% { transform: translateY(-20px); opacity: 0; } 20% { opacity: 1; } 90%,100% { transform: translateY(95px); opacity: 0; } }
+@keyframes capacity-expand { to { transform: scale(1.06); opacity: .6; } }
+.eco-sculpture:has(.sculpture-pause[aria-label="Resume growth cycle"]) :is(.practice-idea,.practice-feedback,.hero-capacity-drop,.capacity-halo,.sculpture-fruit,.sculpture-pulse) { animation-play-state: paused; }
+@media(prefers-reduced-motion:reduce) { .sculpture-slide, .sculpture-slide * { animation: none !important; } .practice-idea { transform: translate(344px,198px); } }
 .sculpture-caption { animation: caption-slide .65s ease both; }
 .sculpture-pause { display: block; margin: 10px 0 0 auto; background: none; border: 0; color: #b5c8e2; font-size: 10px; cursor: pointer; padding: 8px; }
 @keyframes caption-slide { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }

@@ -10,6 +10,13 @@ const { chromium } = require('playwright');
     await page.goto(process.env.ECHO_URL || 'http://127.0.0.1:5181', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('.eco-sculpture')?.classList.contains('phase-1'), { timeout: 8000 });
     await page.getByRole('button', { name: 'Pause growth cycle' }).click();
+    for (const scene of ['Understand', 'Practice', 'Become']) {
+      await page.locator('.sculpture-controls button').filter({ hasText: scene }).click();
+      assert.equal(await page.locator('.sculpture-slide').getAttribute('data-scene'), scene);
+      assert.equal(await page.locator('.sculpture-slide svg[role="img"]').count(), 1);
+      await page.locator('.sculpture-slide').evaluate(el => Promise.all(el.getAnimations().map(animation => animation.finished)));
+      await page.locator('.eco-sculpture').screenshot({ path: `tests/hero-${scene.toLowerCase()}-preview.png` });
+    }
     assert.equal(await page.locator('.landing-links a[href="#students"], .landing-links a[href="#lifelong-learners"], .landing-links a[href="#questions"]').count(), 0);
     assert.equal(await page.locator('#how-it-works .problem-insights article').count(), 3);
     await page.locator('#growth-analytics').scrollIntoViewIfNeeded();
