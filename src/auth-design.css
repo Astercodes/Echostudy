@@ -9,6 +9,12 @@
 .auth-designed .auth-story h1 em { color: #ffc15d; }
 .auth-designed .auth-story p { color: #b8cce4; font-size: 14px; line-height: 1.8; }
 .auth-garden { position: relative; margin: 28px -16px 16px; }
+.auth-orbit-art { display: block; width: 100%; height: auto; overflow: visible; }
+.auth-glass-core { animation: auth-core-float 6s ease-in-out infinite; }
+.auth-orbit-gold { offset-path: path('M97 275 C-5 205 430 -28 503 85 C596 167 202 393 97 275'); animation: auth-orbit-travel 18s linear infinite; offset-rotate: 0deg; }
+.auth-orbit-small { offset-path: path('M152 64 C221 -10 532 213 448 296 C368 370 61 146 152 64'); animation: auth-orbit-travel 23s linear infinite reverse; }
+@keyframes auth-orbit-travel { to { offset-distance: 100%; } }
+@keyframes auth-core-float { 50% { transform: translateY(-7px); } }
 .auth-garden img { display: block; width: 100%; aspect-ratio: 1.65; object-fit: cover; border-radius: 18px; animation: garden-arrive 1.2s ease both; }
 .auth-garden figcaption { display: flex; gap: 12px; align-items: center; position: relative; width: fit-content; max-width: 95%; margin: -27px auto 0; padding: 15px 20px; background: #fff9ec; color: #17355a; border: 1px solid #ffdaa7; border-radius: 13px; box-shadow: 0 14px 35px #020e2640; font-size: 10px; animation: garden-float 6s ease-in-out infinite; }
 .auth-garden figcaption strong { display: block; font-size: 12px; margin-top: 4px; font-weight: 600; }

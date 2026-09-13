@@ -14,7 +14,7 @@ const { chromium } = require('playwright');
     await page.getByRole('button', { name: 'Show password' }).click();
     assert.equal(await page.getByPlaceholder('Enter your password', { exact: true }).getAttribute('type'), 'text');
     await page.getByRole('button', { name: 'Hide password' }).click();
-    await page.locator('.auth-garden img').evaluate(img => img.decode());
+    assert.equal(await page.locator('.auth-orbit-art').count(), 1);
     await page.screenshot({ path: 'tests/auth-desktop-preview.png', fullPage: true });
     await page.getByRole('button', { name: 'Forgot password?' }).click();
     await page.getByRole('heading', { name: 'A fresh way back in.' }).waitFor();

@@ -140,7 +140,31 @@ export default function AuthShell() {
             Return to your ideas. Put them into practice.<br />Make room for who you're becoming.
           </p>
           <figure className="auth-garden">
-            <img src="/illustrations/study.jpg" alt="An open book growing into a sculptural tree with blue leaves and golden fruit" />
+            <svg className="auth-orbit-art" viewBox="0 0 600 365" role="img" aria-label="A luminous glass sphere surrounded by blue orbital rings and moving golden ideas">
+              <defs>
+                <radialGradient id="auth-aura"><stop stopColor="#078be4" stopOpacity=".4"/><stop offset="1" stopColor="#078be4" stopOpacity="0"/></radialGradient>
+                <radialGradient id="auth-glass" cx=".3" cy=".25" r=".8"><stop stopColor="#b1eeff"/><stop offset=".2" stopColor="#45b9f6"/><stop offset=".55" stopColor="#1957b1"/><stop offset=".8" stopColor="#0b2c69"/><stop offset="1" stopColor="#76bdeb"/></radialGradient>
+                <radialGradient id="auth-gold" cx=".3" cy=".2"><stop stopColor="#fff5b4"/><stop offset=".45" stopColor="#ffca49"/><stop offset="1" stopColor="#f37824"/></radialGradient>
+                <linearGradient id="auth-ring"><stop stopColor="#297bd2" stopOpacity=".25"/><stop offset=".5" stopColor="#a3e4ff"/><stop offset="1" stopColor="#318ddc" stopOpacity=".4"/></linearGradient>
+              </defs>
+              <ellipse cx="300" cy="185" rx="265" ry="180" fill="url(#auth-aura)"/>
+              <ellipse cx="300" cy="324" rx="135" ry="12" fill="#03162e" opacity=".4"/>
+              <g fill="none" stroke="url(#auth-ring)">
+                <ellipse cx="300" cy="180" rx="224" ry="77" transform="rotate(-25 300 180)" strokeWidth="2"/>
+                <ellipse cx="300" cy="180" rx="188" ry="86" transform="rotate(38 300 180)" strokeWidth="1.5"/>
+                <ellipse cx="300" cy="180" rx="104" ry="149" transform="rotate(25 300 180)" strokeWidth="1"/>
+              </g>
+              <g className="auth-glass-core">
+                <circle cx="300" cy="180" r="76" fill="url(#auth-glass)" stroke="#86d9ff" strokeOpacity=".5"/>
+                <path d="M246 156Q253 120 293 119" fill="none" stroke="#ddf8ff" strokeWidth="5" strokeLinecap="round" opacity=".65"/>
+                <path d="M283 196l14 13 28-38" fill="none" stroke="#fff2bd" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+              </g>
+              <g className="auth-orbit-gold"><circle cx="0" cy="0" r="24" fill="url(#auth-gold)"/><circle cx="-7" cy="-8" r="5" fill="#fff8d5" opacity=".65"/></g>
+              <circle className="auth-orbit-small" r="12" fill="#ff7851"/>
+              <circle cx="413" cy="286" r="15" fill="url(#auth-glass)"/>
+              <circle cx="177" cy="73" r="8" fill="#ffe5a0"/>
+              <path d="M474 104v14m-7-7h14M132 249v10m-5-5h10" stroke="#a6dafc" strokeWidth="1.5"/>
+            </svg>
             <figcaption><span className="auth-seed-mark"><Sprout size={21}/></span><span>A question today.<strong>A world of possibility tomorrow.</strong></span></figcaption>
           </figure>
         </div>
