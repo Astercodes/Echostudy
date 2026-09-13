@@ -15,6 +15,7 @@ const App = lazy(() => import("./App"));
 import Landing from "./Landing";
 import { supabase, authConfigured } from "./auth";
 import { setFileNamespace } from "./files";
+import "./auth-design.css";
 const route = () =>
   ({
     "/login": "login",
@@ -127,31 +128,23 @@ export default function AuthShell() {
     );
   if (mode === "landing" && !message) return <Landing navigate={navigate} />;
   return (
-    <div className="auth-page">
+    <div className="auth-page auth-designed">
       <aside className="auth-story">
         <Brand onClick={() => navigate("landing")} />
-        <div>
-          <span className="eyebrow">A LIFE OF INTENTIONAL GROWTH</span>
+        <div className="auth-story-body">
+          <span className="eyebrow">A LITTLE CURIOSITY. A LIFETIME OF GROWTH.</span>
           <h1>
-            Become more.
-            <br />
-            One purposeful
-            <br />
-            <em>day at a time.</em>
+            Your next chapter<br /><em>is taking root.</em>
           </h1>
           <p>
-            Your time, your goals, your growing mind.
-            <br />
-            Finally, in one connected space.
+            Return to your ideas. Put them into practice.<br />Make room for who you're becoming.
           </p>
-          <div className="auth-flower" aria-hidden="true">
-            {Array.from({ length: 6 }, (_, i) => (
-              <span key={i} style={{ "--petal": i }} />
-            ))}
-            <Sprout size={52} />
-          </div>
+          <figure className="auth-garden">
+            <img src="/illustrations/study.jpg" alt="An open book growing into a sculptural tree with blue leaves and golden fruit" />
+            <figcaption><span className="auth-seed-mark"><Sprout size={21}/></span><span>A question today.<strong>A world of possibility tomorrow.</strong></span></figcaption>
+          </figure>
         </div>
-        <small>Time → goals → study → knowledge → growth</small>
+        <div className="auth-story-footer"><span>Understand.</span><span>Practise.</span><span>Become.</span></div>
       </aside>
       <section className="auth-content">
         <button
@@ -209,7 +202,7 @@ function AuthForm({ mode, navigate, verifiedUser, externalMessage }) {
       ? "A fresh way back in."
       : update
         ? "Choose a new password."
-        : "Welcome back, growing mind.";
+        : "Welcome back.";
   const submit = async (e) => {
     e.preventDefault();
     setError("");
@@ -272,6 +265,7 @@ function AuthForm({ mode, navigate, verifiedUser, externalMessage }) {
   };
   return (
     <div className="auth-form-wrap">
+      <div className="auth-form-symbol" aria-hidden="true"><Sprout size={28} strokeWidth={1.5}/></div>
       <span className="eyebrow">
         {signup
           ? "PLANT THE FIRST SEED"
@@ -287,7 +281,7 @@ function AuthForm({ mode, navigate, verifiedUser, externalMessage }) {
             ? "Enter your email and we’ll send you a reset link."
             : update
               ? "Use a strong password you don’t use elsewhere."
-              : "Sign in to continue building a more intentional life."}
+              : "Your ideas, your practice, your next possibility. Pick up where you left off."}
       </p>
       {!authConfigured && (
         <div className="auth-notice" role="status">
