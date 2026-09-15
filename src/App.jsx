@@ -1120,6 +1120,7 @@ export default function App({ user, onSignOut }) {
               data={data}
               date={date}
               update={updatePlan}
+              createGoal={(defaults,onCreated)=>setModal({type:'goal',defaults,onCreated})}
               edit={(b) => setModal({ type: "block", block: b })}
               stretch={(b) => {
                 setStretchDraft({title:b.title,objective:b.objective || '',goalId:b.goalId,goalIds:b.goalIds || [],date,planned:b.end-b.start,blockId:b.id});
@@ -1236,6 +1237,7 @@ export default function App({ user, onSignOut }) {
               ...d,
               goals: [...d.goals.filter((x) => x.id !== g.id), g],
             }));
+            modal.onCreated?.(g.id);
             setModal(null);
             notify("Goal saved.");
           }}
@@ -1411,11 +1413,11 @@ function Stat({ icon: Icon, label, value, foot, color }) {
     </div>
   );
 }
-function Planner({ blocks, data, date, update, edit, start, stretch, notify }) {
+function Planner({ blocks, data, date, update, edit, start, stretch, notify, createGoal }) {
   const booked = blocks.reduce((n, b) => n + b.end - b.start, 0);
   return (
     <>
-      <PlannerAllocation blocks={blocks} data={data} date={date} update={update} notify={notify}/>
+      <PlannerAllocation blocks={blocks} data={data} date={date} update={update} notify={notify} createGoal={createGoal}/>
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
         <Badge color="#7C5C14">{duration(1440 - booked)} open</Badge>
