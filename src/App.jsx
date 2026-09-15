@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { PlannerGoals } from './PlannerAllocation';
 import { availableWindows } from './planner-windows';
+import { scheduledStudies, saveStudySchedule } from './study-scheduling';
 import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
 import {
@@ -351,7 +352,8 @@ export default function App({ user, onSignOut }) {
       go("Study workspace");
       return;
     }
-    setModal({ type: "session", block: b });
+    const scheduledDate = b?.scheduledDate || Object.keys(data.plans).find(day=>data.plans[day].some(x=>x.id===b?.id)) || today();
+    setModal({ type: "session", block: b, scheduledDate });
   };
   const updatePlan = (bs) =>
     save((d) => ({ ...d, plans: { ...d.plans, [date]: bs } }));
@@ -599,7 +601,7 @@ export default function App({ user, onSignOut }) {
                       ? setModal({ type: "goal" })
                       : page === "24-hour planner"
                         ? setModal({ type: "block" })
-                        : start(first)
+                        : start(page === 'Study workspace' ? undefined : first)
                   }
                 >
                   {page === "Goals" || page === "24-hour planner" ? (
@@ -1148,7 +1150,7 @@ export default function App({ user, onSignOut }) {
               data={data}
               save={save}
               tick={tick}
-              start={() => start(first)}
+              start={start}
               finish={() => setModal({ type: "finish" })}
               go={go}
             />
@@ -1279,11 +1281,14 @@ export default function App({ user, onSignOut }) {
         <SessionModal
           block={modal.block}
           data={data}
+          scheduledDate={modal.scheduledDate}
           close={() => setModal(null)}
-          submit={(t) => {
-            save((d) => ({ ...d, timer: t }));
+          submit={(t, schedule, runNow) => {
+            const next = saveStudySchedule(data,t,schedule,runNow);
+            save(next);
             setModal(null);
             go("Study workspace");
+            notify(runNow ? 'Study started. Your planner is linked.' : 'Study scheduled in your planner and Study workspace.');
           }}
         />
       )}
@@ -1480,15 +1485,17 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
             <span>{duration(b.end - b.start)}</span>
             <div className="row-actions">
               {b.kind === 'stretch' && <button className="text-btn" onClick={()=>stretch(b)}>Open Stretch</button>}
-              {["deep", "light"].includes(b.kind) && (
+              {["deep", "light"].includes(b.kind) && !data.sessions.some(s=>s.blockId===b.id && (s.scheduledDate || s.date)===date) && (
                 <button
-                  className="icon-btn"
+                  className="text-btn"
                   aria-label={"Start " + b.title}
                   onClick={() => start(b)}
                 >
                   <Play size={16} />
+                  {data.timer?.blockId===b.id?'Resume study':'Begin study'}
                 </button>
               )}
+              {data.sessions.some(s=>s.blockId===b.id && (s.scheduledDate || s.date)===date) && <Badge>Completed</Badge>}
               <button className="text-btn" onClick={() => edit(b)}>
                 Edit
               </button>
@@ -1627,14 +1634,19 @@ function BlockModal({ block, blocks, goals, areas, close, submit, remove, create
     </Modal>
   );
 }
-function SessionModal({ block, data, close, submit }) {
+function SessionModal({ block, data, scheduledDate, close, submit }) {
   const [objective, setObjective] = useState(block?.objective || ""),
     [goal, setGoal] = useState(block?.goalId || ""),
     [mins, setMins] = useState(block ? block.end - block.start : 45),
     [topic, setTopic] = useState(block?.title || ""),
-    [concept, setConcept] = useState(""),
-    [resource, setResource] = useState(""),
-    [intention, setIntention] = useState("peel");
+    [concept, setConcept] = useState(block?.conceptId || ""),
+    [resource, setResource] = useState(block?.resourceId || ""),
+    [intention, setIntention] = useState(block?.intention || "peel");
+  const [goalIds,setGoalIds] = useState(block?.goalIds || (block?.goalId?[block.goalId]:[]));
+  const [scheduleDate,setScheduleDate] = useState(scheduledDate || today());
+  const [scheduleTime,setScheduleTime] = useState(block ? clock(block.start) : clock(new Date().getHours()*60+new Date().getMinutes()));
+  const [runNow,setRunNow] = useState(!scheduledDate || scheduledDate===today());
+  const [sessionError,setSessionError] = useState('');
   const intentions = [
     ["taste", "Taste", "Explore"],
     ["peel", "Peel", "Understand"],
@@ -1646,7 +1658,7 @@ function SessionModal({ block, data, close, submit }) {
     ["test", "Test", "Assess"],
   ];
   const [capacityIds, setCapacityIds] = useState(
-    data.goals.find((g) => g.id === block?.goalId)?.capacityIds || [],
+    block?.capacityIds || [...new Set(data.goals.filter(g=>goalIds.includes(g.id)).flatMap(g=>g.capacityIds || []))],
   );
   return (
     <Modal title="Begin with an intention" onClose={close}>
@@ -1654,14 +1666,17 @@ function SessionModal({ block, data, close, submit }) {
         onSubmit={(e) => {
           e.preventDefault();
           if (!objective.trim() || !topic.trim()) return;
-          submit({
+          setSessionError('');
+          if (!goalIds.length) { setSessionError('Select at least one contributing goal.'); return; }
+          if(runNow && scheduleDate!==today()) {setSessionError('Start a session on its scheduled day, or save it for later.');return;}
+          try { submit({
             id: uid(),
-            blockId: block?.id || "",
+            blockId: block?.id || uid(),
             date: today(),
             topic,
             objective,
             goalId: goal,
-            goalIds: [...new Set([goal,...(block?.goalIds || [])].filter(Boolean))],
+            goalIds,
             capacityIds,
             areaId: data.goals.find((g) => g.id === goal)?.areaId || "",
             subAreaId: data.goals.find((g) => g.id === goal)?.subAreaId || "",
@@ -1676,7 +1691,8 @@ function SessionModal({ block, data, close, submit }) {
             intentionHistory: [
               { id: intention, startedAt: Date.now(), minutes: 0 },
             ],
-          });
+          },{date:scheduleDate,start:!block && runNow ? new Date().getHours()*60+new Date().getMinutes() : minutes(scheduleTime)},runNow);
+          } catch(error) { setSessionError(error.message); }
         }}
       >
         <Field label="What are you studying?">
@@ -1710,19 +1726,8 @@ function SessionModal({ block, data, close, submit }) {
             ))}
           </div>
         </Field>
-        <Field label="This session contributes to">
-          <GoalSelect
-            required
-            goals={data.goals}
-            value={goal}
-            onChange={(id) => {
-              setGoal(id);
-              setCapacityIds(
-                data.goals.find((g) => g.id === id)?.capacityIds || [],
-              );
-            }}
-          />
-        </Field>
+        <h3>This session contributes to</h3>
+        <PlannerGoals goals={data.goals} areas={data.lifeAreas} value={goalIds} onChange={ids=>{setGoalIds(ids);setGoal(ids[0] || '');setCapacityIds([...new Set(data.goals.filter(g=>ids.includes(g.id)).flatMap(g=>g.capacityIds || []))]);}}/>
         <GoalTrail id={goal} goals={data.goals} />
         <CapacityPicker value={capacityIds} onChange={setCapacityIds} />
         <div className="form-grid">
@@ -1731,7 +1736,7 @@ function SessionModal({ block, data, close, submit }) {
               type="number"
               required
               min="1"
-              max="240"
+              max="1440"
               value={mins}
               onChange={(e) => setMins(Number(e.target.value))}
             />
@@ -1764,9 +1769,15 @@ function SessionModal({ block, data, close, submit }) {
           </select>
         </Field>
         <div className="form-actions">
+          <label><input type="checkbox" checked={runNow} onChange={e=>setRunNow(e.target.checked)}/> Start now</label>
+        </div>
+        {!runNow && <div className="form-grid"><Field label="Session date"><input type="date" required min={today()} disabled={Boolean(block)} value={scheduleDate} onChange={e=>setScheduleDate(e.target.value)}/></Field><Field label="Scheduled start"><input type="time" required value={scheduleTime} onChange={e=>setScheduleTime(e.target.value)}/></Field></div>}
+        {block && <p className="muted">Linked planner block: {scheduleDate} · {clock(block.start)}–{clock(block.end)}. Saved details update this same block.</p>}
+        {sessionError && <p role="alert" className="error">{sessionError} Adjust the duration or choose a free time in the planner.</p>}
+        <div className="form-actions">
           <Button primary type="submit">
             <Play size={15} />
-            Start focused study
+            {runNow ? 'Start focused study' : 'Schedule study'}
           </Button>
         </div>
       </form>
@@ -1776,8 +1787,10 @@ function SessionModal({ block, data, close, submit }) {
 function Study({ data, save, tick, start, finish, go }) {
   const t = data.timer;
   const [focus, setFocus] = useState(false);
+  const upcoming = scheduledStudies(data,today());
   if (!t)
     return (
+      <>
       <section className="card empty study-empty">
         <div className="empty-sprout">
           <Sprout size={52} />
@@ -1789,7 +1802,7 @@ function Study({ data, save, tick, start, finish, go }) {
           <br />
           The timer starts when your purpose is clear.
         </p>
-        <Button primary onClick={start}>
+        <Button primary onClick={()=>start()}>
           <Play size={16} />
           Set your study intention
         </Button>
@@ -1797,6 +1810,12 @@ function Study({ data, save, tick, start, finish, go }) {
           <p>{data.sessions.length} intentional sessions completed so far.</p>
         )}
       </section>
+      <section className="card study-upcoming"><div className="section-head"><h2>Upcoming study</h2><button className="text-btn" onClick={()=>go('24-hour planner')}>Open planner</button></div>
+        <p className="muted">Your scheduled Study blocks, shared with the 24-hour planner.</p>
+        {upcoming.map(b=><article key={`${b.scheduledDate}-${b.id}`} className="study-upcoming-row"><div><small>{b.scheduledDate} · {clock(b.start)}–{clock(b.end)}</small><h3>{b.title}</h3><p>{b.objective || 'Set an objective when you open this session.'}</p><small>{duration(b.end-b.start)}{b.intention?` · ${b.intention}`:''}{b.goalIds?.length?` · ${b.goalIds.length} linked goals`:''}</small></div><Button onClick={()=>start(b)}>{b.scheduledDate===today()?'Begin session':'Prepare session'}</Button></article>)}
+        {!upcoming.length&&<p>No upcoming study yet. Set your study intention to start now or schedule for later.</p>}
+      </section>
+      </>
     );
   const elapsed = focusedMs(t, tick),
     sec = Math.floor(elapsed / 1000),
