@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
 import {
   Sprout,
@@ -249,6 +250,13 @@ export default function App({ user, onSignOut }) {
     [tick, setTick] = useState(Date.now());
   const latestData = useRef(data);
   const lastCalendarDay = useRef(today());
+  const calendarDay = today();
+  useEffect(() => {
+    setData(current => {
+      const goals = refreshRecurringGoals(current.goals, calendarDay);
+      return goals === current.goals ? current : {...current, goals};
+    });
+  }, [calendarDay]);
   useEffect(() => {
     const currentDay = today();
     if (currentDay !== lastCalendarDay.current) {
@@ -721,7 +729,7 @@ export default function App({ user, onSignOut }) {
                   <div>
                     <Badge color="#173dc5">GOALS</Badge>
                     {data.goals
-                      .filter((g) => g.level === "Day" || g.due === date)
+                      .filter((g) => goalForDay(g, date))
                       .slice(0, 3)
                       .map((g) => (
                         <button
@@ -732,13 +740,13 @@ export default function App({ user, onSignOut }) {
                           <span>🎯</span>
                           <strong>{g.title}</strong>
                           <small>
-                            {g.due === date ? "Due today" : "Daily objective"}
+                            {g.repeat && g.repeat !== 'none' ? `Repeats ${g.repeat}` : g.due === date ? "Due today" : "Daily objective"}
                           </small>
                           <em>{g.progress || 0}%</em>
                         </button>
                       ))}
                     {!data.goals.some(
-                      (g) => g.level === "Day" || g.due === date,
+                      (g) => goalForDay(g, date),
                     ) && <p className="muted">No goal due today.</p>}
                   </div>
                 </div>

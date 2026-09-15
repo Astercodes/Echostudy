@@ -22,6 +22,8 @@ import {
 import { goalLocation, validateLifeArea } from "./life-areas";
 import "./goals.css";
 import { CapacityPicker } from "./Barns.jsx";
+import { suggestGoal, goalPeriod } from "./goal-planning.js";
+import { today } from "./model";
 
 const horizonLabels = {
   Year: "Yearly",
@@ -85,7 +87,7 @@ export default function Goals({ data, save, edit, create, notify }) {
             <strong>{g.title}</strong>
             <small>
               {goalLocation(g, areas)}
-              {g.due ? " · Due " + g.due : ""}
+              {g.repeat && g.repeat !== 'none' ? ` · Repeats ${g.repeat} · Current period ends ${g.due}` : g.due ? " · Due " + g.due : ""}
             </small>
             {g.knowledgeIds?.length > 0 && (
               <small className="goal-ecosystem-link">
@@ -152,7 +154,7 @@ export default function Goals({ data, save, edit, create, notify }) {
             <button className="text-btn" onClick={() => edit(g)}>
               Edit
             </button>
-            {next && (
+            {next && (!g.repeat || g.repeat === 'none') && (
               <button
                 className="icon-btn"
                 aria-label={
@@ -525,11 +527,14 @@ export function GoalModal({
       },
   );
   const [error, setError] = useState("");
+  const [manualArea, setManualArea] = useState(Boolean(goal || defaults.parent));
+  const [manualCapacity, setManualCapacity] = useState(Boolean(goal));
   const hasChildren = goals.some((x) => x.parent === g.id),
     area = areas.find((a) => a.id === g.areaId);
   const parentOptions = goals.filter(
     (x) =>
       x.id !== g.id &&
+      (!x.repeat || x.repeat === 'none') &&
       x.areaId === g.areaId &&
       LEVELS.indexOf(x.level) < LEVELS.indexOf(g.level),
   );
@@ -541,7 +546,8 @@ export function GoalModal({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const next = { ...g, title: g.title.trim() };
+          const period = g.repeat && g.repeat !== 'none' ? goalPeriod(g.repeat, today()) : null;
+          const next = { ...g, title: g.title.trim(), ...(period ? { due: period.end, periodStart: period.start } : {}) };
           const message = validateGoal(next, goals, areas);
           if (message) {
             setError(message);
@@ -550,16 +556,17 @@ export function GoalModal({
           submit(next);
         }}
       >
-        <CapacityPicker
-          value={g.capacityIds || []}
-          onChange={(capacityIds) => setG({ ...g, capacityIds })}
-        />
-        <Field label="What capacity or outcome are you building?">
+        <Field label="What do you want to achieve or practise?">
           <input
             required
             autoFocus
             value={g.title}
-            onChange={(e) => setG({ ...g, title: e.target.value })}
+            placeholder="For example, study the Bible and reflect on a theme each week"
+            onChange={(e) => {
+              const title = e.target.value;
+              const suggestion = suggestGoal(title, areas);
+              setG({ ...g, title, ...(!manualArea && !hasChildren && suggestion.areaId ? { areaId: suggestion.areaId, subAreaId: suggestion.subAreaId, parent: '' } : {}), ...(!manualCapacity ? {capacityIds: suggestion.capacityIds} : {}) });
+            }}
           />
         </Field>
         <div className="form-grid">
@@ -584,14 +591,15 @@ export function GoalModal({
               aria-label="Life area"
               value={g.areaId}
               disabled={hasChildren}
-              onChange={(e) =>
+              onChange={(e) => {
+                setManualArea(true);
                 setG({
                   ...g,
                   areaId: e.target.value,
                   subAreaId: "",
                   parent: "",
-                })
-              }
+                });
+              }}
             >
               {areas.map((a) => (
                 <option value={a.id} key={a.id}>
@@ -611,7 +619,7 @@ export function GoalModal({
           <select
             aria-label="Sub-area (optional)"
             value={g.subAreaId || ""}
-            onChange={(e) => setG({ ...g, subAreaId: e.target.value })}
+            onChange={(e) => { setManualArea(true); setG({ ...g, subAreaId: e.target.value }); }}
           >
             <option value="">Whole life area</option>
             {area?.subAreas.map((s) => (
@@ -639,14 +647,20 @@ export function GoalModal({
           </Field>
         )}
         {g.parent && <GoalTrail id={g.parent} goals={goals} />}
-        <Field label="Target date">
+        <p className="muted">Life area and capacities are suggested from your goal wording. Review them here; your selections stay in place as you edit.</p>
+        <Field label="Does this goal repeat?">
+          <select aria-label="Does this goal repeat?" value={g.repeat || 'none'} disabled={hasChildren} onChange={e => setG({...g, repeat:e.target.value, due:'', periodStart:''})}>
+            <option value="none">One-time goal</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option>
+          </select>
+        </Field>
+        {g.repeat && g.repeat !== 'none' ? <p className="auth-notice">Repeats {g.repeat}. Progress resets for each new {g.repeat === 'daily' ? 'day' : g.repeat === 'weekly' ? 'week (Monday–Sunday)' : 'calendar month'}; previous progress is kept. No deadline to keep updating. Current period ends {goalPeriod(g.repeat, today()).end}.</p> : <Field label="Target date (optional)">
           <input
             type="date"
             value={g.due || ""}
             onChange={(e) => setG({ ...g, due: e.target.value })}
           />
-        </Field>
-        {!hasChildren && (
+        </Field>}
+        {goal && !hasChildren && (
           <Field label={"Progress · " + g.progress + "%"}>
             <input
               type="range"
@@ -658,6 +672,11 @@ export function GoalModal({
             />
           </Field>
         )}
+        <details className="goal-capacity-review"><summary>Capacities this goal builds · {(g.capacityIds || []).length ? 'suggested — review or change' : 'optional'}</summary>
+          <p className="muted">Suggestions describe likely areas of development, not evidence that capacity has increased.</p>
+          <CapacityPicker value={g.capacityIds || []} onChange={capacityIds => { setManualCapacity(true); setG({...g,capacityIds}); }}/>
+        </details>
+        {g.periodHistory?.length > 0 && <details><summary>Previous periods ({g.periodHistory.length})</summary>{g.periodHistory.slice().reverse().map(p=><p key={p.start}>{p.start} – {p.end}: {p.progress}%</p>)}</details>}
         {error && (
           <p className="error" role="alert">
             {error}
