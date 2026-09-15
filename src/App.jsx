@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import PlannerAllocation, { PlannerGoals } from './PlannerAllocation';
+import { PlannerGoals } from './PlannerAllocation';
+import { availableWindows } from './planner-windows';
 import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
 import {
@@ -1209,6 +1210,7 @@ export default function App({ user, onSignOut }) {
           blocks={blocks}
           goals={data.goals}
           areas={data.lifeAreas}
+          createGoal={(defaults,draft)=>setModal({type:'goal',defaults,returnBlock:draft})}
           close={() => setModal(null)}
           submit={(b) => {
             updatePlan(
@@ -1231,14 +1233,14 @@ export default function App({ user, onSignOut }) {
           goals={data.goals}
           areas={data.lifeAreas}
           defaults={modal.defaults}
-          close={() => setModal(null)}
+          close={() => setModal(modal.returnBlock ? {type:'block',block:modal.returnBlock} : null)}
           submit={(g) => {
             save((d) => ({
               ...d,
               goals: [...d.goals.filter((x) => x.id !== g.id), g],
             }));
             modal.onCreated?.(g.id);
-            setModal(null);
+            setModal(modal.returnBlock ? {type:'block',block:{...modal.returnBlock,goalIds:[...new Set([...(modal.returnBlock.goalIds || (modal.returnBlock.goalId?[modal.returnBlock.goalId]:[])),g.id])],goalId:modal.returnBlock.goalId || g.id}} : null);
             notify("Goal saved.");
           }}
         />
@@ -1417,7 +1419,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
   const booked = blocks.reduce((n, b) => n + b.end - b.start, 0);
   return (
     <>
-      <PlannerAllocation blocks={blocks} data={data} date={date} update={update} notify={notify} createGoal={createGoal}/>
+      <header className="planner-day-hero"><div><span className="eyebrow">YOUR DAY, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Add a time block to plan Study, Stretch or life's commitments.</p><div className="planner-type-legend"><span>Study</span><span>Stretch</span><span>Life & commitments</span></div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
         <Badge color="#7C5C14">{duration(1440 - booked)} open</Badge>
@@ -1441,12 +1443,12 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
         <div className="table-heading">
           <span>TIME</span>
           <span>INTENTION</span>
-          <span>ENERGY</span>
+          <span>TYPE</span>
           <span>DURATION</span>
           <span>ACTION</span>
         </div>
         {blocks.map((b) => (
-          <div className="plan-row" key={b.id}>
+          <div className={`plan-row planner-kind-${['deep','light'].includes(b.kind)?'study':b.kind==='stretch'?'stretch':'life'}`} key={b.id}>
             <span className="mono">
               {clock(b.start)} <small>— {clock(b.end)}</small>
             </span>
@@ -1454,6 +1456,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
               <i style={{ background: KINDS[b.kind]?.[1] }} />
               <span>
                 <strong>{b.title}</strong>
+                <span className="planner-block-type">{['deep','light'].includes(b.kind)?'STUDY':b.kind==='stretch'?'STRETCH':KINDS[b.kind]?.[0]}</span>
                 <small>
                   {b.objective ||
                     data.goals.find((g) => g.id === b.goalId)?.title ||
@@ -1498,7 +1501,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
     </>
   );
 }
-function BlockModal({ block, blocks, goals, areas, close, submit, remove }) {
+function BlockModal({ block, blocks, goals, areas, close, submit, remove, createGoal }) {
   const [b, setB] = useState(
       block || {
         id: uid(),
@@ -1516,6 +1519,9 @@ function BlockModal({ block, blocks, goals, areas, close, submit, remove }) {
     b.end === 1440 ? "00:00" : clock(b.end),
   );
   const change = (k, v) => setB({ ...b, [k]: v });
+  const [showWindows,setShowWindows] = useState(false);
+  const windows = availableWindows(blocks.filter(x=>x.id!==b.id));
+  const requestedDuration = Math.max(15,(endTime==='00:00'?1440:minutes(endTime))-minutes(startTime));
   return (
     <Modal
       title={block ? "Edit time block" : "Make room in your day"}
@@ -1566,7 +1572,10 @@ function BlockModal({ block, blocks, goals, areas, close, submit, remove }) {
         <p className="field-help">
           Choose 00:00 to end at midnight (24:00). Blocks stay within this day.
         </p>
-        <Field label="Type of energy">
+        <Field label="Duration (hours)"><input aria-label="Duration (hours)" type="number" min="0.25" max="24" step="0.25" value={Math.max(0,((endTime==='00:00'?1440:minutes(endTime))-minutes(startTime))/60)} onChange={e=>{const end=minutes(startTime)+Math.round(Number(e.target.value)*60);if(end<=1440&&end>minutes(startTime))setEndTime(end===1440?'00:00':clock(end));}}/></Field>
+        <button type="button" className="text-btn" onClick={()=>setShowWindows(!showWindows)}>Find available windows</button>
+        {showWindows&&<div className="planner-window-results"><p>Choose a free window. Existing blocks are preserved.</p>{windows.map(w=><button type="button" className="planner-window" key={w.start} onClick={()=>{const length=Math.max(15,(endTime==='00:00'?1440:minutes(endTime))-minutes(startTime));setStartTime(clock(w.start));const end=Math.min(w.end,w.start+length);setEndTime(end===1440?'00:00':clock(end));}}>{clock(w.start)}–{clock(w.end)} · {duration(w.end-w.start)} free</button>)}{!windows.length&&<p>No free windows. Edit another block to make space.</p>}</div>}
+        <Field label="Block type">
           <select
             value={b.kind}
             onChange={(e) => change("kind", e.target.value)}
@@ -1578,7 +1587,7 @@ function BlockModal({ block, blocks, goals, areas, close, submit, remove }) {
             ))}
           </select>
         </Field>
-        <PlannerGoals goals={goals} areas={areas} value={b.goalIds || (b.goalId ? [b.goalId] : [])} onChange={goalIds=>setB({...b,goalIds,goalId:goalIds[0] || ''})}/>
+        <PlannerGoals goals={goals} areas={areas} value={b.goalIds || (b.goalId ? [b.goalId] : [])} onChange={goalIds=>setB({...b,goalIds,goalId:goalIds[0] || ''})} createGoal={(defaults)=>createGoal(defaults,{...b,start:minutes(startTime),end:endTime==='00:00'?1440:minutes(endTime)})}/>
         {b.goalId && <GoalTrail id={b.goalId} goals={goals} />}
         {["deep", "light", "stretch"].includes(b.kind) && (
           <Field label="What will you understand, explain, or do?">
