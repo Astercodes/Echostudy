@@ -36,6 +36,7 @@ const goalLocations = g => [{areaId:g.areaId,subAreaId:g.subAreaId},...(g.locati
 const inArea = (g,id) => goalLocations(g).some(l=>l.areaId === id);
 
 export default function Goals({ data, save, edit, create, notify }) {
+  const currentDate = new Date();
   const [areaId, setAreaId] = useState("all"),
     [subAreaId, setSubAreaId] = useState("all");
   const [horizon, setHorizon] = useState("all"),
@@ -188,6 +189,12 @@ export default function Goals({ data, save, edit, create, notify }) {
   return (
     <div className="goals-workspace">
       <div className="goals-overview">
+        <time className="goals-date" dateTime={today()} aria-label={currentDate.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})}>
+          <span className="goals-date-year">{currentDate.getFullYear()}</span>
+          <span className="goals-date-month">{currentDate.toLocaleDateString(undefined,{month:'long'})}</span>
+          <strong className="goals-date-day">{String(currentDate.getDate()).padStart(2,'0')}</strong>
+          <span className="goals-date-weekday">{currentDate.toLocaleDateString(undefined,{weekday:'long'})}</span>
+        </time>
         <div>
           <span className="eyebrow">YOUR WHOLE LIFE, WITH DIRECTION</span>
           <h2>There is room for every part of you.</h2>

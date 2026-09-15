@@ -30,6 +30,13 @@
 .goal-contribution-list small { display: block; color: #6c7f93; margin-top: 4px; }
 @media(max-width:600px) { .goals-workspace .goals-overview { padding: 24px; } .goals-workspace .area-total { padding-left: 12px; } .goal-location-row { grid-template-columns: 1fr; } .goals-workspace .goal-row { padding: 14px; } }
 @media(prefers-reduced-motion:reduce) { .goals-workspace .life-area-card { transition: none; } }
+.goals-workspace .goals-date { display: grid; flex-shrink: 0; grid-template-columns: auto auto; align-items: center; column-gap: 18px; padding: 18px 22px; border: 1px solid #ffffff40; border-left: 4px solid #ff7900; border-radius: 15px; background: #ffffff0d; }
+.goals-date-year { font-size: 13px; letter-spacing: .23em; color: #ffd43b; }
+.goals-date-month { grid-row: 2; font-size: 20px; font-weight: 500; color: #fff; }
+.goals-date-day { grid-column: 2; grid-row: 1 / 3; font-size: 58px; line-height: 1; font-weight: 500; letter-spacing: -.06em; color: #fff; font-variant-numeric: tabular-nums; }
+.goals-date-weekday { grid-column: 1 / -1; margin-top: 12px; padding-top: 10px; border-top: 1px solid #ffffff30; text-transform: uppercase; font-size: 9px; letter-spacing: .2em; color: #fff; }
+@media(max-width:1100px) { .goals-workspace .goals-overview { flex-wrap: wrap; } .goals-workspace .goals-date { padding: 14px 18px; } .goals-date-day { font-size: 46px; } }
+@media(max-width:600px) { .goals-workspace .goals-date { width: 100%; grid-template-columns: 1fr auto; } }
 .goals-overview {
   display: flex;
   align-items: center;
