@@ -3,6 +3,12 @@
 .planner-day-hero h2 { margin:12px 0; font-weight:500; }
 .planner-day-hero p { color:#fff; font-size:13px; line-height:1.7; }
 .planner-day-hero .eyebrow { color:#ffd43b; }
+.planner-category-filters { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+.planner-category-filters button { display:flex; gap:10px; align-items:center; padding:10px 13px; border:1px solid #ffffff60; border-radius:9px; color:#fff; background:#ffffff10; font-size:12px; cursor:pointer; min-height:44px; }
+.planner-category-filters button[aria-pressed="true"] { background:#ff7900; border-color:#ff7900; color:#082b96; font-weight:700; }
+.planner-category-filters button:focus-visible { outline:3px solid #ffd43b; outline-offset:3px; }
+.planner-category-filters button span { font-size:11px; }
+.planner-filter-summary { padding:14px 18px; margin:0; color:#082b96; font-size:12px; }
 .planner-type-legend { display:flex; gap:14px; flex-wrap:wrap; margin-top:20px; font-size:11px; }
 .planner-type-legend span { border-bottom:3px solid #009cde; padding-bottom:6px; }
 .planner-type-legend span:nth-child(2) { border-color:#ff7900; }
