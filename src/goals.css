@@ -1,9 +1,16 @@
-.goals-workspace .goals-overview { background: radial-gradient(ellipse at 95% 0%,#2371b966,transparent 65%),linear-gradient(120deg,#112e58,#0b1d36); color: #fff; border: 1px solid #244872; border-radius: 22px; padding: 32px; box-shadow: 0 14px 32px #12335a14; }
-.goals-workspace .goals-overview .eyebrow { color: #ffc768; letter-spacing: .15em; }
+.app .goals-workspace .goals-overview { background: linear-gradient(120deg,#082b96,#173dc5); color: #fff; border: 1px solid #173dc5; border-top: 4px solid #ff7900; border-radius: 22px; padding: 32px; box-shadow: 0 14px 32px #082b9614; }
+.goals-workspace .goals-overview .eyebrow { color: #ffd43b; letter-spacing: .15em; }
 .goals-workspace .goals-overview h2 { font-size: clamp(23px,2.4vw,32px); letter-spacing: -.035em; font-weight: 500; }
-.goals-workspace .goals-overview p,.goals-workspace .area-total small { color: #bed0e6; line-height: 1.8; }
+.goals-workspace .goals-overview p,.goals-workspace .area-total small { color: #fff; line-height: 1.8; }
 .goals-workspace .area-total { border-left: 1px solid #ffffff25; padding-left: 28px; }
-.goals-workspace .area-total > strong { color: #ffd071; }
+.goals-workspace .area-total > strong { color: #ffd43b; }
+.goals-workspace .area-total { border-left-color: #ff7900; }
+.goals-workspace .goal-row { border-left: 3px solid #ff7900 !important; }
+.goals-workspace .goal-row .goal-main > strong { color: #082b96; }
+.goals-workspace .goal-row .progress i { background: #ff7900 !important; }
+.goals-workspace .goal-row .percent { color: #173dc5; }
+.goals-workspace .goal-link-chips span { color: #082b96; border-color: #173dc530; background: #fff; }
+.goal-extra-links summary,.goal-capacity-review summary { color: #082b96; }
 .goals-workspace .life-area-card { border-radius: 18px; background: linear-gradient(145deg,#fff,#f7faff); box-shadow: 0 6px 20px #15365a08; transition: box-shadow .2s,transform .2s; }
 .goals-workspace .life-area-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px #15365a12; }
 .goals-workspace .goal-row { border: 1px solid #dfe7ef; background: linear-gradient(110deg,#fff,#f8fafd); border-radius: 15px; padding: 19px; box-shadow: 0 4px 12px #173b6005; margin-bottom: 9px; }

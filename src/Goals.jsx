@@ -87,7 +87,6 @@ export default function Goals({ data, save, edit, create, notify }) {
           <div className="goal-main">
             <strong>{g.title}</strong>
             {g.locations?.length > 0 && <div className="goal-link-chips">{g.locations.map((l,i)=><span key={i}>{goalLocation(l,areas)}</span>)}</div>}
-            {g.contributesTo?.length > 0 && <small>Also contributes to: {g.contributesTo.map(id=>data.goals.find(x=>x.id===id)?.title).filter(Boolean).join(' · ')}</small>}
             <small>
               {goalLocation(g, areas)}
               {g.repeat && g.repeat !== 'none' ? ` · Repeats ${g.repeat} · Current period ends ${g.due}` : g.due ? " · Due " + g.due : ""}
@@ -667,10 +666,10 @@ export function GoalModal({
         <p className="muted">Life area and capacities are suggested from your goal wording. Review them here; your selections stay in place as you edit.</p>
         <Field label="Does this goal repeat?">
           <select aria-label="Does this goal repeat?" value={g.repeat || 'none'} disabled={hasChildren} onChange={e => setG({...g, repeat:e.target.value, due:'', periodStart:''})}>
-            <option value="none">One-time goal</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option>
+            <option value="none">One-time goal</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option><option value="yearly">Every year</option>
           </select>
         </Field>
-        {g.repeat && g.repeat !== 'none' ? <p className="auth-notice">Repeats {g.repeat}. Progress resets for each new {g.repeat === 'daily' ? 'day' : g.repeat === 'weekly' ? 'week (Monday–Sunday)' : 'calendar month'}; previous progress is kept. No deadline to keep updating. Current period ends {goalPeriod(g.repeat, today()).end}.</p> : <Field label="Target date (optional)">
+        {g.repeat && g.repeat !== 'none' ? <p className="auth-notice">Repeats {g.repeat}. Progress resets for each new {g.repeat === 'daily' ? 'day' : g.repeat === 'weekly' ? 'week (Monday–Sunday)' : g.repeat === 'yearly' ? 'calendar year (January–December)' : 'calendar month'}; previous progress is kept. No deadline to keep updating. Current period ends {goalPeriod(g.repeat, today()).end}.</p> : <Field label="Target date (optional)">
           <input
             type="date"
             value={g.due || ""}

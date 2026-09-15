@@ -6,15 +6,17 @@ export function goalPeriod(repeat, day) {
   const start = new Date(day + 'T12:00:00');
   if (repeat === 'weekly') start.setDate(start.getDate() - (start.getDay()+6)%7);
   if (repeat === 'monthly') start.setDate(1);
+  if (repeat === 'yearly') start.setMonth(0,1);
   const end = new Date(start);
   if (repeat === 'weekly') end.setDate(end.getDate()+6);
   if (repeat === 'monthly') { end.setMonth(end.getMonth()+1); end.setDate(0); }
+  if (repeat === 'yearly') end.setMonth(11,31);
   return { start: localDate(start), end: localDate(end) };
 }
 export function refreshRecurringGoals(goals, day) {
   let changed = false;
   const next = goals.map(g => {
-    if (!['daily','weekly','monthly'].includes(g.repeat)) return g;
+    if (!['daily','weekly','monthly','yearly'].includes(g.repeat)) return g;
     const period = goalPeriod(g.repeat, day);
     if (g.periodStart === period.start) return g;
     changed = true;

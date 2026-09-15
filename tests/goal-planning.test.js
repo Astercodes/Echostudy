@@ -12,6 +12,15 @@ test('rollover preserves evidence and is idempotent',()=>{
   assert.equal(next[0].periodHistory[0].progress,100);
   assert.equal(refreshRecurringGoals(next,'2026-09-15'),next);
 });
+test('yearly goals renew January 1 and retain last year',()=>{
+  assert.deepEqual(goalPeriod('yearly','2028-02-29'),{start:'2028-01-01',end:'2028-12-31'});
+  const goals=[{repeat:'yearly',periodStart:'2028-01-01',due:'2028-12-31',progress:75}];
+  assert.equal(refreshRecurringGoals(goals,'2028-12-31'),goals);
+  const next=refreshRecurringGoals(goals,'2029-01-01');
+  assert.equal(next[0].due,'2029-12-31');
+  assert.equal(next[0].progress,0);
+  assert.equal(next[0].periodHistory[0].progress,75);
+});
 test('Bible study suggests faith and spiritual capacity; unknown wording stays unclassified',()=>{
   const areas=[{id:'faith',name:'Faith & spirituality',subAreas:[{id:'scripture',name:'Scripture knowledge'}]},{id:'work',name:'Career',subAreas:[]}];
   const result=suggestGoal('Study the Bible each week',areas);
