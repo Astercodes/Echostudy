@@ -74,7 +74,7 @@ import Stretch from "./Stretch.jsx";
 import StretchPlanner from "./StretchPlanner.jsx";
 import { workspaceKey } from "./auth";
 const NAV = [
-  ["Today", LayoutDashboard],
+  ["Dashboard", LayoutDashboard],
   ["24-hour planner", CalendarDays],
   ["Goals", Target],
   ["Growth Planner", Sparkles],
@@ -240,7 +240,7 @@ export default function App({ user, onSignOut }) {
   const [loaded] = useState(() => read(KEY));
   const [loadError, setLoadError] = useState(loaded.error);
   const [data, setData] = useState(loaded.data),
-    [page, setPage] = useState("Today"),
+    [page, setPage] = useState("Dashboard"),
     [date, setDate] = useState(today()),
     [modal, setModal] = useState(null),
     [toast, setToast] = useState(""),
@@ -248,11 +248,20 @@ export default function App({ user, onSignOut }) {
     [query, setQuery] = useState(""),
     [tick, setTick] = useState(Date.now());
   const latestData = useRef(data);
+  const lastCalendarDay = useRef(today());
+  useEffect(() => {
+    const currentDay = today();
+    if (currentDay !== lastCalendarDay.current) {
+      const previousDay = lastCalendarDay.current;
+      lastCalendarDay.current = currentDay;
+      setDate((selected) => selected === previousDay ? currentDay : selected);
+    }
+  }, [tick]);
   const [stretchDraft, setStretchDraft] = useState(null);
   const [knowledgeFocus, setKnowledgeFocus] = useState(null);
   const nextKnowledgeStep = useMemo(
     () =>
-      page === "Today" ? knowledgeIntelligence(data).suggestions[0] : null,
+      page === "Dashboard" ? knowledgeIntelligence(data).suggestions[0] : null,
     [data, page],
   );
   latestData.current = data;
@@ -385,7 +394,7 @@ export default function App({ user, onSignOut }) {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            go("Today");
+            go("Dashboard");
           }}
         >
           <div className="brand-icon">
@@ -524,7 +533,7 @@ export default function App({ user, onSignOut }) {
                   ? "Put your capacity into practice."
                   : page === "Barns"
                     ? "Room for greater capacity."
-                    : page === "Today"
+                    : page === "Dashboard"
                       ? "Make room for becoming."
                       : page === "Knowledge Ecosystem"
                         ? "A mind that keeps growing."
@@ -545,7 +554,7 @@ export default function App({ user, onSignOut }) {
                   ? "Practical challenges. Real outcomes. Stronger abilities."
                   : page === "Barns"
                     ? "Sixteen dimensions. Every life area. Evidence of becoming."
-                    : page === "Today"
+                    : page === "Dashboard"
                       ? "A purposeful day. A focused mind. A stronger you."
                       : page === "Knowledge Ecosystem"
                         ? "Let ideas take root, branch out, and find unexpected connections."
@@ -563,7 +572,7 @@ export default function App({ user, onSignOut }) {
               </p>
             </div>
             <div className="heading-actions">
-              {["Today", "24-hour planner", "Reflection"].includes(page) && (
+              {["Dashboard", "24-hour planner", "Reflection"].includes(page) && (
                 <input
                   type="date"
                   aria-label="Selected day"
@@ -624,7 +633,7 @@ export default function App({ user, onSignOut }) {
               </button>
             </div>
           )}
-          {page === "Today" && (
+          {page === "Dashboard" && (
             <>
               <section className="dashboard-today card">
                 <div>

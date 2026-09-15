@@ -99,7 +99,7 @@ const assert = require("node:assert/strict");
   console.log(
     "PASS PDF upload, canvas rendering, selectable text, permanent highlight, page navigation",
   );
-  await page.getByRole("button", { name: "Today", exact: true }).click();
+  await page.getByRole("button", { name: "Dashboard", exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(600);
   assert.equal(

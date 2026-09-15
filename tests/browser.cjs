@@ -171,7 +171,7 @@ const fs = require("node:fs/promises");
   await page.getByRole("button", { name: "Growth", exact: true }).click();
   await page.locator(".history-row").waitFor();
   console.log("PASS daily reflection and growth record");
-  await page.getByRole("button", { name: "Today", exact: true }).click();
+  await page.getByRole("button", { name: "Dashboard", exact: true }).click();
   await page.screenshot({ path: "test-results/desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: "test-results/mobile.png", fullPage: true });
