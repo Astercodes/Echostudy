@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import PlannerAllocation, { PlannerGoals } from './PlannerAllocation';
 import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
 import {
@@ -88,6 +89,7 @@ const NAV = [
   ["Barns", Library],
 ];
 const KINDS = {
+  stretch: ["Stretch practice", "#ff7900"],
   deep: ["Deep study", "#009cde"],
   light: ["Light study", "#07529a"],
   reflection: ["Reflection", "#173dc5"],
@@ -1119,6 +1121,10 @@ export default function App({ user, onSignOut }) {
               date={date}
               update={updatePlan}
               edit={(b) => setModal({ type: "block", block: b })}
+              stretch={(b) => {
+                setStretchDraft({title:b.title,objective:b.objective || '',goalId:b.goalId,goalIds:b.goalIds || [],date,planned:b.end-b.start,blockId:b.id});
+                go('Stretch workspace');
+              }}
               start={start}
               notify={notify}
             />
@@ -1201,6 +1207,7 @@ export default function App({ user, onSignOut }) {
           block={modal.block}
           blocks={blocks}
           goals={data.goals}
+          areas={data.lifeAreas}
           close={() => setModal(null)}
           submit={(b) => {
             updatePlan(
@@ -1404,64 +1411,11 @@ function Stat({ icon: Icon, label, value, foot, color }) {
     </div>
   );
 }
-function Planner({ blocks, data, date, update, edit, start, notify }) {
-  const [hours, setHours] = useState(3),
-    [goal, setGoal] = useState("g5");
+function Planner({ blocks, data, date, update, edit, start, stretch, notify }) {
   const booked = blocks.reduce((n, b) => n + b.end - b.start, 0);
   return (
     <>
-      <div className="planner-banner">
-        <div>
-          <h2>A full life needs breathing room.</h2>
-          <p>
-            Keep your commitments, then fit study into free windows between
-            06:00 and 23:00. Deep blocks last at most 90 minutes, with 15-minute
-            breaks where space allows.
-          </p>
-        </div>
-        <div className="auto-controls">
-          <Field label="Study hours">
-            <input
-              type="number"
-              min=".5"
-              max="12"
-              step=".5"
-              value={hours}
-              onChange={(e) => setHours(Number(e.target.value))}
-            />
-          </Field>
-          <Field label="Contributing goal">
-            <GoalSelect goals={data.goals} value={goal} onChange={setGoal} />
-          </Field>
-          <Button
-            primary
-            onClick={() => {
-              if (
-                !goal ||
-                !Number.isFinite(hours) ||
-                hours < 0.5 ||
-                hours > 12
-              ) {
-                notify("Choose a goal and 0.5–12 study hours.");
-                return;
-              }
-              const result = fillStudyWindows(blocks, hours * 60, goal);
-              update(result.blocks);
-              notify(
-                result.unplaced
-                  ? duration(hours * 60 - result.unplaced) +
-                      " scheduled; " +
-                      duration(result.unplaced) +
-                      " could not fit. Adjust commitments or reduce study time."
-                  : "Study windows planned with recovery breaks.",
-              );
-            }}
-          >
-            <Sprout size={17} />
-            Find my study windows
-          </Button>
-        </div>
-      </div>
+      <PlannerAllocation blocks={blocks} data={data} date={date} update={update} notify={notify}/>
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
         <Badge color="#7C5C14">{duration(1440 - booked)} open</Badge>
@@ -1504,7 +1458,7 @@ function Planner({ blocks, data, date, update, edit, start, notify }) {
                     "A protected part of your day"}
                 </small>
                 <small className="planner-goal">
-                  {b.goalId
+                  {b.goalIds?.length > 1 ? `${b.goalIds.length} contributing goals` : b.goalId
                     ? "Goal: " +
                       (data.goals.find((g) => g.id === b.goalId)?.title ||
                         "Unavailable — choose another goal")
@@ -1515,6 +1469,7 @@ function Planner({ blocks, data, date, update, edit, start, notify }) {
             <Badge color={KINDS[b.kind]?.[1]}>{KINDS[b.kind]?.[0]}</Badge>
             <span>{duration(b.end - b.start)}</span>
             <div className="row-actions">
+              {b.kind === 'stretch' && <button className="text-btn" onClick={()=>stretch(b)}>Open Stretch</button>}
               {["deep", "light"].includes(b.kind) && (
                 <button
                   className="icon-btn"
@@ -1541,7 +1496,7 @@ function Planner({ blocks, data, date, update, edit, start, notify }) {
     </>
   );
 }
-function BlockModal({ block, blocks, goals, close, submit, remove }) {
+function BlockModal({ block, blocks, goals, areas, close, submit, remove }) {
   const [b, setB] = useState(
       block || {
         id: uid(),
@@ -1621,15 +1576,9 @@ function BlockModal({ block, blocks, goals, close, submit, remove }) {
             ))}
           </select>
         </Field>
-        <Field label="Linked goal">
-          <GoalSelect
-            goals={goals}
-            value={b.goalId}
-            onChange={(v) => change("goalId", v)}
-          />
-        </Field>
+        <PlannerGoals goals={goals} areas={areas} value={b.goalIds || (b.goalId ? [b.goalId] : [])} onChange={goalIds=>setB({...b,goalIds,goalId:goalIds[0] || ''})}/>
         {b.goalId && <GoalTrail id={b.goalId} goals={goals} />}
-        {["deep", "light"].includes(b.kind) && (
+        {["deep", "light", "stretch"].includes(b.kind) && (
           <Field label="What will you understand, explain, or do?">
             <textarea
               value={b.objective}
@@ -1696,6 +1645,7 @@ function SessionModal({ block, data, close, submit }) {
             topic,
             objective,
             goalId: goal,
+            goalIds: [...new Set([goal,...(block?.goalIds || [])].filter(Boolean))],
             capacityIds,
             areaId: data.goals.find((g) => g.id === goal)?.areaId || "",
             subAreaId: data.goals.find((g) => g.id === goal)?.subAreaId || "",
