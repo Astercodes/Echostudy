@@ -128,11 +128,13 @@ export function ancestors(goalId, goals) {
   }
   return chain;
 }
-export function goalProgress(id, goals) {
-  const children = goals.filter((g) => g.parent === id);
+export function goalProgress(id, goals, visited = new Set()) {
+  if (visited.has(id)) return 0;
+  const path = new Set(visited).add(id);
+  const children = goals.filter((g) => g.parent === id || (g.contributesTo || []).includes(id));
   return children.length
     ? Math.round(
-        children.reduce((n, g) => n + goalProgress(g.id, goals), 0) /
+        children.reduce((n, g) => n + goalProgress(g.id, goals, path), 0) /
           children.length,
       )
     : goals.find((g) => g.id === id)?.progress || 0;
@@ -497,6 +499,16 @@ export function validateGoal(goal, goals, areas) {
   if (typeof goal.title !== "string" || !goal.title.trim())
     return "Give this goal a clear title.";
   if (!LEVELS.includes(goal.level)) return "Choose a time horizon.";
+  for (const location of goal.locations || []) {
+    const linkedArea = areas.find(a=>a.id===location.areaId);
+    if (!linkedArea || (location.subAreaId && !linkedArea.subAreas.some(s=>s.id===location.subAreaId))) return 'Choose a valid life area and sub-area for each additional location, or remove the empty row.';
+  }
+  for (const id of goal.contributesTo || []) {
+    const linked = goals.find(g=>g.id===id);
+    if (!linked || id===goal.id) return 'Choose an existing larger goal.';
+    if (LEVELS.indexOf(linked.level)>=LEVELS.indexOf(goal.level) || (linked.repeat && linked.repeat!=='none')) return 'Additional goals must have a longer horizon and must not repeat.';
+  }
+  if (goals.some(g=>(g.contributesTo || []).includes(goal.id) && LEVELS.indexOf(g.level)<=LEVELS.indexOf(goal.level))) return 'Keep this goal at a longer horizon than the goals contributing to it.';
   const area = areas.find((a) => a.id === goal.areaId);
   if (!area) return "Choose a life area.";
   if (goal.subAreaId && !area.subAreas.some((s) => s.id === goal.subAreaId))

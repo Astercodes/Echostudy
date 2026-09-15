@@ -32,6 +32,8 @@ const horizonLabels = {
   Week: "Weekly",
   Day: "Daily",
 };
+const goalLocations = g => [{areaId:g.areaId,subAreaId:g.subAreaId},...(g.locations || [])];
+const inArea = (g,id) => goalLocations(g).some(l=>l.areaId === id);
 
 export default function Goals({ data, save, edit, create, notify }) {
   const [areaId, setAreaId] = useState("all"),
@@ -43,8 +45,7 @@ export default function Goals({ data, save, edit, create, notify }) {
   const areas = data.lifeAreas,
     area = areas.find((a) => a.id === areaId);
   const match = (g) =>
-    (areaId === "all" || g.areaId === areaId) &&
-    (subAreaId === "all" || g.subAreaId === subAreaId) &&
+    goalLocations(g).some(l => (areaId === "all" || l.areaId === areaId) && (subAreaId === "all" || l.subAreaId === subAreaId)) &&
     (horizon === "all" || g.level === horizon) &&
     (!query.trim() ||
       (g.title + " " + goalLocation(g, areas))
@@ -85,6 +86,8 @@ export default function Goals({ data, save, edit, create, notify }) {
           </span>
           <div className="goal-main">
             <strong>{g.title}</strong>
+            {g.locations?.length > 0 && <div className="goal-link-chips">{g.locations.map((l,i)=><span key={i}>{goalLocation(l,areas)}</span>)}</div>}
+            {g.contributesTo?.length > 0 && <small>Also contributes to: {g.contributesTo.map(id=>data.goals.find(x=>x.id===id)?.title).filter(Boolean).join(' · ')}</small>}
             <small>
               {goalLocation(g, areas)}
               {g.repeat && g.repeat !== 'none' ? ` · Repeats ${g.repeat} · Current period ends ${g.due}` : g.due ? " · Due " + g.due : ""}
@@ -179,7 +182,7 @@ export default function Goals({ data, save, edit, create, notify }) {
           </div>
         </div>
         {tree &&
-          data.goals.filter((x) => x.parent === g.id).map((x) => renderGoal(x))}
+          data.goals.filter((x) => x.parent === g.id || (x.contributesTo || []).includes(g.id)).map((x) => renderGoal(x))}
       </div>
     );
   };
@@ -255,7 +258,7 @@ export default function Goals({ data, save, edit, create, notify }) {
           </p>
           <div className="life-area-grid">
             {areas.map((a, index) => {
-              const goals = data.goals.filter((g) => g.areaId === a.id);
+              const goals = data.goals.filter((g) => inArea(g,a.id));
               return (
                 <article
                   className="card life-area-card"
@@ -296,7 +299,7 @@ export default function Goals({ data, save, edit, create, notify }) {
                           >
                             {s.name}
                             <span>
-                              {goals.filter((g) => g.subAreaId === s.id).length}
+                              {goals.filter((g) => goalLocations(g).some(l=>l.areaId===a.id && l.subAreaId===s.id)).length}
                             </span>
                           </button>
                         </li>
@@ -442,7 +445,7 @@ export default function Goals({ data, save, edit, create, notify }) {
             </section>
           ) : (
             areas
-              .filter((a) => filtered.some((g) => g.areaId === a.id))
+              .filter((a) => filtered.some((g) => inArea(g,a.id)))
               .map((a) => (
                 <section className="card goals-card area-goal-group" key={a.id}>
                   <div className="section-head">
@@ -467,7 +470,7 @@ export default function Goals({ data, save, edit, create, notify }) {
                     </button>
                   </div>
                   {filtered
-                    .filter((g) => g.areaId === a.id && (flat || !g.parent))
+                    .filter((g) => inArea(g,a.id) && (flat || !g.parent || g.areaId !== a.id))
                     .map((g) => renderGoal(g, !flat))}
                 </section>
               ))
@@ -529,7 +532,7 @@ export function GoalModal({
   const [error, setError] = useState("");
   const [manualArea, setManualArea] = useState(Boolean(goal || defaults.parent));
   const [manualCapacity, setManualCapacity] = useState(Boolean(goal));
-  const hasChildren = goals.some((x) => x.parent === g.id),
+  const hasChildren = goals.some((x) => x.parent === g.id || (x.contributesTo || []).includes(g.id)),
     area = areas.find((a) => a.id === g.areaId);
   const parentOptions = goals.filter(
     (x) =>
@@ -647,6 +650,20 @@ export function GoalModal({
           </Field>
         )}
         {g.parent && <GoalTrail id={g.parent} goals={goals} />}
+        <details className="goal-extra-links" open={Boolean(g.locations?.length || g.contributesTo?.length)}>
+          <summary>Connect to more life areas and larger goals</summary>
+          <p className="muted">Keep the primary home above. Add other areas this same goal supports; progress is shared, not copied.</p>
+          {(g.locations || []).map((location,i)=><div className="goal-location-row" key={i}>
+            <select aria-label={`Additional life area ${i+1}`} value={location.areaId} onChange={e=>setG({...g,locations:g.locations.map((l,j)=>j===i?{areaId:e.target.value,subAreaId:''}:l)})}><option value="">Choose life area</option>{areas.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select>
+            <select aria-label={`Additional sub-area ${i+1}`} value={location.subAreaId || ''} onChange={e=>setG({...g,locations:g.locations.map((l,j)=>j===i?{...l,subAreaId:e.target.value}:l)})}><option value="">Whole life area</option>{areas.find(a=>a.id===location.areaId)?.subAreas.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select>
+            <button type="button" className="text-btn" aria-label={`Remove additional location ${i+1}`} onClick={()=>setG({...g,locations:g.locations.filter((_,j)=>j!==i)})}>Remove</button>
+          </div>)}
+          <Button type="button" onClick={()=>setG({...g,locations:[...(g.locations || []),{areaId:'',subAreaId:''}]})}>Add life area / sub-area</Button>
+          <fieldset className="goal-contribution-list"><legend>Other larger goals this contributes to</legend>
+          {goals.filter(x=>x.id!==g.id && x.id!==g.parent && (!x.repeat || x.repeat==='none') && LEVELS.indexOf(x.level)<LEVELS.indexOf(g.level)).map(x=><label key={x.id}><input type="checkbox" checked={(g.contributesTo || []).includes(x.id)} onChange={e=>setG({...g,contributesTo:e.target.checked?[...(g.contributesTo || []),x.id]:(g.contributesTo || []).filter(id=>id!==x.id)})}/><span>{x.title}<small>{horizonLabels[x.level]} · {goalLocation(x,areas)}</small></span></label>)}
+          {!goals.some(x=>x.id!==g.id && x.id!==g.parent && (!x.repeat || x.repeat==='none') && LEVELS.indexOf(x.level)<LEVELS.indexOf(g.level)) && <p className="muted">Create a longer-horizon goal to link it here. Goals can belong to different life areas.</p>}
+          </fieldset>
+        </details>
         <p className="muted">Life area and capacities are suggested from your goal wording. Review them here; your selections stay in place as you edit.</p>
         <Field label="Does this goal repeat?">
           <select aria-label="Does this goal repeat?" value={g.repeat || 'none'} disabled={hasChildren} onChange={e => setG({...g, repeat:e.target.value, due:'', periodStart:''})}>
