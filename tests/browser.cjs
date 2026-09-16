@@ -67,7 +67,7 @@ const fs = require("node:fs/promises");
   assert.equal(state.timer, null);
   console.log("PASS timer start, pause, reload recovery, notes and reflection");
   await page
-    .getByRole("button", { name: "24-hour planner", exact: true })
+    .getByRole("button", { name: "Time planner", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Add time block", exact: true })

@@ -9,7 +9,7 @@ const {installAuthMock,enterWorkspace,USER_ONE}=require('./auth-mock.cjs');
  const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await installAuthMock(page);await page.addInitScript(({data,key})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(data));},{data,key:'echostudy-v1:'+USER_ONE});
  await page.goto('http://127.0.0.1:5183');await enterWorkspace(page);
- await page.getByRole('button',{name:'24-hour planner',exact:true}).click();
+ await page.getByRole('button',{name:'Time planner',exact:true}).click();
  await page.getByRole('button',{name:'Add time block',exact:true}).click();
  const dialog=page.getByRole('dialog');
  await dialog.getByRole('button',{name:'Life commitment',exact:true}).click();

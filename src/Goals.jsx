@@ -87,7 +87,6 @@ export default function Goals({ data, save, edit, create, notify }) {
           </span>
           <div className="goal-main">
             <strong>{g.title}</strong>
-            {g.targetHours>0&&<small>{g.targetHours}h {g.timeActivity||'study'} target · progress from completed activity</small>}
             {(g.contributionEvidence?.studyIds.length>0||g.contributionEvidence?.stretchIds.length>0)&&<small>{g.contributionEvidence.studyIds.length} Study sessions · {g.contributionEvidence.stretchIds.length} Stretch practices contributed</small>}
             {g.locations?.length > 0 && <div className="goal-link-chips">{g.locations.map((l,i)=><span key={i}>{goalLocation(l,areas)}</span>)}</div>}
             <small>
@@ -662,8 +661,7 @@ export function GoalModal({
             onChange={(e) => setG({ ...g, due: e.target.value })}
           />
         </Field>}
-        {!hasChildren&&<details><summary>Track a time target (optional)</summary><Field label="Activity to measure"><select value={g.timeActivity||'study'} onChange={e=>setG({...g,timeActivity:e.target.value})}><option value="study">Study — focused time</option><option value="stretch">Stretch — actual practice</option><option value="life">Life commitments — completed blocks</option></select></Field><Field label="Target hours this goal period"><input type="number" min="0" step="0.25" value={g.targetHours||''} onChange={e=>setG({...g,targetHours:Number(e.target.value)})}/></Field><small>Linked completed activity updates progress automatically. Leave empty for manual progress.</small></details>}
-        {goal && !hasChildren && !g.targetHours && (
+        {goal && !hasChildren && (
           <Field label={"Progress · " + g.progress + "%"}>
             <input
               type="range"

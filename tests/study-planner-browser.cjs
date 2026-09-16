@@ -35,7 +35,7 @@ const {installAuthMock,enterWorkspace,USER_ONE}=require('./auth-mock.cjs');
  await dialog.getByRole('button',{name:'Schedule study',exact:true}).click();
  if(await page.locator('.study-upcoming-compact').getAttribute('open')===null) await page.locator('.study-upcoming-compact summary').click();
  await page.getByRole('heading',{name:'Scheduled from Study',exact:true}).waitFor();
- await page.getByRole('button',{name:'24-hour planner',exact:true}).click();
+ await page.getByRole('button',{name:'Time planner',exact:true}).click();
  await page.locator('.plan-row').filter({hasText:'Scheduled from Study'}).waitFor();
  assert.equal(await page.locator('.plan-row').count(),2);
  await page.locator('.plan-row').filter({hasText:'Scheduled from Study'}).getByRole('button',{name:'Actions for Scheduled from Study',exact:true}).click(); await dialog.getByRole('button',{name:'Edit',exact:true}).click();

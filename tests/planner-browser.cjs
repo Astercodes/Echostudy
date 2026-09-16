@@ -11,7 +11,7 @@ const assert = require("node:assert/strict");
     await page.goto("http://127.0.0.1:5180");
     await enterWorkspace(page);
     await page
-      .getByRole("button", { name: "24-hour planner", exact: true })
+      .getByRole("button", { name: "Time planner", exact: true })
       .click();
     const row = page.locator(".plan-row").last();
     await row.getByRole("button", { name: "Edit", exact: true }).click();
@@ -28,7 +28,7 @@ const assert = require("node:assert/strict");
     assert.match(await row.innerText(), /Goal:/);
     await page.reload();
     await page
-      .getByRole("button", { name: "24-hour planner", exact: true })
+      .getByRole("button", { name: "Time planner", exact: true })
       .click();
     await page
       .locator(".plan-row")

@@ -5,7 +5,8 @@ import { scheduledStudies, saveStudySchedule } from './study-scheduling';
 import StudyIntentionPicker from './StudyIntentionPicker';
 import BlockEditor from './BlockEditor';
 import PlannerTools from './PlannerTools';
-import GoalTimeSuggestions from './GoalTimeSuggestions';
+import PlannerWeek from './PlannerWeek';
+import {weekDays} from './planner-week';
 import {integrateLearning} from './learning-integration';
 import {advanceStudyCycle,nextStudyCycle,focusWithinWindow} from './study-cycles';
 import {blockCategory,hasStudy,hasStretch,studyMinutes,stretchMinutes,recurringCommitments,storePlannerBlock} from './planner-blocks';
@@ -86,7 +87,7 @@ import StretchPlanner from "./StretchPlanner.jsx";
 import { workspaceKey } from "./auth";
 const NAV = [
   ["Dashboard", LayoutDashboard],
-  ["24-hour planner", CalendarDays],
+  ["Time planner", CalendarDays],
   ["Goals", Target],
   ["Growth Planner", Sparkles],
   ["Study workspace", BookOpen],
@@ -584,7 +585,7 @@ export default function App({ user, onSignOut }) {
                         ? "Let ideas take root, branch out, and find unexpected connections."
                         : page === "Goals"
                           ? "Connect what you do today to who you are becoming. Every goal can direct what you Study and Stretch next. Build a pathway from any goal to create intentional Study and Stretch actions."
-                          : page === "24-hour planner"
+                          : page === "Time planner"
                             ? "Protect your essentials. Find realistic space to learn and grow."
                             : page === "Resource library"
                               ? "Read, highlight, and give every insight a place in your knowledge."
@@ -596,7 +597,7 @@ export default function App({ user, onSignOut }) {
               </p>
             </div>
             <div className="heading-actions">
-              {["Dashboard", "24-hour planner", "Reflection"].includes(page) && (
+              {["Dashboard", "Time planner", "Reflection"].includes(page) && (
                 <input
                   type="date"
                   aria-label="Selected day"
@@ -610,19 +611,19 @@ export default function App({ user, onSignOut }) {
                   onClick={() =>
                     page === "Goals"
                       ? setModal({ type: "goal" })
-                      : page === "24-hour planner"
+                      : page === "Time planner"
                         ? setModal({ type: "block" })
                         : start(page === 'Study workspace' ? undefined : first)
                   }
                 >
-                  {page === "Goals" || page === "24-hour planner" ? (
+                  {page === "Goals" || page === "Time planner" ? (
                     <Plus size={17} />
                   ) : (
                     <Play size={15} fill="currentColor" />
                   )}
                   {page === "Goals"
                     ? "New goal"
-                    : page === "24-hour planner"
+                    : page === "Time planner"
                       ? "Add time block"
                       : data.timer
                         ? "Return to session"
@@ -643,7 +644,7 @@ export default function App({ user, onSignOut }) {
               <button
                 onClick={() => {
                   save((d) => ({ ...d, onboarded: true }));
-                  go("24-hour planner");
+                  go("Time planner");
                 }}
               >
                 Personalize my day <ArrowRight size={16} />
@@ -672,7 +673,7 @@ export default function App({ user, onSignOut }) {
                   <Button
                     primary
                     onClick={() =>
-                      first ? start(first) : go("24-hour planner")
+                      first ? start(first) : go("Time planner")
                     }
                   >
                     <Play size={15} fill="currentColor" /> Start Study
@@ -690,7 +691,7 @@ export default function App({ user, onSignOut }) {
                   </div>
                   <button
                     className="text-btn"
-                    onClick={() => go("24-hour planner")}
+                    onClick={() => go("Time planner")}
                   >
                     Plan the day <ArrowRight size={15} />
                   </button>
@@ -923,7 +924,7 @@ export default function App({ user, onSignOut }) {
                       <button
                         className="icon-btn"
                         aria-label="Edit day plan"
-                        onClick={() => go("24-hour planner")}
+                        onClick={() => go("Time planner")}
                       >
                         <ArrowUpRight size={19} />
                       </button>
@@ -986,7 +987,7 @@ export default function App({ user, onSignOut }) {
                     </div>
                     <button
                       className="full-link"
-                      onClick={() => go("24-hour planner")}
+                      onClick={() => go("Time planner")}
                     >
                       View your full 24 hours <ArrowRight size={16} />
                     </button>
@@ -1128,15 +1129,18 @@ export default function App({ user, onSignOut }) {
               </div>
             </>
           )}
-          {page === "24-hour planner" && (
+          {page === "Time planner" && (
             <Planner
               save={save}
+              selectDate={setDate}
+              add={day=>{setDate(day);setModal({type:'block'});}}
+              openGoals={()=>go('Goals')}
               blocks={blocks}
               data={data}
               date={date}
               update={updatePlan}
               createGoal={(defaults,onCreated)=>setModal({type:'goal',defaults,onCreated})}
-              edit={(b) => setModal({ type: "block", block: b })}
+              edit={(b,day=date) => {setDate(day);setModal({ type: "block", block: b });}}
               stretch={(b) => {
                 const stretchDate=b.scheduledDate || date;
                 const existing=data.stretches.find(s=>s.blockId===b.id && s.date===stretchDate);
@@ -1434,16 +1438,21 @@ function Stat({ icon: Icon, label, value, foot, color }) {
     </div>
   );
 }
-function Planner({ blocks, data, date, update, edit, start, stretch, notify, save, createGoal, conflicts=[] }) {
+function Planner({ blocks, data, date, update, edit, start, stretch, notify, save, selectDate,add,openGoals, createGoal, conflicts=[] }) {
+  const [view,setView]=useState('day');
   const [category,setCategory] = useState('all');
   const categoryOf = blockCategory;
   const categories = [['all','All'],['study','Study'],['stretch','Stretch'],['life','Life & commitments']];
   const matches = (b,filter) => filter==='all'||categoryOf(b)===filter || (categoryOf(b)==='combined' && ['study','stretch'].includes(filter));
   const visibleBlocks = blocks.filter(b=>matches(b,category));
+  const scopeBlocks=view==='week'?weekDays(date).flatMap(day=>recurringCommitments(data,day).blocks):blocks;
   const booked = blocks.filter(b=>b.status!=='skipped').reduce((n, b) => n + b.end - b.start, 0);
   return (
     <>
-      <header className="planner-day-hero"><div><span className="eyebrow">YOUR DAY, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Add a time block to plan Study, Stretch or life's commitments.</p><div className="planner-category-filters" role="group" aria-label="Filter time blocks">{categories.map(([id,label])=><button key={id} type="button" aria-pressed={category===id} aria-controls="planner-filtered-blocks" onClick={()=>setCategory(id)}>{label}<span>{blocks.filter(b=>matches(b,id)).length}</span></button>)}</div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
+      <div className="planner-view-bar"><div className="planner-category-filters" role="group" aria-label="Planner view">{['day','week'].map(v=><button key={v} type="button" aria-pressed={view===v} onClick={()=>setView(v)}>{v==='day'?'Day':'Week'}</button>)}</div><button className="text-btn" onClick={openGoals}>Year → Quarter → Month → Week → Day → Time Block</button></div>
+      <p className="planner-horizon-help">Set your longer-term direction in Goals. Plan the days and weeks that bring it to life here.</p>
+      <header className="planner-day-hero"><div><span className="eyebrow">YOUR TIME, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Add a time block to plan Study, Stretch or life's commitments.</p><div className="planner-category-filters" role="group" aria-label="Filter time blocks">{categories.map(([id,label])=><button key={id} type="button" aria-pressed={category===id} aria-controls="planner-filtered-blocks" onClick={()=>setCategory(id)}>{label}<span>{scopeBlocks.filter(b=>matches(b,id)).length}</span></button>)}</div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
+      {view==='week'?<PlannerWeek data={data} date={date} category={category} selectDate={selectDate} openDay={day=>{selectDate(day);setView('day');}} add={add} edit={edit} start={start} stretch={stretch} save={save} notify={notify}/>:<>
       {conflicts.length>0 && <div className="auth-notice" role="status">Recurring commitments need attention: {conflicts.map(b=>`${b.title} (${clock(b.start)}–${clock(b.end)})`).join(', ')}. They overlap existing blocks and haven't been added to this day.</div>}
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
@@ -1464,7 +1473,6 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
         )}
       </div>
       {booked>=1296&&<div className="auth-notice" role="status">Your day is {Math.round(booked/1440*100)}% allocated. You have only {duration(Math.max(0,1440-booked))} of unplanned time. Consider leaving room for transitions, delays and rest. Capacity isn't maximized by filling every available minute.</div>}
-      <GoalTimeSuggestions data={data} save={save} notify={notify}/>
       <section className="card planner-table" id="planner-filtered-blocks" aria-label={`${categories.find(([id])=>id===category)[1]} time blocks`}>
         <p className="planner-filter-summary" role="status">{visibleBlocks.length} {category==='all'?'total':categories.find(([id])=>id===category)[1]} blocks · {duration(visibleBlocks.reduce((n,b)=>n+(category==='study'?studyMinutes(b):category==='stretch'?stretchMinutes(b):b.end-b.start),0))}</p>
         <div className="table-heading">
@@ -1512,6 +1520,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
           </div>
         )}
       </section>
+      </>}
     </>
   );
 }
@@ -1651,8 +1660,8 @@ function Study({ data, save, tick, start, finish, go }) {
   const [focus, setFocus] = useState(false);
   const upcoming = scheduledStudies(data,today());
   const upcomingPanel = (
-      <details className="card study-upcoming study-upcoming-compact"><summary><span>Upcoming study <strong>{upcoming.length}</strong></span><span>View sessions <ChevronDown size={16}/></span></summary><div className="study-upcoming-content"><button className="text-btn" onClick={()=>go('24-hour planner')}>Open planner</button>
-        <p className="muted">Your scheduled Study blocks, shared with the 24-hour planner.</p>
+      <details className="card study-upcoming study-upcoming-compact"><summary><span>Upcoming study <strong>{upcoming.length}</strong></span><span>View sessions <ChevronDown size={16}/></span></summary><div className="study-upcoming-content"><button className="text-btn" onClick={()=>go('Time planner')}>Open planner</button>
+        <p className="muted">Your scheduled Study blocks, shared with the Time planner.</p>
         {upcoming.map(b=><article key={`${b.scheduledDate}-${b.id}`} className="study-upcoming-row"><div><small>{b.scheduledDate} · {clock(b.start)}–{clock(b.end)}</small><h3>{b.title}</h3><p>{b.objective || 'Set an objective when you open this session.'}</p><small>{duration(studyMinutes(b))}{b.intention?` · ${b.intention}`:''}{b.goalIds?.length?` · ${b.goalIds.length} linked goals`:''}</small></div><Button disabled={Boolean(t)} onClick={()=>start(b)}>{b.scheduledDate===today()?'Begin session':'Prepare session'}</Button></article>)}
         {!upcoming.length&&<p>No upcoming study yet. Set your study intention to start now or schedule for later.</p>}
       </div></details>
@@ -1932,7 +1941,7 @@ function FinishModal({ data, close, submit }) {
             placeholder="I can now explain… Next, I need to understand…"
           />
         </Field>
-        {!data.goals.find(g=>g.id===data.timer.goalId)?.targetHours && !data.goals.some((g) => g.parent === data.timer.goalId) && (
+        {!data.goals.some((g) => g.parent === data.timer.goalId) && (
           <Field label={"Update linked goal progress · " + progress + "%"}>
             <input
               type="range"
