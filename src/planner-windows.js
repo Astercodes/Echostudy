@@ -1,7 +1,7 @@
 export function availableWindows(blocks) {
   let cursor=0;
   const gaps=[];
-  for(const b of [...blocks].sort((a,b)=>a.start-b.start)) {
+  for(const b of blocks.filter(b=>b.status!=='skipped').sort((a,b)=>a.start-b.start)) {
     if(b.start>cursor) gaps.push({start:cursor,end:b.start});
     cursor=Math.max(cursor,b.end);
   }

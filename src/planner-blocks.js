@@ -11,7 +11,7 @@ export function recurringCommitments(data, day) {
     const id=`${rule.id}:${day}`;
     if(blocks.some(b=>b.id===id) || (data.skippedCommitments || []).includes(id)) continue;
     const b={...rule.block,id,repeatRuleId:rule.id,repeat:rule.repeat};
-    if(blocks.some(x=>b.start<x.end && b.end>x.start)) {conflicts.push(b);continue;}
+    if(blocks.some(x=>x.status!=='skipped' && b.start<x.end && b.end>x.start)) {conflicts.push(b);continue;}
     blocks.push(b);
   }
   return {blocks:blocks.sort((a,b)=>a.start-b.start),conflicts};

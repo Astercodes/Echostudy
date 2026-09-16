@@ -66,7 +66,7 @@ export function validateBlock(block, blocks) {
     return "Choose an end time after the start, within this day. Split overnight blocks at midnight.";
   if (
     blocks.some(
-      (b) => b.id !== block.id && block.start < b.end && block.end > b.start,
+      (b) => b.status !== 'skipped' && b.id !== block.id && block.start < b.end && block.end > b.start,
     )
   )
     return "This overlaps another block. Choose an open window.";

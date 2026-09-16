@@ -1,5 +1,28 @@
 import {uid,validateBlock} from './model.js';
 import {recurringCommitments,storePlannerBlock} from './planner-blocks.js';
+import {availableWindows} from './planner-windows.js';
+
+export function plannerBlockStatus(data,day,b) {
+  if(b.status==='skipped')return 'skipped';
+  const studyDone=!['deep','light','combined'].includes(b.kind)||data.sessions.some(s=>s.blockId===b.id&&(s.scheduledDate||s.date)===day);
+  const stretchDone=!['stretch','combined'].includes(b.kind)||(data.stretches||[]).some(s=>s.blockId===b.id&&s.date===day&&s.status==='completed');
+  if(b.status==='completed'||(['deep','light','stretch','combined'].includes(b.kind)&&studyDone&&stretchDone))return 'completed';
+  return b.status || 'planned';
+}
+export function setPlannerBlockStatus(data,day,b,status) {
+  if(data.timer?.blockId===b.id)throw Error('Finish your active Study session before changing this block.');
+  const blocks=recurringCommitments(data,day).blocks;
+  const next={...data,plans:{...data.plans,[day]:status==='deleted'?blocks.filter(x=>x.id!==b.id):blocks.map(x=>x.id===b.id?{...x,status,statusChangedAt:new Date().toISOString()}:x)}};
+  if(status==='deleted'&&b.repeatRuleId)next.skippedCommitments=[...(data.skippedCommitments||[]),b.id];
+  next.stretches=(data.stretches||[]).flatMap(s=>s.blockId!==b.id||s.date!==day||s.status!=='planned'?[s]:status==='deleted'?[]:[{...s,plannerStatus:status}]);
+  return next;
+}
+export function recoveryWindows(data,day,block,now=new Date()) {
+  const local=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  if(day<local)return [];
+  const earliest=day===local?Math.ceil((now.getHours()*60+now.getMinutes())/5)*5:0;
+  return availableWindows(recurringCommitments(data,day).blocks.filter(b=>b.id!==block.id&&b.status!=='skipped')).map(w=>({...w,start:Math.max(w.start,earliest)})).filter(w=>w.end-w.start>=block.end-block.start);
+}
 
 export function changePlannerBlock(data,day,block,action,options={}) {
   const target=options.date || day;
@@ -7,7 +30,7 @@ export function changePlannerBlock(data,day,block,action,options={}) {
   const recorded=data.timer?.blockId===block.id || data.sessions.some(s=>s.blockId===block.id) || (data.stretches || []).some(s=>s.blockId===block.id && s.status!=='planned');
   if(recorded && action!=='duplicate') throw Error('This block has activity recorded. Duplicate it to plan new time without changing its history.');
   let next={...data,plans:{...data.plans}},items=[];
-  const clean={...block,repeat:'none'};delete clean.repeatRuleId;
+  const clean={...block,repeat:'none',status:'planned'};delete clean.repeatRuleId;delete clean.statusChangedAt;
   if(action==='split') {
     const first=Number(options.first),gap=Number(options.gap),length=block.end-block.start;
     if(!Number.isFinite(first)||!Number.isFinite(gap)||first<1||gap<0||first+gap>=length) throw Error('Leave at least one minute in each session, with a break that fits inside the original block.');

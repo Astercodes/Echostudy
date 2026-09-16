@@ -337,7 +337,7 @@ export default function App({ user, onSignOut }) {
     };
   const resolvedDay = recurringCommitments(data,date);
   const blocks = resolvedDay.blocks,
-    studyBlocks = blocks.filter(hasStudy),
+    studyBlocks = blocks.filter(b=>hasStudy(b)&&b.status!=='skipped'),
     sessions = data.sessions.filter((s) => s.date === date);
   const planned = studyBlocks.reduce((n, b) => n + studyMinutes(b), 0),
     actual = Math.round(sessions.reduce((n, s) => n + s.actualMs, 0) / 60000),
@@ -345,7 +345,7 @@ export default function App({ user, onSignOut }) {
       (c) => !c.id.startsWith("d") && c.id !== "root",
     );
   const pending = studyBlocks.filter(
-    (b) => !sessions.some((s) => s.blockId === b.id),
+    (b) => b.status!=='completed' && !sessions.some((s) => s.blockId === b.id),
   );
   const nowMinutes =
     new Date(tick).getHours() * 60 + new Date(tick).getMinutes();
@@ -1133,8 +1133,9 @@ export default function App({ user, onSignOut }) {
               createGoal={(defaults,onCreated)=>setModal({type:'goal',defaults,onCreated})}
               edit={(b) => setModal({ type: "block", block: b })}
               stretch={(b) => {
-                const existing=data.stretches.find(s=>s.blockId===b.id && s.date===date);
-                setStretchDraft({...existing,title:b.title,objective:b.objective || '',goalId:b.goalId,goalIds:b.goalIds || [],date,planned:stretchMinutes(b),blockId:b.id,environment:b.environment || existing?.environment || 'internal',stretchLevel:b.stretchLevel || existing?.stretchLevel || 'practice',knowledgeIds:b.knowledgeIds || existing?.knowledgeIds || []});
+                const stretchDate=b.scheduledDate || date;
+                const existing=data.stretches.find(s=>s.blockId===b.id && s.date===stretchDate);
+                setStretchDraft({...existing,title:b.title,objective:b.objective || '',goalId:b.goalId,goalIds:b.goalIds || [],date:stretchDate,planned:stretchMinutes(b),blockId:b.id,environment:b.environment || existing?.environment || 'internal',stretchLevel:b.stretchLevel || existing?.stretchLevel || 'practice',knowledgeIds:b.knowledgeIds || existing?.knowledgeIds || []});
                 go('Stretch workspace');
               }}
               start={start}
@@ -1434,7 +1435,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
   const categories = [['all','All'],['study','Study'],['stretch','Stretch'],['life','Life & commitments']];
   const matches = (b,filter) => filter==='all'||categoryOf(b)===filter || (categoryOf(b)==='combined' && ['study','stretch'].includes(filter));
   const visibleBlocks = blocks.filter(b=>matches(b,category));
-  const booked = blocks.reduce((n, b) => n + b.end - b.start, 0);
+  const booked = blocks.filter(b=>b.status!=='skipped').reduce((n, b) => n + b.end - b.start, 0);
   return (
     <>
       <header className="planner-day-hero"><div><span className="eyebrow">YOUR DAY, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Add a time block to plan Study, Stretch or life's commitments.</p><div className="planner-category-filters" role="group" aria-label="Filter time blocks">{categories.map(([id,label])=><button key={id} type="button" aria-pressed={category===id} aria-controls="planner-filtered-blocks" onClick={()=>setCategory(id)}>{label}<span>{blocks.filter(b=>matches(b,id)).length}</span></button>)}</div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
@@ -1458,7 +1459,6 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
         )}
       </div>
       {booked>=1296&&<div className="auth-notice" role="status">Your day is {Math.round(booked/1440*100)}% allocated. You have only {duration(Math.max(0,1440-booked))} of unplanned time. Consider leaving room for transitions, delays and rest. Capacity isn't maximized by filling every available minute.</div>}
-      <PlannerTools blocks={visibleBlocks} data={data} date={date} save={save} edit={edit} notify={notify}/>
       <section className="card planner-table" id="planner-filtered-blocks" aria-label={`${categories.find(([id])=>id===category)[1]} time blocks`}>
         <p className="planner-filter-summary" role="status">{visibleBlocks.length} {category==='all'?'total':categories.find(([id])=>id===category)[1]} blocks · {duration(visibleBlocks.reduce((n,b)=>n+(category==='study'?studyMinutes(b):category==='stretch'?stretchMinutes(b):b.end-b.start),0))}</p>
         <div className="table-heading">
@@ -1495,23 +1495,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
             </button>
             <Badge color={KINDS[b.kind]?.[1]}>{KINDS[b.kind]?.[0]}</Badge>
             <span>{duration(b.end - b.start)}</span>
-            <div className="row-actions">
-              {hasStretch(b) && <button className="text-btn" onClick={()=>stretch(b)}>Open Stretch</button>}
-              {hasStudy(b) && !data.sessions.some(s=>s.blockId===b.id && (s.scheduledDate || s.date)===date) && (
-                <button
-                  className="text-btn"
-                  aria-label={"Start " + b.title}
-                  onClick={() => start(b)}
-                >
-                  <Play size={16} />
-                  {data.timer?.blockId===b.id?'Resume study':'Begin study'}
-                </button>
-              )}
-              {data.sessions.some(s=>s.blockId===b.id && (s.scheduledDate || s.date)===date) && <Badge>Completed</Badge>}
-              <button className="text-btn" onClick={() => edit(b)}>
-                Edit
-              </button>
-            </div>
+            <div className="row-actions"><PlannerTools block={b} data={data} date={date} save={save} edit={edit} start={start} stretch={stretch} notify={notify}/></div>
           </div>
         ))}
         {!visibleBlocks.length && (
