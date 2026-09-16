@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {goalTime,suggestGoalBlocks,addGoalBlocks,integrateLearning} from '../src/learning-integration.js';
+import {advanceStudyCycle,nextStudyCycle,focusWallMinutes} from '../src/study-cycles.js';
+import {focusedMs} from '../src/model.js';
+const day='2026-09-16';
+const goal={id:'energy',title:'Energy Economics',level:'Week',targetHours:4,due:'2026-09-18'};
+const state=()=>({goals:[goal],plans:{},concepts:[{id:'c'}],sessions:[{id:'s',date:day,goalIds:['energy'],actualMs:105*60000,conceptId:'c',completedAt:day}],stretches:[]});
+test('goal remainder spreads across days, reserves breaks, and avoids duplicate planning',()=>{const data=state(),s=suggestGoalBlocks(data,goal,day,new Date(day+'T07:00:00'));assert.equal(s.remaining,135);assert.deepEqual(s.blocks.map(b=>b.focusMinutes),[45,45,45]);assert.equal(s.blocks[0].end-s.blocks[0].start,50);const planned=addGoalBlocks(data,s.blocks);assert.equal(suggestGoalBlocks(planned,goal,day,new Date(day+'T07:00:00')).blocks.length,0);});
+test('completion references are idempotent and reach all linked goals without fabricated evidence',()=>{const data=state();data.goals.push({...goal,id:'second'});data.sessions[0].goalIds.push('second');const once=integrateLearning(data,day),twice=integrateLearning(once,day);assert.equal(twice.goals[1].progress,44);assert.deepEqual(twice.concepts[0].studySessionIds,['s']);assert.equal(twice.sessions.length,1);});
+test('focus caps at 25 minutes; breaks never inflate focus; next interval requires resume',()=>{const t={focusCycles:true,planned:50,elapsed:0,started:1000,pauses:[]};assert.equal(focusedMs(t,3601000),1500000);const br=advanceStudyCycle(t,1501000);assert.equal(br.cyclePhase,'break');assert.equal(focusedMs(br,1801000),1500000);assert.equal(nextStudyCycle(br,1502000),br);const next=nextStudyCycle(br,1801000);assert.equal(advanceStudyCycle(next,3301000).cyclePhase,'complete');assert.equal(focusWallMinutes(50),55);});

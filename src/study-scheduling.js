@@ -1,4 +1,5 @@
 import { validateBlock } from './model.js';
+import {focusWallMinutes} from './study-cycles.js';
 import {hasStudy,recurringCommitments,storePlannerBlock} from './planner-blocks.js';
 export const isStudyBlock = hasStudy;
 export function scheduledStudies(data, fromDate) {
@@ -16,10 +17,11 @@ export function saveStudySchedule(data, session, schedule, runNow) {
   const blocks=recurringCommitments(data,schedule.date).blocks;
   const existing=blocks.find(b=>b.id===session.blockId);
   if (existing && !isStudyBlock(existing)) throw Error('This time belongs to a different activity. Choose a Study block.');
-  if(existing?.kind==='combined' && (session.planned>=existing.end-existing.start || schedule.start!==existing.start)) throw Error('Keep time for Stretch in this combined block. Move the whole block in the planner.');
+  const wall=session.focusCycles?focusWallMinutes(session.planned):session.planned;
+  if(existing?.kind==='combined' && (wall>=existing.end-existing.start || schedule.start!==existing.start)) throw Error('Keep time for Stretch in this combined block. Move the whole block in the planner.');
   const block={...existing,id:session.blockId,title:session.topic,objective:session.objective,
-    start:schedule.start,end:existing?.kind==='combined'?existing.end:schedule.start+session.planned,kind:existing?.kind || 'deep',
-    ...(existing?.kind==='combined'?{studyMinutes:session.planned}:{}),
+    start:schedule.start,end:existing?.kind==='combined'?existing.end:schedule.start+wall,kind:existing?.kind || 'deep',focusMinutes:session.planned,
+    ...(existing?.kind==='combined'?{studyMinutes:wall}:{}),
     goalId:session.goalId,goalIds:session.goalIds,capacityIds:session.capacityIds,
     resourceId:session.resourceId,conceptId:session.conceptId,intention:session.intention};
   const error=validateBlock(block,blocks);

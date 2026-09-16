@@ -771,6 +771,7 @@ function KnowledgeView({
                           : knowledgeLabel(sel, data.concepts).toUpperCase()}
                   </div>
                   <h2>{sel.title}</h2>
+                  {data.sessions.some(s=>s.conceptId===sel.id)&&<details><summary>Study history</summary>{data.sessions.filter(s=>s.conceptId===sel.id).map(s=><article key={s.id}><strong>{s.date} · {s.intention||'Study'} · {Math.floor((s.actualMs||0)/60000)} min</strong><p style={{whiteSpace:'pre-wrap'}}>{s.notes}</p><p>{s.reflection}</p></article>)}</details>}
                   {sel.lineage && (
                     <p className="muted">
                       {sel.lineage.action === "plant"

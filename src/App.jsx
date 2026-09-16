@@ -5,6 +5,9 @@ import { scheduledStudies, saveStudySchedule } from './study-scheduling';
 import StudyIntentionPicker from './StudyIntentionPicker';
 import BlockEditor from './BlockEditor';
 import PlannerTools from './PlannerTools';
+import GoalTimeSuggestions from './GoalTimeSuggestions';
+import {integrateLearning} from './learning-integration';
+import {advanceStudyCycle,nextStudyCycle,focusWithinWindow} from './study-cycles';
 import {blockCategory,hasStudy,hasStretch,studyMinutes,stretchMinutes,recurringCommitments,storePlannerBlock} from './planner-blocks';
 import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
@@ -263,7 +266,7 @@ export default function App({ user, onSignOut }) {
   useEffect(() => {
     setData(current => {
       const goals = refreshRecurringGoals(current.goals, calendarDay);
-      return goals === current.goals ? current : {...current, goals};
+      return integrateLearning({...current,goals},calendarDay);
     });
   }, [calendarDay]);
   useEffect(() => {
@@ -305,7 +308,8 @@ export default function App({ user, onSignOut }) {
     [KEY, loadError],
   );
   const save = (d) =>
-    setData((prev) => (typeof d === "function" ? d(prev) : d));
+    setData((prev) => integrateLearning(typeof d === "function" ? d(prev) : d,today()));
+  useEffect(()=>{setData(d=>{const timer=advanceStudyCycle(d.timer,tick);return timer===d.timer?d:{...d,timer};});},[tick]);
   useEffect(() => {
     try {
       if (!loadError) localStorage.setItem(KEY, JSON.stringify(data));
@@ -354,6 +358,7 @@ export default function App({ user, onSignOut }) {
     pending[0] ||
     studyBlocks[0];
   const start = (b) => {
+    go('Study workspace');
     if (data.timer) {
       go("Study workspace");
       return;
@@ -1459,6 +1464,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
         )}
       </div>
       {booked>=1296&&<div className="auth-notice" role="status">Your day is {Math.round(booked/1440*100)}% allocated. You have only {duration(Math.max(0,1440-booked))} of unplanned time. Consider leaving room for transitions, delays and rest. Capacity isn't maximized by filling every available minute.</div>}
+      <GoalTimeSuggestions data={data} save={save} notify={notify}/>
       <section className="card planner-table" id="planner-filtered-blocks" aria-label={`${categories.find(([id])=>id===category)[1]} time blocks`}>
         <p className="planner-filter-summary" role="status">{visibleBlocks.length} {category==='all'?'total':categories.find(([id])=>id===category)[1]} blocks · {duration(visibleBlocks.reduce((n,b)=>n+(category==='study'?studyMinutes(b):category==='stretch'?stretchMinutes(b):b.end-b.start),0))}</p>
         <div className="table-heading">
@@ -1512,7 +1518,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
 function SessionModal({ block, data, scheduledDate, close, submit, draft={}, createGoal }) {
   const [objective, setObjective] = useState(draft.objective ?? block?.objective ?? ""),
     [goal, setGoal] = useState(draft.goal ?? block?.goalId ?? ""),
-    [mins, setMins] = useState(draft.mins ?? (block ? studyMinutes(block) : 45)),
+    [mins, setMins] = useState(draft.mins ?? (block ? block.focusMinutes || focusWithinWindow(studyMinutes(block)) : 45)),
     [topic, setTopic] = useState(draft.topic ?? block?.title ?? ""),
     [concept, setConcept] = useState(draft.concept ?? block?.conceptId ?? ""),
     [resource, setResource] = useState(draft.resource ?? block?.resourceId ?? ""),
@@ -1549,6 +1555,9 @@ function SessionModal({ block, data, scheduledDate, close, submit, draft={}, cre
             resourceId: resource,
             planned: mins,
             elapsed: 0,
+            focusCycles:true,
+            cyclePhase:'focus',
+            cycleBase:0,
             started: Date.now(),
             pauses: [],
             notes: "",
@@ -1676,7 +1685,7 @@ function Study({ data, save, tick, start, finish, go }) {
   const elapsed = focusedMs(t, tick),
     sec = Math.floor(elapsed / 1000),
     remaining = Math.max(0, t.planned * 60 - sec),
-    shown = remaining ? remaining : sec - t.planned * 60,
+    shown = t.focusCycles ? t.cyclePhase==='break'?Math.max(0,Math.ceil((t.breakUntil-tick)/1000)):Math.max(0,Math.min(t.planned*60,(t.cycleBase||0)/1000+1500)-sec) : remaining ? remaining : sec - t.planned * 60,
     display =
       String(Math.floor(shown / 60)).padStart(2, "0") +
       ":" +
@@ -1731,7 +1740,7 @@ function Study({ data, save, tick, start, finish, go }) {
       {!focus && upcomingPanel}
       <div className="section-head">
         <Badge color="#009cde">
-          {t.started ? "FOCUS IN PROGRESS" : "PAUSED · TAKE A BREATH"}
+          {t.cyclePhase==='break'?'FIVE-MINUTE BREAK':t.cyclePhase==='complete'?'FOCUS COMPLETE':t.started ? "FOCUS IN PROGRESS" : "PAUSED · TAKE A BREATH"}
         </Badge>
         <button className="text-btn" onClick={() => setFocus(!focus)}>
           <Maximize2 size={16} />
@@ -1773,6 +1782,7 @@ function Study({ data, save, tick, start, finish, go }) {
           <div className="eyebrow">YOUR OBJECTIVE</div>
           <h2>{t.objective}</h2>
           <p>{t.topic}</p>
+          {t.focusCycles&&<p>25 min focus → 5 min break → next focus. Breaks don't count toward your goals.</p>}
           <div
             className="timer-ring"
             style={{
@@ -1782,21 +1792,21 @@ function Study({ data, save, tick, start, finish, go }) {
           >
             <div>
               <span className="timer-digits">
-                {remaining ? "" : "+"}
+                {t.focusCycles?'':remaining ? "" : "+"}
                 {display}
               </span>
               <span>
-                {remaining
+                {t.focusCycles ? t.cyclePhase==='break'?'break · resume when ready':t.cyclePhase==='complete'?'ready to reflect':'remaining in this focus interval' : remaining
                   ? "remaining in this session"
                   : "beyond your planned focus"}
               </span>
             </div>
           </div>
           <div className="timer-controls">
-            <Button onClick={pause}>
+            {t.cyclePhase==='break'?<Button disabled={tick<t.breakUntil} onClick={()=>save(d=>({...d,timer:nextStudyCycle(d.timer)}))}>Begin next focus</Button>:t.cyclePhase==='complete'?null:<Button onClick={pause}>
               {t.started ? <Pause size={18} /> : <Play size={18} />}{" "}
               {t.started ? "Pause" : "Resume"}
-            </Button>
+            </Button>}
             <Button
               primary
               onClick={() => {
@@ -1922,7 +1932,7 @@ function FinishModal({ data, close, submit }) {
             placeholder="I can now explain… Next, I need to understand…"
           />
         </Field>
-        {!data.goals.some((g) => g.parent === data.timer.goalId) && (
+        {!data.goals.find(g=>g.id===data.timer.goalId)?.targetHours && !data.goals.some((g) => g.parent === data.timer.goalId) && (
           <Field label={"Update linked goal progress · " + progress + "%"}>
             <input
               type="range"

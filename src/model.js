@@ -141,9 +141,9 @@ export function goalProgress(id, goals, visited = new Set()) {
     : goals.find((g) => g.id === id)?.progress || 0;
 }
 export function focusedMs(timer, now = Date.now()) {
-  return timer
-    ? timer.elapsed + (timer.started ? Math.max(0, now - timer.started) : 0)
-    : 0;
+  if(!timer)return 0;
+  const elapsed=timer.elapsed+(timer.started?Math.max(0,now-timer.started):0);
+  return timer.focusCycles?Math.min(elapsed,timer.planned*60000,(timer.cycleBase||0)+25*60000):elapsed;
 }
 export function insights(concepts) {
   concepts = concepts.filter(c => !c.trashedAt);
