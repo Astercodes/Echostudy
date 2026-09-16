@@ -59,3 +59,6 @@
 .planner-window-results { margin-top:20px; border-top:1px solid #173dc530; padding-top:16px; }
 .planner-window { display:flex; justify-content:space-between; gap:15px; align-items:center; border:1px solid #173dc530; border-left:3px solid #ff7900; border-radius:10px; padding:15px; margin:10px 0; }
 @media(max-width:650px) { .planner-allocation {padding:16px;} .planner-allocation header {padding:18px;flex-wrap:wrap;} .planner-goal-options {grid-template-columns:1fr;} .planner-window {flex-wrap:wrap;} }
+.planner-priority{display:inline-flex!important;width:fit-content;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;line-height:1.5;margin:4px 0;border:1px solid #d9dfea;background:#fff;color:#48536b}
+.planner-priority-must{background:#fff0ee;color:#b5241d;border-color:#df352d}
+.planner-priority-should{background:#fff8d5;color:#695100;border-color:#ffd43b}

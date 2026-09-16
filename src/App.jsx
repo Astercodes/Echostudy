@@ -1475,6 +1475,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
               <span>
                 <strong>{b.title}</strong>
                 <span className="planner-block-type">{b.kind==='combined'?`STUDY ${studyMinutes(b)}m + STRETCH ${stretchMinutes(b)}m`:hasStudy(b)?'STUDY':hasStretch(b)?'STRETCH':KINDS[b.kind]?.[0]}</span>
+                {['must','should','could'].includes(b.priority) && <span className={`planner-priority planner-priority-${b.priority}`}>{ {must:'Must Do',should:'Should Do',could:'Could Do'}[b.priority]}</span>}
                 <small>
                   {b.objective ||
                     data.goals.find((g) => g.id === b.goalId)?.title ||
