@@ -211,29 +211,6 @@ export default function Goals({ data, save, edit, create, notify }) {
           </small>
         </div>
       </div>
-      <section className="goals-pathway-banner card">
-        <div>
-          <span className="eyebrow">GOAL → GROWTH PATHWAYS</span>
-          <h3>Every goal can direct what you Study and Stretch next.</h3>
-          <p>
-            Build a pathway from any goal to create intentional Study and
-            Stretch actions. Complete actions remain as evidence of
-            contribution.
-          </p>
-        </div>
-        <div className="goals-pathway-stats">
-          <strong>{data.goals.filter((g) => g.progress > 0).length}</strong>
-          <span>goals in motion</span>
-          <strong>
-            {
-              (data.learningPlanner || []).filter(
-                (x) => x.source === "goal" && x.status !== "completed",
-              ).length
-            }
-          </strong>
-          <span>pathway actions ready</span>
-        </div>
-      </section>
       <div className="knowledge-toolbar">
         <div className="segmented">
           <button

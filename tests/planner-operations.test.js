@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {changePlannerBlock} from '../src/planner-operations.js';
+import {storePlannerBlock,recurringCommitments} from '../src/planner-blocks.js';
+import {scheduledStudies} from '../src/study-scheduling.js';
+const day='2026-09-16',b={id:'study',title:'Read',kind:'deep',start:600,end:720,priority:'must',goalIds:['g']};
+const initial=()=>({plans:{[day]:[b]},sessions:[],stretches:[],goals:[]});
+test('split conserves the full interval and retains goals and priority',()=>{const next=changePlannerBlock(initial(),day,b,'split',{first:50,gap:10});const blocks=next.plans[day];assert.deepEqual(blocks.map(x=>x.end-x.start),[50,10,60]);assert.equal(blocks[2].priority,'must');assert.deepEqual(blocks[2].goalIds,['g']);});
+test('move and duplicate validate conflicts without changing source data',()=>{const data=initial();assert.throws(()=>changePlannerBlock(data,day,b,'duplicate',{start:610}),/overlaps/);const copy=changePlannerBlock(data,day,b,'duplicate',{date:'2026-09-17',start:800});assert.equal(copy.plans[day].length,1);assert.notEqual(copy.plans['2026-09-17'][0].id,b.id);const moved=changePlannerBlock(data,day,b,'move',{date:'2026-09-17',start:800});assert.equal(moved.plans[day].length,0);assert.equal(data.plans[day].length,1);});
+test('recorded sessions are protected',()=>{const data=initial();data.sessions=[{blockId:b.id}];assert.throws(()=>changePlannerBlock(data,day,b,'move',{start:800}),/history/);});
+test('Study repeats appear in upcoming and moving an occurrence preserves its siblings',()=>{const data=storePlannerBlock({...initial(),plans:{}},day,{...b,repeat:'daily'});assert.equal(scheduledStudies(data,day).length,30);const occurrence=recurringCommitments(data,'2026-09-17').blocks[0];const moved=changePlannerBlock(data,'2026-09-17',occurrence,'move',{start:800});assert.equal(recurringCommitments(moved,'2026-09-17').blocks[0].start,800);assert.equal(recurringCommitments(moved,'2026-09-18').blocks[0].start,600);});

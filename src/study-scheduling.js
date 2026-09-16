@@ -2,7 +2,9 @@ import { validateBlock } from './model.js';
 import {hasStudy,recurringCommitments,storePlannerBlock} from './planner-blocks.js';
 export const isStudyBlock = hasStudy;
 export function scheduledStudies(data, fromDate) {
-  return Object.entries(data.plans).flatMap(([date,blocks])=>blocks
+  const dates=new Set(Object.keys(data.plans));
+  if(data.commitmentRules?.length) for(let i=0;i<30;i++){const d=new Date(fromDate+'T12:00:00');d.setDate(d.getDate()+i);dates.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+  return [...dates].flatMap(date=>recurringCommitments(data,date).blocks
     .filter(b=>isStudyBlock(b) && date>=fromDate && !data.sessions.some(s=>s.blockId===b.id && (s.scheduledDate || s.date)===date) && data.timer?.blockId!==b.id)
     .map(b=>({...b,scheduledDate:date})))
     .sort((a,b)=>a.scheduledDate.localeCompare(b.scheduledDate)||a.start-b.start);

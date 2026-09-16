@@ -18,7 +18,7 @@ export function recurringCommitments(data, day) {
 }
 export function storePlannerBlock(data, day, block) {
   let plans={...data.plans},rules=[...(data.commitmentRules || [])];
-  const repeat=blockCategory(block)==='life' ? block.repeat || 'none' : 'none';
+  const repeat=block.repeat || 'none';
   let saved={...block};
   if(block.repeatRuleId || repeat!=='none') {
     const ruleId=block.repeatRuleId || block.id;

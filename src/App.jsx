@@ -4,6 +4,7 @@ import { availableWindows } from './planner-windows';
 import { scheduledStudies, saveStudySchedule } from './study-scheduling';
 import StudyIntentionPicker from './StudyIntentionPicker';
 import BlockEditor from './BlockEditor';
+import PlannerTools from './PlannerTools';
 import {blockCategory,hasStudy,hasStretch,studyMinutes,stretchMinutes,recurringCommitments,storePlannerBlock} from './planner-blocks';
 import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
@@ -577,7 +578,7 @@ export default function App({ user, onSignOut }) {
                       : page === "Knowledge Ecosystem"
                         ? "Let ideas take root, branch out, and find unexpected connections."
                         : page === "Goals"
-                          ? "Connect what you do today to who you are becoming."
+                          ? "Connect what you do today to who you are becoming. Every goal can direct what you Study and Stretch next. Build a pathway from any goal to create intentional Study and Stretch actions."
                           : page === "24-hour planner"
                             ? "Protect your essentials. Find realistic space to learn and grow."
                             : page === "Resource library"
@@ -1124,6 +1125,7 @@ export default function App({ user, onSignOut }) {
           )}
           {page === "24-hour planner" && (
             <Planner
+              save={save}
               blocks={blocks}
               data={data}
               date={date}
@@ -1426,7 +1428,7 @@ function Stat({ icon: Icon, label, value, foot, color }) {
     </div>
   );
 }
-function Planner({ blocks, data, date, update, edit, start, stretch, notify, createGoal, conflicts=[] }) {
+function Planner({ blocks, data, date, update, edit, start, stretch, notify, save, createGoal, conflicts=[] }) {
   const [category,setCategory] = useState('all');
   const categoryOf = blockCategory;
   const categories = [['all','All'],['study','Study'],['stretch','Stretch'],['life','Life & commitments']];
@@ -1439,10 +1441,9 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
       {conflicts.length>0 && <div className="auth-notice" role="status">Recurring commitments need attention: {conflicts.map(b=>`${b.title} (${clock(b.start)}–${clock(b.end)})`).join(', ')}. They overlap existing blocks and haven't been added to this day.</div>}
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
-        <Badge color="#7C5C14">{duration(1440 - booked)} open</Badge>
+        <Badge color="#173dc5">Unplanned / Available: {duration(Math.max(0,1440 - booked))}</Badge>
         <span>
-          Blocks run from midnight to midnight. Edit any block to make this day
-          yours.
+          Leave breathing room for transitions, delays and rest.
         </span>
         {!blocks.length && (
           <Button
@@ -1456,6 +1457,8 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
           </Button>
         )}
       </div>
+      {booked>=1296&&<div className="auth-notice" role="status">Your day is {Math.round(booked/1440*100)}% allocated. You have only {duration(Math.max(0,1440-booked))} of unplanned time. Consider leaving room for transitions, delays and rest. Capacity isn't maximized by filling every available minute.</div>}
+      <PlannerTools blocks={visibleBlocks} data={data} date={date} save={save} edit={edit} notify={notify}/>
       <section className="card planner-table" id="planner-filtered-blocks" aria-label={`${categories.find(([id])=>id===category)[1]} time blocks`}>
         <p className="planner-filter-summary" role="status">{visibleBlocks.length} {category==='all'?'total':categories.find(([id])=>id===category)[1]} blocks · {duration(visibleBlocks.reduce((n,b)=>n+(category==='study'?studyMinutes(b):category==='stretch'?stretchMinutes(b):b.end-b.start),0))}</p>
         <div className="table-heading">
