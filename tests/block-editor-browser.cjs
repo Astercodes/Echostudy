@@ -1,0 +1,48 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const {installAuthMock,enterWorkspace,USER_ONE}=require('./auth-mock.cjs');
+(async()=>{
+ const {initialState,today}=await import('../src/model.js');
+ const data=initialState(),day=today(); data.plans={[day]:[]};data.sessions=[];data.timer=null;
+ const browser=await chromium.launch({channel:'msedge',headless:true});
+ try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await installAuthMock(page);await page.addInitScript(({data,key})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(data));},{data,key:'echostudy-v1:'+USER_ONE});
+ await page.goto('http://127.0.0.1:5183');await enterWorkspace(page);
+ await page.getByRole('button',{name:'24-hour planner',exact:true}).click();
+ await page.getByRole('button',{name:'Add time block',exact:true}).click();
+ const dialog=page.getByRole('dialog');
+ await dialog.getByRole('button',{name:'Life commitment',exact:true}).click();
+ assert.equal(await dialog.locator('.planner-goal-picker').count(),0);
+ assert.equal(await dialog.locator('.study-intention-picker').count(),0);
+ await dialog.getByLabel('What?',{exact:true}).fill('Work');
+ await dialog.getByLabel('Starts',{exact:true}).fill('09:00');await dialog.getByLabel('Ends',{exact:true}).fill('17:00');
+ await dialog.getByLabel('Repeat',{exact:true}).selectOption('weekdays');
+ await dialog.getByRole('button',{name:'Add',exact:true}).click();
+ await page.getByRole('button',{name:'Add time block',exact:true}).click();
+ await dialog.getByRole('button',{name:'Stretch',exact:true}).click();
+ assert.equal(await dialog.locator('.study-intention-picker').count(),0);
+ await dialog.getByLabel('What are you practicing?',{exact:true}).fill('Feedback practice');
+ await dialog.getByLabel('Starts',{exact:true}).fill('18:00');await dialog.getByLabel('Ends',{exact:true}).fill('18:45');
+ await dialog.getByLabel('Practice environment',{exact:true}).selectOption('social');
+ await dialog.getByLabel('Stretch level',{exact:true}).selectOption('adapt');
+ await dialog.getByRole('button',{name:'Schedule Stretch',exact:true}).click();
+ await page.getByRole('button',{name:'Add time block',exact:true}).click();
+ await dialog.getByRole('button',{name:'Study + Stretch',exact:true}).click();
+ await dialog.getByLabel('What is this time for?',{exact:true}).fill('Learn then practise');
+ await dialog.getByLabel('Starts',{exact:true}).fill('19:00');await dialog.getByLabel('Ends',{exact:true}).fill('20:00');
+ await dialog.getByLabel('Study minutes within this block',{exact:true}).fill('25');
+ await dialog.getByRole('button',{name:'Chew Process',exact:true}).click();
+ await dialog.getByRole('button',{name:'Schedule Study + Stretch',exact:true}).click();
+ const saved=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),'echostudy-v1:'+USER_ONE);
+ assert.equal(saved.plans[day].length,3);assert.equal(saved.commitmentRules.length,1);
+ assert.equal(saved.stretches.find(s=>s.title==='Feedback practice').environment,'social');
+ assert.equal(saved.stretches.find(s=>s.title==='Learn then practise').planned,35);
+ await page.getByRole('group',{name:'Filter time blocks'}).getByRole('button',{name:/^Study/}).click();assert.equal(await page.locator('.plan-row').count(),1);
+ await page.getByRole('group',{name:'Filter time blocks'}).getByRole('button',{name:/^Stretch/}).click();assert.equal(await page.locator('.plan-row').count(),2);
+ await page.getByRole('button',{name:'Study workspace',exact:true}).click();
+ const panel=await page.locator('.study-upcoming-compact').boundingBox(),main=await page.locator('.study-empty').boundingBox();assert.ok(panel.y<main.y);
+ await page.setViewportSize({width:390,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ assert.deepEqual(errors,[]);console.log('PASS category forms, life repeat, mixed time split, Stretch data, filters and upcoming position');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

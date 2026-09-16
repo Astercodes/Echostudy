@@ -3,6 +3,8 @@ import { PlannerGoals } from './PlannerAllocation';
 import { availableWindows } from './planner-windows';
 import { scheduledStudies, saveStudySchedule } from './study-scheduling';
 import StudyIntentionPicker from './StudyIntentionPicker';
+import BlockEditor from './BlockEditor';
+import {blockCategory,hasStudy,hasStretch,studyMinutes,stretchMinutes,recurringCommitments,storePlannerBlock} from './planner-blocks';
 import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
 import {
@@ -92,6 +94,7 @@ const NAV = [
   ["Barns", Library],
 ];
 const KINDS = {
+  combined: ["Study + Stretch", "#ff7900"],
   stretch: ["Stretch practice", "#ff7900"],
   deep: ["Deep study", "#009cde"],
   light: ["Light study", "#07529a"],
@@ -331,10 +334,11 @@ export default function App({ user, onSignOut }) {
       setMobile(false);
       setQuery("");
     };
-  const blocks = data.plans[date] || [],
-    studyBlocks = blocks.filter((b) => ["deep", "light"].includes(b.kind)),
+  const resolvedDay = recurringCommitments(data,date);
+  const blocks = resolvedDay.blocks,
+    studyBlocks = blocks.filter(hasStudy),
     sessions = data.sessions.filter((s) => s.date === date);
-  const planned = studyBlocks.reduce((n, b) => n + b.end - b.start, 0),
+  const planned = studyBlocks.reduce((n, b) => n + studyMinutes(b), 0),
     actual = Math.round(sessions.reduce((n, s) => n + s.actualMs, 0) / 60000),
     ideas = data.concepts.filter(
       (c) => !c.id.startsWith("d") && c.id !== "root",
@@ -1127,11 +1131,13 @@ export default function App({ user, onSignOut }) {
               createGoal={(defaults,onCreated)=>setModal({type:'goal',defaults,onCreated})}
               edit={(b) => setModal({ type: "block", block: b })}
               stretch={(b) => {
-                setStretchDraft({title:b.title,objective:b.objective || '',goalId:b.goalId,goalIds:b.goalIds || [],date,planned:b.end-b.start,blockId:b.id});
+                const existing=data.stretches.find(s=>s.blockId===b.id && s.date===date);
+                setStretchDraft({...existing,title:b.title,objective:b.objective || '',goalId:b.goalId,goalIds:b.goalIds || [],date,planned:stretchMinutes(b),blockId:b.id,environment:b.environment || existing?.environment || 'internal',stretchLevel:b.stretchLevel || existing?.stretchLevel || 'practice',knowledgeIds:b.knowledgeIds || existing?.knowledgeIds || []});
                 go('Stretch workspace');
               }}
               start={start}
               notify={notify}
+              conflicts={resolvedDay.conflicts}
             />
           )}
           {page === "Goals" && (
@@ -1208,24 +1214,21 @@ export default function App({ user, onSignOut }) {
         </div>
       )}
       {modal?.type === "block" && (
-        <BlockModal
+        <BlockEditor
           block={modal.block}
           blocks={blocks}
           goals={data.goals}
           areas={data.lifeAreas}
+          data={data}
           createGoal={(defaults,draft)=>setModal({type:'goal',defaults,returnBlock:draft})}
           close={() => setModal(null)}
           submit={(b) => {
-            updatePlan(
-              [...blocks.filter((x) => x.id !== b.id), b].sort(
-                (a, b) => a.start - b.start,
-              ),
-            );
+            save(d=>storePlannerBlock(d,date,b));
             setModal(null);
             notify("Time block saved.");
           }}
           remove={(id) => {
-            updatePlan(blocks.filter((b) => b.id !== id));
+            save(d=>({...d,plans:{...d.plans,[date]:blocks.filter(b=>b.id!==id)},skippedCommitments:[...new Set([...(d.skippedCommitments || []),id])]}));
             setModal(null);
           }}
         />
@@ -1423,15 +1426,17 @@ function Stat({ icon: Icon, label, value, foot, color }) {
     </div>
   );
 }
-function Planner({ blocks, data, date, update, edit, start, stretch, notify, createGoal }) {
+function Planner({ blocks, data, date, update, edit, start, stretch, notify, createGoal, conflicts=[] }) {
   const [category,setCategory] = useState('all');
-  const categoryOf = b => ['deep','light'].includes(b.kind) ? 'study' : b.kind === 'stretch' ? 'stretch' : 'life';
+  const categoryOf = blockCategory;
   const categories = [['all','All'],['study','Study'],['stretch','Stretch'],['life','Life & commitments']];
-  const visibleBlocks = blocks.filter(b=>category==='all'||categoryOf(b)===category);
+  const matches = (b,filter) => filter==='all'||categoryOf(b)===filter || (categoryOf(b)==='combined' && ['study','stretch'].includes(filter));
+  const visibleBlocks = blocks.filter(b=>matches(b,category));
   const booked = blocks.reduce((n, b) => n + b.end - b.start, 0);
   return (
     <>
-      <header className="planner-day-hero"><div><span className="eyebrow">YOUR DAY, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Add a time block to plan Study, Stretch or life's commitments.</p><div className="planner-category-filters" role="group" aria-label="Filter time blocks">{categories.map(([id,label])=><button key={id} type="button" aria-pressed={category===id} aria-controls="planner-filtered-blocks" onClick={()=>setCategory(id)}>{label}<span>{blocks.filter(b=>id==='all'||categoryOf(b)===id).length}</span></button>)}</div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
+      <header className="planner-day-hero"><div><span className="eyebrow">YOUR DAY, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Add a time block to plan Study, Stretch or life's commitments.</p><div className="planner-category-filters" role="group" aria-label="Filter time blocks">{categories.map(([id,label])=><button key={id} type="button" aria-pressed={category===id} aria-controls="planner-filtered-blocks" onClick={()=>setCategory(id)}>{label}<span>{blocks.filter(b=>matches(b,id)).length}</span></button>)}</div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
+      {conflicts.length>0 && <div className="auth-notice" role="status">Recurring commitments need attention: {conflicts.map(b=>`${b.title} (${clock(b.start)}–${clock(b.end)})`).join(', ')}. They overlap existing blocks and haven't been added to this day.</div>}
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
         <Badge color="#7C5C14">{duration(1440 - booked)} open</Badge>
@@ -1452,7 +1457,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
         )}
       </div>
       <section className="card planner-table" id="planner-filtered-blocks" aria-label={`${categories.find(([id])=>id===category)[1]} time blocks`}>
-        <p className="planner-filter-summary" role="status">{visibleBlocks.length} {category==='all'?'total':categories.find(([id])=>id===category)[1]} blocks · {duration(visibleBlocks.reduce((n,b)=>n+b.end-b.start,0))}</p>
+        <p className="planner-filter-summary" role="status">{visibleBlocks.length} {category==='all'?'total':categories.find(([id])=>id===category)[1]} blocks · {duration(visibleBlocks.reduce((n,b)=>n+(category==='study'?studyMinutes(b):category==='stretch'?stretchMinutes(b):b.end-b.start),0))}</p>
         <div className="table-heading">
           <span>TIME</span>
           <span>INTENTION</span>
@@ -1469,7 +1474,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
               <i style={{ background: KINDS[b.kind]?.[1] }} />
               <span>
                 <strong>{b.title}</strong>
-                <span className="planner-block-type">{['deep','light'].includes(b.kind)?'STUDY':b.kind==='stretch'?'STRETCH':KINDS[b.kind]?.[0]}</span>
+                <span className="planner-block-type">{b.kind==='combined'?`STUDY ${studyMinutes(b)}m + STRETCH ${stretchMinutes(b)}m`:hasStudy(b)?'STUDY':hasStretch(b)?'STRETCH':KINDS[b.kind]?.[0]}</span>
                 <small>
                   {b.objective ||
                     data.goals.find((g) => g.id === b.goalId)?.title ||
@@ -1487,8 +1492,8 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
             <Badge color={KINDS[b.kind]?.[1]}>{KINDS[b.kind]?.[0]}</Badge>
             <span>{duration(b.end - b.start)}</span>
             <div className="row-actions">
-              {b.kind === 'stretch' && <button className="text-btn" onClick={()=>stretch(b)}>Open Stretch</button>}
-              {["deep", "light"].includes(b.kind) && !data.sessions.some(s=>s.blockId===b.id && (s.scheduledDate || s.date)===date) && (
+              {hasStretch(b) && <button className="text-btn" onClick={()=>stretch(b)}>Open Stretch</button>}
+              {hasStudy(b) && !data.sessions.some(s=>s.blockId===b.id && (s.scheduledDate || s.date)===date) && (
                 <button
                   className="text-btn"
                   aria-label={"Start " + b.title}
@@ -1516,133 +1521,10 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, cre
     </>
   );
 }
-function BlockModal({ block, blocks, goals, areas, close, submit, remove, createGoal }) {
-  const [b, setB] = useState(
-      block || {
-        id: uid(),
-        title: "",
-        start: 480,
-        end: 540,
-        kind: "deep",
-        goalId: "",
-        objective: "",
-      },
-    ),
-    [error, setError] = useState("");
-  const [startTime, setStartTime] = useState(clock(b.start));
-  const [endTime, setEndTime] = useState(
-    b.end === 1440 ? "00:00" : clock(b.end),
-  );
-  const change = (k, v) => setB({ ...b, [k]: v });
-  const [showWindows,setShowWindows] = useState(false);
-  const windows = availableWindows(blocks.filter(x=>x.id!==b.id));
-  const requestedDuration = Math.max(15,(endTime==='00:00'?1440:minutes(endTime))-minutes(startTime));
-  return (
-    <Modal
-      title={block ? "Edit time block" : "Make room in your day"}
-      onClose={close}
-    >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const saved = {
-            ...b,
-            ...(['deep','light'].includes(b.kind) ? {intention:b.intention || 'peel'} : {}),
-            start: minutes(startTime),
-            end: endTime === "00:00" ? 1440 : minutes(endTime),
-          };
-          const err = validateBlock(saved, blocks);
-          if (err) {
-            setError(err);
-            return;
-          }
-          submit(saved);
-        }}
-      >
-        <Field label="What is this time for?">
-          <input
-            autoFocus
-            required
-            value={b.title}
-            onChange={(e) => change("title", e.target.value)}
-          />
-        </Field>
-        <div className="form-grid">
-          <Field label="Starts">
-            <input
-              type="time"
-              required
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-            />
-          </Field>
-          <Field label="Ends">
-            <input
-              required
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-            />
-          </Field>
-        </div>
-        <p className="field-help">
-          Choose 00:00 to end at midnight (24:00). Blocks stay within this day.
-        </p>
-        <Field label="Duration (hours)"><input aria-label="Duration (hours)" type="number" min="0.25" max="24" step="0.25" value={Math.max(0,((endTime==='00:00'?1440:minutes(endTime))-minutes(startTime))/60)} onChange={e=>{const end=minutes(startTime)+Math.round(Number(e.target.value)*60);if(end<=1440&&end>minutes(startTime))setEndTime(end===1440?'00:00':clock(end));}}/></Field>
-        <button type="button" className="text-btn" onClick={()=>setShowWindows(!showWindows)}>Find available windows</button>
-        {showWindows&&<div className="planner-window-results"><p>Choose a free window. Existing blocks are preserved.</p>{windows.map(w=><button type="button" className="planner-window" key={w.start} onClick={()=>{const length=Math.max(15,(endTime==='00:00'?1440:minutes(endTime))-minutes(startTime));setStartTime(clock(w.start));const end=Math.min(w.end,w.start+length);setEndTime(end===1440?'00:00':clock(end));}}>{clock(w.start)}–{clock(w.end)} · {duration(w.end-w.start)} free</button>)}{!windows.length&&<p>No free windows. Edit another block to make space.</p>}</div>}
-        <Field label="Block type">
-          <select
-            value={b.kind}
-            onChange={(e) => change("kind", e.target.value)}
-          >
-            {Object.entries(KINDS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v[0]}
-              </option>
-            ))}
-          </select>
-        </Field>
-        {['deep','light'].includes(b.kind) && <Field label="Study intention"><StudyIntentionPicker value={b.intention || 'peel'} onChange={intention=>change('intention',intention)}/></Field>}
-        <PlannerGoals goals={goals} areas={areas} value={b.goalIds || (b.goalId ? [b.goalId] : [])} onChange={goalIds=>setB({...b,goalIds,goalId:goalIds[0] || ''})} createGoal={(defaults)=>createGoal(defaults,{...b,start:minutes(startTime),end:endTime==='00:00'?1440:minutes(endTime)})}/>
-        {b.goalId && <GoalTrail id={b.goalId} goals={goals} />}
-        {["deep", "light", "stretch"].includes(b.kind) && (
-          <Field label="What will you understand, explain, or do?">
-            <textarea
-              value={b.objective}
-              onChange={(e) => change("objective", e.target.value)}
-              placeholder="A clear outcome for this study block…"
-            />
-          </Field>
-        )}
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
-        <div className="form-actions">
-          {block && (
-            <button
-              type="button"
-              className="text-btn danger"
-              onClick={() => remove(b.id)}
-            >
-              <Trash2 size={15} />
-              Remove block
-            </button>
-          )}
-          <Button primary type="submit">
-            Save time block
-          </Button>
-        </div>
-      </form>
-    </Modal>
-  );
-}
 function SessionModal({ block, data, scheduledDate, close, submit, draft={}, createGoal }) {
   const [objective, setObjective] = useState(draft.objective ?? block?.objective ?? ""),
     [goal, setGoal] = useState(draft.goal ?? block?.goalId ?? ""),
-    [mins, setMins] = useState(draft.mins ?? (block ? block.end - block.start : 45)),
+    [mins, setMins] = useState(draft.mins ?? (block ? studyMinutes(block) : 45)),
     [topic, setTopic] = useState(draft.topic ?? block?.title ?? ""),
     [concept, setConcept] = useState(draft.concept ?? block?.conceptId ?? ""),
     [resource, setResource] = useState(draft.resource ?? block?.resourceId ?? ""),
@@ -1771,9 +1653,17 @@ function Study({ data, save, tick, start, finish, go }) {
   const t = data.timer;
   const [focus, setFocus] = useState(false);
   const upcoming = scheduledStudies(data,today());
+  const upcomingPanel = (
+      <details className="card study-upcoming study-upcoming-compact"><summary><span>Upcoming study <strong>{upcoming.length}</strong></span><span>View sessions <ChevronDown size={16}/></span></summary><div className="study-upcoming-content"><button className="text-btn" onClick={()=>go('24-hour planner')}>Open planner</button>
+        <p className="muted">Your scheduled Study blocks, shared with the 24-hour planner.</p>
+        {upcoming.map(b=><article key={`${b.scheduledDate}-${b.id}`} className="study-upcoming-row"><div><small>{b.scheduledDate} · {clock(b.start)}–{clock(b.end)}</small><h3>{b.title}</h3><p>{b.objective || 'Set an objective when you open this session.'}</p><small>{duration(studyMinutes(b))}{b.intention?` · ${b.intention}`:''}{b.goalIds?.length?` · ${b.goalIds.length} linked goals`:''}</small></div><Button disabled={Boolean(t)} onClick={()=>start(b)}>{b.scheduledDate===today()?'Begin session':'Prepare session'}</Button></article>)}
+        {!upcoming.length&&<p>No upcoming study yet. Set your study intention to start now or schedule for later.</p>}
+      </div></details>
+  );
   if (!t)
     return (
       <>
+      {upcomingPanel}
       <section className="card empty study-empty">
         <div className="empty-sprout">
           <Sprout size={52} />
@@ -1793,11 +1683,6 @@ function Study({ data, save, tick, start, finish, go }) {
           <p>{data.sessions.length} intentional sessions completed so far.</p>
         )}
       </section>
-      <details className="card study-upcoming study-upcoming-compact"><summary><span>Upcoming study <strong>{upcoming.length}</strong></span><span>View sessions <ChevronDown size={16}/></span></summary><div className="study-upcoming-content"><button className="text-btn" onClick={()=>go('24-hour planner')}>Open planner</button>
-        <p className="muted">Your scheduled Study blocks, shared with the 24-hour planner.</p>
-        {upcoming.map(b=><article key={`${b.scheduledDate}-${b.id}`} className="study-upcoming-row"><div><small>{b.scheduledDate} · {clock(b.start)}–{clock(b.end)}</small><h3>{b.title}</h3><p>{b.objective || 'Set an objective when you open this session.'}</p><small>{duration(b.end-b.start)}{b.intention?` · ${b.intention}`:''}{b.goalIds?.length?` · ${b.goalIds.length} linked goals`:''}</small></div><Button onClick={()=>start(b)}>{b.scheduledDate===today()?'Begin session':'Prepare session'}</Button></article>)}
-        {!upcoming.length&&<p>No upcoming study yet. Set your study intention to start now or schedule for later.</p>}
-      </div></details>
       </>
     );
   const elapsed = focusedMs(t, tick),
@@ -1855,6 +1740,7 @@ function Study({ data, save, tick, start, finish, go }) {
     });
   return (
     <div className={focus ? "study-area distraction-free" : "study-area"}>
+      {!focus && upcomingPanel}
       <div className="section-head">
         <Badge color="#009cde">
           {t.started ? "FOCUS IN PROGRESS" : "PAUSED · TAKE A BREATH"}
@@ -2182,8 +2068,8 @@ function Growth({ data }) {
         .filter((s) => s.date === key)
         .reduce((n, s) => n + s.actualMs / 60000, 0),
       planned: (data.plans[key] || [])
-        .filter((b) => ["deep", "light"].includes(b.kind))
-        .reduce((n, b) => n + b.end - b.start, 0),
+        .filter(hasStudy)
+        .reduce((n, b) => n + studyMinutes(b), 0),
     };
   });
   const max = Math.max(60, ...days.flatMap((d) => [d.actual, d.planned]));

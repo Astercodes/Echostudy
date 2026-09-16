@@ -54,6 +54,7 @@ export const duration = (m) =>
     ? Math.floor(m / 60) + "h" + (m % 60 ? " " + Math.round(m % 60) + "m" : "")
     : Math.round(m) + "m";
 export function validateBlock(block, blocks) {
+  if(block.kind==='combined' && (!Number.isFinite(block.studyMinutes) || block.studyMinutes<1 || block.studyMinutes>=block.end-block.start)) return 'Give Study and Stretch separate time within the combined block.';
   if (!block.title.trim()) return "Give this block a name.";
   if (
     !Number.isFinite(block.start) ||

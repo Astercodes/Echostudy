@@ -11,6 +11,13 @@
 .planner-filter-summary { padding:14px 18px; margin:0; color:#082b96; font-size:12px; }
 .study-upcoming { margin-top:22px; border-top:3px solid #173dc5; }
 .study-upcoming-compact { padding:0; max-width:720px; margin-left:auto; }
+.study-upcoming-compact { margin-top:0; margin-bottom:22px; width:100%; max-width:none; }
+.block-category-picker { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:24px; }
+.block-category-picker button { border:1px solid #173dc530; border-radius:10px; padding:14px 8px; color:#082b96; background:#fff; font-size:12px; min-height:48px; }
+.block-category-picker button[aria-pressed="true"] { color:#fff; background:#173dc5; border-color:#173dc5; box-shadow:inset 0 -3px #ff7900; }
+.block-category-picker button:focus-visible { outline:2px solid #ff7900; outline-offset:2px; }
+.planner-table .planner-kind-combined { border-left:4px solid #ff7900; background:linear-gradient(100deg,#173dc506,#ff790009); }
+@media(max-width:550px) { .block-category-picker { grid-template-columns:repeat(2,1fr); } }
 .study-upcoming-compact summary { display:flex; justify-content:space-between; gap:16px; align-items:center; padding:18px 20px; cursor:pointer; color:#082b96; font-size:13px; list-style:none; }
 .study-upcoming-compact summary::-webkit-details-marker { display:none; }
 .study-upcoming-compact summary > span { display:flex; align-items:center; gap:10px; }
