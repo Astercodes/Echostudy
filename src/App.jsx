@@ -1134,7 +1134,6 @@ export default function App({ user, onSignOut }) {
               save={save}
               selectDate={setDate}
               add={day=>{setDate(day);setModal({type:'block'});}}
-              openGoals={()=>go('Goals')}
               blocks={blocks}
               data={data}
               date={date}
@@ -1438,7 +1437,7 @@ function Stat({ icon: Icon, label, value, foot, color }) {
     </div>
   );
 }
-function Planner({ blocks, data, date, update, edit, start, stretch, notify, save, selectDate,add,openGoals, createGoal, conflicts=[] }) {
+function Planner({ blocks, data, date, update, edit, start, stretch, notify, save, selectDate,add, createGoal, conflicts=[] }) {
   const [view,setView]=useState('day');
   const [category,setCategory] = useState('all');
   const categoryOf = blockCategory;
@@ -1449,7 +1448,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
   const booked = blocks.filter(b=>b.status!=='skipped').reduce((n, b) => n + b.end - b.start, 0);
   return (
     <>
-      <div className="planner-view-bar"><div className="planner-category-filters" role="group" aria-label="Planner view">{['day','week'].map(v=><button key={v} type="button" aria-pressed={view===v} onClick={()=>setView(v)}>{v==='day'?'Day':'Week'}</button>)}</div><button className="text-btn" onClick={openGoals}>Year → Quarter → Month → Week → Day → Time Block</button></div>
+      <div className="planner-view-bar"><div className="planner-category-filters" role="group" aria-label="Planner view">{['day','week'].map(v=><button key={v} type="button" aria-pressed={view===v} onClick={()=>setView(v)}>{v==='day'?'Day':'Week'}</button>)}</div></div>
       <p className="planner-horizon-help">Set your longer-term direction in Goals. Plan the days and weeks that bring it to life here.</p>
       <header className="planner-day-hero"><div><span className="eyebrow">YOUR TIME, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Add a time block to plan Study, Stretch or life's commitments.</p><div className="planner-category-filters" role="group" aria-label="Filter time blocks">{categories.map(([id,label])=><button key={id} type="button" aria-pressed={category===id} aria-controls="planner-filtered-blocks" onClick={()=>setCategory(id)}>{label}<span>{scopeBlocks.filter(b=>matches(b,id)).length}</span></button>)}</div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
       {view==='week'?<PlannerWeek data={data} date={date} category={category} selectDate={selectDate} openDay={day=>{selectDate(day);setView('day');}} add={add} edit={edit} start={start} stretch={stretch} save={save} notify={notify}/>:<>
