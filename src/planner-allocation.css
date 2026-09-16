@@ -10,6 +10,14 @@
 .planner-category-filters button span { font-size:11px; }
 .planner-filter-summary { padding:14px 18px; margin:0; color:#082b96; font-size:12px; }
 .study-upcoming { margin-top:22px; border-top:3px solid #173dc5; }
+.study-upcoming-compact { padding:0; max-width:720px; margin-left:auto; }
+.study-upcoming-compact summary { display:flex; justify-content:space-between; gap:16px; align-items:center; padding:18px 20px; cursor:pointer; color:#082b96; font-size:13px; list-style:none; }
+.study-upcoming-compact summary::-webkit-details-marker { display:none; }
+.study-upcoming-compact summary > span { display:flex; align-items:center; gap:10px; }
+.study-upcoming-compact summary strong { background:#173dc510; border-radius:7px; padding:4px 8px; font-size:11px; }
+.study-upcoming-compact[open] summary svg { transform:rotate(180deg); }
+.study-upcoming-content { max-height:380px; overflow:auto; padding:0 20px 18px; border-top:1px solid #173dc520; }
+.study-upcoming-compact summary:focus-visible { outline:2px solid #ff7900; outline-offset:3px; }
 .study-upcoming-row { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:18px 0; border-top:1px solid #173dc525; }
 .study-upcoming-row h3 { margin:8px 0; color:#082b96; }
 .study-upcoming-row p { font-size:12px; margin:6px 0; }
