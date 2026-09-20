@@ -20,6 +20,7 @@ export function saveStudySchedule(data, session, schedule, runNow) {
   const wall=session.focusCycles?focusWallMinutes(session.planned):session.planned;
   if(existing?.kind==='combined' && (wall>=existing.end-existing.start || schedule.start!==existing.start)) throw Error('Keep time for Stretch in this combined block. Move the whole block in the planner.');
   const block={...existing,id:session.blockId,title:session.topic,objective:session.objective,
+    pathwayStepId:session.pathwayStepId || existing?.pathwayStepId,
     start:schedule.start,end:existing?.kind==='combined'?existing.end:schedule.start+wall,kind:existing?.kind || 'deep',focusMinutes:session.planned,
     ...(existing?.kind==='combined'?{studyMinutes:wall}:{}),
     goalId:session.goalId,goalIds:session.goalIds,capacityIds:session.capacityIds,

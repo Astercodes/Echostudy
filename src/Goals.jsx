@@ -35,7 +35,7 @@ const horizonLabels = {
 const goalLocations = g => [{areaId:g.areaId,subAreaId:g.subAreaId},...(g.locations || [])];
 const inArea = (g,id) => goalLocations(g).some(l=>l.areaId === id);
 
-export default function Goals({ data, save, edit, create, notify }) {
+export default function Goals({ data, save, edit, create, notify, buildPathway }) {
   const currentDate = new Date();
   const [areaId, setAreaId] = useState("all"),
     [subAreaId, setSubAreaId] = useState("all");
@@ -115,43 +115,7 @@ export default function Goals({ data, save, edit, create, notify }) {
           <div className="goal-row-actions">
             <button
               className="text-btn goal-pathway-btn"
-              onClick={() => {
-                const pathway = [
-                  {
-                    title: `Study toward: ${g.title}`,
-                    objective: `Identify the knowledge required to make progress on ${g.title}.`,
-                    kind: "study",
-                    horizon: g.level,
-                    goalId: g.id,
-                    source: "goal",
-                  },
-                  {
-                    title: `Stretch toward: ${g.title}`,
-                    objective: `Practise one capability that would demonstrate progress on ${g.title}.`,
-                    kind: "stretch",
-                    horizon: g.level,
-                    goalId: g.id,
-                    source: "goal",
-                  },
-                ].map((x) => ({
-                  ...x,
-                  id: uid(),
-                  status: "planned",
-                  createdAt: new Date().toISOString(),
-                }));
-                save((d) => ({
-                  ...d,
-                  learningPlanner: [
-                    ...(d.learningPlanner || []).filter(
-                      (x) => x.goalId !== g.id || x.status === "completed",
-                    ),
-                    ...pathway,
-                  ],
-                }));
-                notify(
-                  "Goal pathway created: Study and Stretch actions are ready.",
-                );
-              }}
+              onClick={() => buildPathway(g.id)}
             >
               Build pathway
             </button>

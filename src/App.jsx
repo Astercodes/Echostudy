@@ -5,10 +5,11 @@ import { scheduledStudies, saveStudySchedule } from './study-scheduling';
 import StudyIntentionPicker from './StudyIntentionPicker';
 import BlockEditor from './BlockEditor';
 import PlannerTools from './PlannerTools';
+import {changePlannerBlock} from './planner-operations';
 import PlannerWeek from './PlannerWeek';
 import {weekDays} from './planner-week';
 import {integrateLearning} from './learning-integration';
-import {advanceStudyCycle,nextStudyCycle,focusWithinWindow} from './study-cycles';
+import {advanceStudyCycle,nextStudyCycle,focusWithinWindow,focusWallMinutes} from './study-cycles';
 import {blockCategory,hasStudy,hasStretch,studyMinutes,stretchMinutes,recurringCommitments,storePlannerBlock} from './planner-blocks';
 import { refreshRecurringGoals, goalForDay } from "./goal-planning.js";
 import { knowledgeIntelligence } from "./knowledge-intelligence";
@@ -279,6 +280,7 @@ export default function App({ user, onSignOut }) {
     }
   }, [tick]);
   const [stretchDraft, setStretchDraft] = useState(null);
+  const [growthGoalId,setGrowthGoalId]=useState('');
   const [knowledgeFocus, setKnowledgeFocus] = useState(null);
   const nextKnowledgeStep = useMemo(
     () =>
@@ -721,7 +723,7 @@ export default function App({ user, onSignOut }) {
                   <div>
                     <Badge color="#ff7900">STRETCH</Badge>
                     {(data.learningPlanner || [])
-                      .filter((x) => !x.completed)
+                      .filter((x) => (x.type||x.kind)==='stretch' && !['complete','completed'].includes(x.status))
                       .slice(0, 3)
                       .map((x) => (
                         <button
@@ -738,7 +740,7 @@ export default function App({ user, onSignOut }) {
                           <em>Open</em>
                         </button>
                       ))}
-                    {!(data.learningPlanner || []).filter((x) => !x.completed)
+                    {!(data.learningPlanner || []).filter((x) => (x.type||x.kind)==='stretch' && !['complete','completed'].includes(x.status))
                       .length && (
                       <p className="muted">No Stretch planned yet.</p>
                     )}
@@ -1153,6 +1155,7 @@ export default function App({ user, onSignOut }) {
           )}
           {page === "Goals" && (
             <Goals
+              buildPathway={id=>{setGrowthGoalId(id);go('Growth Planner');}}
               data={data}
               save={save}
               edit={(g) => setModal({ type: "goal", goal: g })}
@@ -1161,7 +1164,26 @@ export default function App({ user, onSignOut }) {
             />
           )}
           {page === "Growth Planner" && (
-            <StretchPlanner data={data} save={save} go={go} />
+            <StretchPlanner data={data} save={save} go={go} initialGoalId={growthGoalId} onSelectGoal={setGrowthGoalId}
+              onSchedule={(step,day)=>{
+                const existing=Object.entries(data.plans).flatMap(([d,bs])=>bs.map(b=>({...b,scheduledDate:d}))).find(b=>b.pathwayStepId===step.id);
+                if(existing){setDate(existing.scheduledDate);go('Time planner');setModal({type:'block',block:existing});return;}
+                const duration=step.type==='study'?focusWallMinutes(step.duration):step.duration;
+                const gaps=availableWindows(recurringCommitments(data,day).blocks);
+                const startAt=(gaps.find(w=>w.start>=480&&w.end-w.start>=duration)||gaps.find(w=>w.end-w.start>=duration))?.start;
+                if(startAt===undefined){notify('No opening fits this step on that day. Choose another day or a shorter duration.');return;}
+                const goal=data.goals.find(g=>g.id===step.goalId);
+                setDate(day);go('Time planner');setModal({type:'block',block:{id:uid(),pathwayStepId:step.id,title:step.title,objective:step.objective,kind:step.type==='study'?'deep':'stretch',start:startAt,end:startAt+duration,focusMinutes:step.duration,goalId:step.goalId,goalIds:[step.goalId],capacityIds:goal?.capacityIds||[],conceptId:step.conceptId,knowledgeIds:step.conceptId?[step.conceptId]:[],resourceId:step.resourceId||step.resourceIds[0]||'',intention:step.action.toLowerCase().replaceAll(' ','-'),repeat:'none'}});
+              }}
+              onLaunch={step=>{
+                const existing=Object.entries(data.plans).flatMap(([d,bs])=>bs.map(b=>({...b,scheduledDate:d}))).find(b=>b.pathwayStepId===step.id);
+                if(step.type==='study'){
+                  if(data.timer){go('Study workspace');notify('Finish the active session before starting another step.');return;}
+                  go('Study workspace');
+                  if(existing){try{const now=new Date(),at=now.getHours()*60+now.getMinutes();const moved=changePlannerBlock(data,existing.scheduledDate,existing,'move',{date:today(),start:at});save(moved);start({...moved.plans[today()].find(b=>b.id===existing.id),scheduledDate:today()});}catch(e){notify(e.message);}return;}
+                  setModal({type:'session',draft:{pathwayStepId:step.id,topic:step.title,objective:step.objective,goal:step.goalId,goalIds:[step.goalId],mins:step.duration,concept:step.conceptId,resource:step.resourceId||step.resourceIds[0]||'',intention:step.action.toLowerCase().replaceAll(' ','-'),runNow:true}});
+                }else{const prior=data.stretches.find(s=>s.pathwayStepId===step.id),goal=data.goals.find(g=>g.id===step.goalId);setStretchDraft({...prior,areaId:goal?.areaId||'',subAreaId:goal?.subAreaId||'',capacityIds:goal?.capacityIds||[],pathwayStepId:step.id,title:step.title,objective:step.objective,success:step.success,goalId:step.goalId,goalIds:[step.goalId],planned:step.duration,knowledgeIds:step.conceptId?[step.conceptId]:[],resourceIds:step.resourceIds,resourceId:step.resourceId||step.resourceIds[0]||'',date:prior?.date||today()});go('Stretch workspace');}
+              }}/>
           )}
           {page === "Study workspace" && (
             <Study
@@ -1551,6 +1573,7 @@ function SessionModal({ block, data, scheduledDate, close, submit, draft={}, cre
           try { submit({
             id: uid(),
             blockId: block?.id || uid(),
+            pathwayStepId:draft.pathwayStepId || block?.pathwayStepId,
             date: today(),
             topic,
             objective,
@@ -1597,7 +1620,7 @@ function SessionModal({ block, data, scheduledDate, close, submit, draft={}, cre
           <StudyIntentionPicker value={intention} onChange={setIntention}/>
         </Field>
         <h3>This session contributes to</h3>
-        <PlannerGoals goals={data.goals} areas={data.lifeAreas} value={goalIds} onChange={ids=>{setGoalIds(ids);setGoal(ids[0] || '');setCapacityIds([...new Set(data.goals.filter(g=>ids.includes(g.id)).flatMap(g=>g.capacityIds || []))]);}} createGoal={defaults=>createGoal(defaults,{objective,goal,mins,topic,concept,resource,intention,goalIds,scheduleDate,scheduleTime,runNow,capacityIds})}/>
+        <PlannerGoals goals={data.goals} areas={data.lifeAreas} value={goalIds} onChange={ids=>{setGoalIds(ids);setGoal(ids[0] || '');setCapacityIds([...new Set(data.goals.filter(g=>ids.includes(g.id)).flatMap(g=>g.capacityIds || []))]);}} createGoal={defaults=>createGoal(defaults,{...draft,objective,goal,mins,topic,concept,resource,intention,goalIds,scheduleDate,scheduleTime,runNow,capacityIds})}/>
         <GoalTrail id={goal} goals={data.goals} />
         <CapacityPicker value={capacityIds} onChange={setCapacityIds} />
         <div className="form-grid">

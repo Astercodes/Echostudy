@@ -37,7 +37,7 @@ export function storePlannerBlock(data, day, block) {
     const source=stretches.find(s=>s.id===saved.stretchPlanId);
     const goal=data.goals?.find(g=>g.id===saved.goalId);
     const record={title:'',objective:'',success:'',capacityIds:[],areaId:'',subAreaId:'',status:'planned',actualMinutes:0,completion:100,outcome:'',nextStep:'',source:'user',environment:'internal',challenge:1,knowledgeIds:[],repeat:'once',studyGap:'',gapResolved:false,evidence:'',harvest:'',harvests:[],applyAction:'',horizon:'daily',parentStretchId:'',targetDate:'',
-      ...source,...existing,id:existing?.id || `stretch:${saved.id}`,blockId:saved.id,date:day,title:saved.title,objective:saved.objective || '',
+      ...source,...existing,id:existing?.id || `stretch:${saved.id}`,blockId:saved.id,pathwayStepId:saved.pathwayStepId || existing?.pathwayStepId,date:day,title:saved.title,objective:saved.objective || '',resourceId:saved.resourceId||existing?.resourceId||'',
       goalId:saved.goalId || '',goalIds:saved.goalIds || [],areaId:goal?.areaId || '',subAreaId:goal?.subAreaId || '',capacityIds:existing?.capacityIds || source?.capacityIds || goal?.capacityIds || [],
       environment:saved.environment || 'internal',stretchLevel:saved.stretchLevel || 'practice',knowledgeIds:saved.knowledgeIds || [],planned:stretchMinutes(saved),status:existing?.status || 'planned'};
     stretches=[...stretches.filter(s=>s.id!==record.id),record];

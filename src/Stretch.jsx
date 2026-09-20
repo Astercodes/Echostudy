@@ -800,6 +800,7 @@ export default function Stretch({
               setView(finishing ? "history" : "practice");
             }}
           >
+            {(editor.resourceIds?.length>0||editor.resourceId)&&<section className="auth-notice"><strong>Pathway learning resources</strong>{[...new Set([...(editor.resourceIds||[]),editor.resourceId].filter(Boolean))].map(id=>{const r=data.resources.find(x=>x.id===id);return r&&<p key={id}>{/^https?:\/\//.test(r.url||'')?<a href={r.url} target="_blank" rel="noreferrer">{r.title} ↗</a>:`${r.title} · available in Resource library`}</p>;})}</section>}
             <details open={!finishing} className="stretch-plan-details">
               <summary>Practice plan · purpose and success</summary>
               <Field label="Stretch plan">
