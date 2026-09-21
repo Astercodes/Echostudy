@@ -26,6 +26,8 @@ import {
   outlinePathway,
   matchesEnergyGoal,
   growLesson,
+  lessonName,
+  upgradeEnergyPathways,
 } from "./curriculum-pathway";
 import "./growth-pathway.css";
 const horizons = {
@@ -36,7 +38,7 @@ const horizons = {
   Day: "Daily",
 };
 const levelKey = (s) =>
-  `${s.levelOrder || 0}:${s.levelTitle || "Your pathway"}`;
+  `${s.levelOrder || 0}:${s.levelTitle ?? "Your pathway"}`;
 function levelsFor(steps) {
   const map = new Map();
   for (const s of steps) {
@@ -44,7 +46,7 @@ function levelsFor(steps) {
     if (!map.has(key))
       map.set(key, {
         key,
-        title: s.levelTitle || "Your pathway",
+        title: s.levelTitle ?? "Your pathway",
         order: s.levelOrder || 0,
         outcome: s.levelOutcome || "",
         steps: [],
@@ -95,6 +97,9 @@ export default function StretchPlanner({
     }),
     [lessonSearch, setLessonSearch] = useState("");
   const request = useRef(null);
+  useEffect(() => {
+    save((d) => upgradeEnergyPathways(d));
+  }, []);
   useEffect(() => () => request.current?.abort(), []);
   const goal = data.goals.find((g) => g.id === goalId),
     knowledge = knowledgeEntries(data).filter((n) => !n.trashedAt);
@@ -237,7 +242,7 @@ export default function StretchPlanner({
         sourceLessonId: step.id,
         type: "stretch",
         action: "Apply",
-        title: `Practise: ${step.title}`,
+        title: `Practise: ${lessonName(step)}`,
         objective: `Use ${step.title} in a case, simulation or real situation. Record the attempt and what needs further study.`,
         status: "planned",
         lessonCompletedAt: null,
@@ -336,7 +341,7 @@ export default function StretchPlanner({
     </div>
   );
   const modules = [
-    ...new Set((level?.steps || []).map((s) => s.moduleTitle || "Lessons")),
+    ...new Set((level?.steps || []).map((s) => s.moduleTitle ?? "")),
   ];
   return (
     <div className="growth-pathway">
@@ -420,7 +425,7 @@ export default function StretchPlanner({
               <Sprout size={38} />
               <h3>Your next chapter starts here.</h3>
               <p>
-                Choose a goal when you’re ready. Your saved levels and lessons
+                Choose a goal when you’re ready. Your saved topics and lessons
                 will live here, ready for your next session.
               </p>
               <Button onClick={() => setBuilder(true)}>
@@ -512,8 +517,11 @@ export default function StretchPlanner({
                             setLessonSearch("");
                           }}
                         >
-                          {s.title}
-                          <small>{s.levelTitle}</small>
+                          {lessonName(s)}
+                          <small>
+                            Topic {(s.levelOrder || 0) + 1} · Subtopic{" "}
+                            {(s.moduleOrder || 0) + 1}
+                          </small>
                         </button>
                       ))}
                     {!steps.some((s) =>
@@ -523,7 +531,7 @@ export default function StretchPlanner({
                     ) && <p>No matching lessons.</p>}
                   </div>
                 ) : (
-                  <nav aria-label="Curriculum levels">
+                  <nav aria-label="Curriculum topics">
                     {levels.map((l) => (
                       <button
                         key={l.key}
@@ -533,7 +541,7 @@ export default function StretchPlanner({
                           setLessonId("");
                         }}
                       >
-                        <span>Level {l.order}</span>
+                        <span>Topic {l.order + 1}</span>
                         <strong>{l.title}</strong>
                         <small>
                           {
@@ -549,28 +557,43 @@ export default function StretchPlanner({
               </aside>
               <section className="curriculum-content">
                 <header className="curriculum-level">
-                  <span className="eyebrow">LEVEL {level?.order}</span>
-                  <h2>{level?.title}</h2>
+                  <span className="eyebrow">
+                    TOPIC {(level?.order || 0) + 1}
+                  </span>
+                  {level?.steps[0]?.stageTitle && (
+                    <p>{level.steps[0].stageTitle}</p>
+                  )}
+                  <h2>{level?.title || `Topic ${(level?.order || 0) + 1}`}</h2>
                   <p>{level?.outcome}</p>
                 </header>
-                <details className="lesson-directory" key={level?.key}>
-                  <summary>
-                    Choose a lesson{" "}
-                    <span>{level?.steps.length} lessons in this level</span>
-                  </summary>
-                  {modules.map((module) => (
-                    <div key={module}>
-                      <h4>{module}</h4>
+                <section
+                  className="lesson-directory"
+                  key={level?.key}
+                  aria-label="Subtopics"
+                >
+                  <h3>Subtopics</h3>
+                  <p>Select a subtopic to see its lessons.</p>
+                  {modules.map((module, mi) => (
+                    <details className="subtopic-group" key={module}>
+                      <summary>
+                        Subtopic {mi + 1}
+                        {module ? " — " + module : ""}
+                        <small>
+                          {
+                            level.steps.filter(
+                              (s) => (s.moduleTitle ?? "") === module,
+                            ).length
+                          }{" "}
+                          lessons
+                        </small>
+                      </summary>
                       {level.steps
-                        .filter((s) => (s.moduleTitle || "Lessons") === module)
-                        .map((s) => (
+                        .filter((s) => (s.moduleTitle ?? "") === module)
+                        .map((s, li) => (
                           <button
                             key={s.id}
                             aria-pressed={lesson?.id === s.id}
-                            onClick={(e) => {
-                              setLessonId(s.id);
-                              e.currentTarget.closest("details").open = false;
-                            }}
+                            onClick={() => setLessonId(s.id)}
                           >
                             <span>
                               {s.status === "completed" ? (
@@ -579,28 +602,27 @@ export default function StretchPlanner({
                                 <BookOpen size={15} />
                               )}
                             </span>
-                            {s.title}
-                            <small>
-                              {s.type === "stretch"
-                                ? "Applied lesson"
-                                : s.duration + " min focus"}
-                            </small>
+                            Lesson {li + 1}
+                            {s.title ? " — " + s.title : ""}
+                            <small>{s.duration} min focus</small>
                           </button>
                         ))}
-                    </div>
+                    </details>
                   ))}
-                </details>
+                </section>
                 {lesson && (
                   <article
                     className={`growth-step lesson-focus step-${lesson.type}`}
                   >
                     <header>
                       <span className="eyebrow">
-                        {lesson.moduleTitle || "YOUR LESSON"}
+                        Topic {(lesson.levelOrder || 0) + 1} → Subtopic{" "}
+                        {(lesson.moduleOrder || 0) + 1} → Lesson{" "}
+                        {(lesson.lessonOrder || 0) + 1}
                       </span>
                       <span className="lesson-status">{lesson.status}</span>
                     </header>
-                    <h2>{lesson.title}</h2>
+                    <h2>{lessonName(lesson)}</h2>
                     <p className="lesson-objective">{lesson.objective}</p>
                     <div className="lesson-meta">
                       <span>
@@ -622,7 +644,7 @@ export default function StretchPlanner({
                         <h3>
                           {lesson.type === "stretch"
                             ? "Questions to work through"
-                            : "What this lesson covers"}
+                            : "Concepts"}
                         </h3>
                         <ol>
                           {lesson.topics.map((t, i) => (
@@ -744,30 +766,38 @@ export default function StretchPlanner({
           <div className="curriculum-preview">
             <p>{preview.summary}</p>
             <strong>
-              {levelsFor(preview.steps).length} levels · {preview.steps.length}{" "}
+              {levelsFor(preview.steps).length} topics · {preview.steps.length}{" "}
               lessons
             </strong>
             {levelsFor(preview.steps).map((l) => (
               <details key={l.key}>
                 <summary>
-                  Level {l.order} · {l.title}
+                  Topic {l.order + 1} · {l.title}
                   <small>{l.steps.length} lessons</small>
                 </summary>
                 <p>{l.outcome}</p>
-                {[
-                  ...new Set(l.steps.map((s) => s.moduleTitle || "Lessons")),
-                ].map((m) => (
-                  <div key={m}>
-                    <h4>{m}</h4>
-                    <ul>
-                      {l.steps
-                        .filter((s) => (s.moduleTitle || "Lessons") === m)
-                        .map((s, i) => (
-                          <li key={i}>{s.title}</li>
-                        ))}
-                    </ul>
-                  </div>
-                ))}
+                {[...new Set(l.steps.map((s) => s.moduleTitle ?? ""))].map(
+                  (m) => (
+                    <div key={m}>
+                      <h4>
+                        Subtopic{" "}
+                        {l.steps.find((s) => s.moduleTitle === m)?.moduleOrder +
+                          1 || 1}
+                        {m ? " — " + m : ""}
+                      </h4>
+                      <ul>
+                        {l.steps
+                          .filter((s) => (s.moduleTitle ?? "") === m)
+                          .map((s, i) => (
+                            <li key={i}>
+                              Lesson {(s.lessonOrder || 0) + 1}
+                              {s.title ? " — " + s.title : ""}
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  ),
+                )}
               </details>
             ))}
             <Button
@@ -901,7 +931,7 @@ export default function StretchPlanner({
                       }
                     />
                     <small>
-                      Use # for a level, ## for a topic, and one lesson per
+                      Use # for a topic, ## for a subtopic, and one lesson per
                       line.
                     </small>
                   </Field>
@@ -950,7 +980,6 @@ export default function StretchPlanner({
           >
             <Field label="Lesson title">
               <input
-                required
                 value={editing.title}
                 onChange={(e) =>
                   setEditing({ ...editing, title: e.target.value })
@@ -1044,7 +1073,7 @@ export default function StretchPlanner({
               setScheduling(null);
             }}
           >
-            <h3>{scheduling.title}</h3>
+            <h3>{lessonName(scheduling)}</h3>
             <Field label="Schedule date">
               <input
                 required
@@ -1081,7 +1110,7 @@ export default function StretchPlanner({
               }
             }}
           >
-            <h3>{growing.title}</h3>
+            <h3>{lessonName(growing)}</h3>
             <p>
               Save this lesson as a branch with its concepts as leaves. Existing
               knowledge stays intact. Repeating this action opens the same

@@ -5,6 +5,7 @@ import {
   energyCurriculum,
   growLesson,
   outlinePathway,
+  upgradeEnergyPathways,
 } from "../src/curriculum-pathway.js";
 import { acceptPathway } from "../src/growth-pathway.js";
 import { integrateLearning } from "../src/learning-integration.js";
@@ -33,21 +34,21 @@ const base = () => ({
   plans: {},
   learningPlanner: [],
 });
-test("supplied curriculum preserves 20 levels, all 80 foundation concept groups and 15-question applied lesson", () => {
+test("supplied curriculum preserves business topic plus all 80 energy concept groups and 15-question applied lesson", () => {
   const d = base(),
     p = curriculumPathway(d, d.goals[0], "", [], []);
-  assert.equal(energyCurriculum.levels.length, 20);
+  assert.equal(energyCurriculum.levels.length, 21);
   assert.equal(
-    p.steps.filter((s) => s.levelOrder === 0 && s.type === "study").length,
+    p.steps.filter((s) => s.levelOrder === 1 && s.type === "study").length,
     80,
   );
   const applied = p.steps.find((s) => s.title === "Map an Energy Company");
   assert.equal(applied.topics.length, 15);
   assert.equal(applied.type, "stretch");
   assert.equal(
-    p.steps.find((s) => s.title === "Strategic Management Fundamentals")
+    p.steps.find((s) => s.moduleTitle === "Strategic Management Fundamentals")
       .levelOrder,
-    14,
+    15,
   );
   assert.ok(p.steps.at(-1).objective.includes("$5 billion"));
   assert.ok(p.steps.every((s) => s.curriculumLesson));
@@ -112,4 +113,90 @@ test("custom curriculum supports levels and topics for other goals without losin
   assert.equal(p.steps[1].moduleTitle, "Prayer");
   assert.equal(p.steps[2].levelOrder, 1);
   assert.throws(() => outlinePathway("# Empty", { title: "Goal" }));
+});
+
+test("business headings and concept ordering exactly follow the supplied hierarchy", () => {
+  const b = energyCurriculum.levels[0];
+  assert.equal(b.title, "Introduction to Business");
+  assert.equal(b.stageTitle, "Energy business foundations");
+  assert.deepEqual(
+    b.modules.map((m) => m.title),
+    [
+      "What is Business?",
+      "Why Businesses Exist",
+      "Evolution of Business",
+      "Characteristics of Businesses",
+      "Business Objectives",
+      "Business vs Nonprofit Organizations",
+      "Business Ecosystems",
+      "Business Life Cycle",
+    ],
+  );
+  assert.equal(b.modules.flatMap((m) => m.lessons).length, 29);
+  assert.equal(b.modules[0].lessons[0].title, "Definition of Business");
+  assert.deepEqual(b.modules[0].lessons[0].topics, [
+    "Business",
+    "Enterprise",
+    "Organization",
+    "Commercial Activity",
+    "Economic Activity",
+    "Exchange",
+    "Goods",
+    "Services",
+    "Customers",
+    "Markets",
+  ]);
+  assert.equal(b.modules[7].lessons[3].title, "Decline & Renewal");
+  assert.ok(energyCurriculum.levels.slice(1).every((t) => t.title === ""));
+});
+test("existing pathways update once and preserve identifiers, customized content and evidence", () => {
+  const d = base();
+  d.learningPlanner = [
+    {
+      id: "old",
+      pathwayId: "p",
+      goalId: "g",
+      blueprint: "energy-strategy-v1",
+      levelOrder: 0,
+      moduleOrder: 0,
+      lessonOrder: 0,
+      title: "Energy, work & power",
+      topics: ["Energy"],
+      objective: "My saved objective",
+      conceptId: "node",
+      evidenceIds: ["session"],
+      lessonCompletedAt: "2026-09-20",
+    },
+    {
+      id: "custom",
+      pathwayId: "p",
+      goalId: "g",
+      blueprint: "energy-strategy-v1",
+      levelOrder: 0,
+      moduleOrder: 0,
+      lessonOrder: 1,
+      title: "My renamed lesson",
+      objective: "My notes",
+    },
+  ];
+  const next = upgradeEnergyPathways(d);
+  assert.equal(next.learningPlanner.length, 31);
+  assert.equal(next.learningPlanner[0].title, "");
+  assert.equal(next.learningPlanner[0].conceptId, "node");
+  assert.equal(next.learningPlanner[0].objective, "My saved objective");
+  assert.deepEqual(next.learningPlanner[0].evidenceIds, ["session"]);
+  assert.equal(next.learningPlanner[1].title, "My renamed lesson");
+  assert.equal(upgradeEnergyPathways(next), next);
+});
+test("markdown topic, subtopic, lesson and concept headings stay distinct", () => {
+  const p = outlinePathway(
+    "Topic 1 — Introduction to Business\n## Subtopic 1 — What is Business?\n### Lesson 1 — Definition of Business\n#### Concepts\n- Business\n- Enterprise\n### Lesson 2 — Components of a Business\n- Inputs",
+    { title: "Business" },
+  );
+  assert.equal(p.steps.length, 2);
+  assert.equal(p.steps[0].levelTitle, "Introduction to Business");
+  assert.equal(p.steps[0].moduleTitle, "What is Business?");
+  assert.equal(p.steps[0].title, "Definition of Business");
+  assert.deepEqual(p.steps[0].topics, ["Business", "Enterprise"]);
+  assert.equal(p.steps[1].lessonOrder, 1);
 });

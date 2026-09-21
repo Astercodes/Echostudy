@@ -632,3 +632,28 @@
   border: 1px solid #dfe6f2;
   color: #082b96;
 }
+
+.subtopic-group {
+  border-top: 1px solid #dfe6f2;
+  padding: 16px 0;
+}
+.subtopic-group summary {
+  cursor: pointer;
+  color: #082b96;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.subtopic-group summary small {
+  display: block;
+  margin-left: 18px;
+  color: #526787;
+  font-size: 12px;
+  font-weight: 400;
+}
+.lesson-directory > h3 {
+  margin: 4px 0 10px;
+}
+.lesson-directory > p {
+  font-size: 13px;
+  color: #526787;
+}

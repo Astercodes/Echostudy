@@ -27,7 +27,7 @@ const {
   ];
   data.resources.push({
     id: "energy-source",
-    title: "Energy work power",
+    title: "Business enterprise organization",
     kind: "url",
     url: "https://example.org/energy",
     tags: [],
@@ -82,7 +82,7 @@ const {
     assert.equal(await page.locator(".growth-step").count(), 1);
     assert.equal(
       await page.locator(".growth-step>h2").innerText(),
-      "Energy, work & power",
+      "Definition of Business",
     );
     await page.screenshot({
       path: "C:/Users/ayeni/Downloads/growth-curriculum-desktop.png",
@@ -112,7 +112,7 @@ const {
       .click();
     assert.equal(
       await dialog.getByLabel("What is this time for?").inputValue(),
-      "Energy, work & power",
+      "Definition of Business",
     );
     await dialog.getByRole("button", { name: "Save time block" }).click();
     await page
@@ -149,7 +149,12 @@ const {
     await page
       .getByRole("button", { name: "Growth Planner", exact: true })
       .click();
-    await page.locator(".lesson-directory>summary").click();
+    await page
+      .getByRole("navigation", { name: "Curriculum topics" })
+      .getByRole("button")
+      .nth(1)
+      .click();
+    await page.locator(".subtopic-group").last().locator("summary").click();
     await page
       .locator(".lesson-directory")
       .getByRole("button", { name: /Map an Energy Company/ })
@@ -184,7 +189,10 @@ const {
       .getByRole("button", { name: "Growth Planner", exact: true })
       .click();
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.waitForFunction(()=>document.querySelector('.sidebar').getBoundingClientRect().right<=0);
+    await page.waitForFunction(
+      () =>
+        document.querySelector(".sidebar").getBoundingClientRect().right <= 0,
+    );
     await page.screenshot({
       path: "C:/Users/ayeni/Downloads/growth-curriculum-mobile.png",
       fullPage: true,
