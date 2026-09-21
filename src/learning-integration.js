@@ -1,3 +1,5 @@
+const contributes = (record, id) =>
+  record?.pathwayStepId === id || (record?.pathwayStepIds || []).includes(id);
 export const linkedGoals = (item) => [
   ...new Set([item.goalId, ...(item.goalIds || [])].filter(Boolean)),
 ];
@@ -26,17 +28,17 @@ export function integrateLearning(data) {
       : c;
   });
   const learningPlanner = (data.learningPlanner || []).map((item) => {
-    const study = data.sessions.filter((s) => s.pathwayStepId === item.id),
+    const study = data.sessions.filter((s) => contributes(s, item.id)),
       practice = (data.stretches || []).filter(
-        (s) => s.pathwayStepId === item.id && s.status === "completed",
+        (s) => contributes(s, item.id) && s.status === "completed",
       );
     const scheduled = Object.entries(data.plans).find(([, blocks]) =>
-      blocks.some((b) => b.pathwayStepId === item.id && b.status !== "skipped"),
+      blocks.some((b) => contributes(b, item.id) && b.status !== "skipped"),
     );
     const active =
-      data.timer?.pathwayStepId === item.id ||
+      contributes(data.timer, item.id) ||
       (data.stretches || []).some(
-        (s) => s.pathwayStepId === item.id && s.status === "active",
+        (s) => contributes(s, item.id) && s.status === "active",
       );
     return {
       ...item,
@@ -52,7 +54,9 @@ export function integrateLearning(data) {
                 ? "scheduled"
                 : "planned"
         : study.length || practice.length
-          ? "completed"
+          ? [...study, ...practice].some((s) => s.pathwayStepId === item.id)
+            ? "completed"
+            : "in progress"
           : active
             ? "active"
             : item.status === "completed" || item.status === "complete"

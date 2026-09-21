@@ -30,6 +30,7 @@ import {
   upgradeEnergyPathways,
 } from "./curriculum-pathway";
 import "./growth-pathway.css";
+import { scopeFor, saveScope, growScope } from "./pathway-scopes";
 import { pathwayCards, changePathway } from "./pathway-library";
 const horizons = {
   Year: "Yearly",
@@ -100,6 +101,8 @@ export default function StretchPlanner({
   const [manage, setManage] = useState(null),
     [manageValue, setManageValue] = useState("");
   const cards = pathwayCards(data);
+  const [selectedLessons, setSelectedLessons] = useState([]),
+    [scopeDraft, setScopeDraft] = useState(null);
   const request = useRef(null);
   useEffect(() => {
     save((d) => upgradeEnergyPathways(d));
@@ -130,6 +133,53 @@ export default function StretchPlanner({
       },
     }));
   }, [lesson?.id]);
+  useEffect(() => setSelectedLessons([]), [goalId, batch, level?.key]);
+  const chooseScope = (items, title) => {
+    setScopeDraft(scopeFor(data, items, title));
+    setError("");
+  };
+  const toggleLesson = (id) =>
+    setSelectedLessons((ids) =>
+      ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id],
+    );
+  const scopeAction = (action) => {
+    const {
+      title,
+      type,
+      action: studyAction,
+      duration,
+      objective,
+      resourceId,
+      resourceIds,
+    } = scopeDraft;
+    const scope = scopeFor(
+      data,
+      allSteps.filter((s) => scopeDraft.pathwayStepIds.includes(s.id)),
+      title,
+      {
+        type,
+        action: studyAction,
+        duration,
+        objective,
+        resourceId,
+        resourceIds,
+      },
+    );
+    save((d) => saveScope(d, scope));
+    setScopeDraft(null);
+    if (action === "launch") onLaunch(scope);
+    else if (action === "schedule") {
+      setScheduling(scope);
+      setScheduleDate(today());
+    } else {
+      setGrowing(scope);
+      setDestination({
+        areaId: goal.areaId || data.lifeAreas[0]?.id || "",
+        subAreaId: goal.subAreaId || "",
+        parentId: "",
+      });
+    }
+  };
   const visible = data.goals.filter(
     (g) =>
       (!horizon || g.level === horizon) &&
@@ -639,6 +689,16 @@ export default function StretchPlanner({
                   )}
                   <h2>{level?.title || `Topic ${level?.order || 0}`}</h2>
                   <p>{level?.outcome}</p>
+                  <Button
+                    onClick={() =>
+                      chooseScope(
+                        level.steps,
+                        level.title || `Topic ${level.order}`,
+                      )
+                    }
+                  >
+                    Work on entire topic
+                  </Button>
                 </header>
                 <section
                   className="lesson-directory"
@@ -646,7 +706,33 @@ export default function StretchPlanner({
                   aria-label="Subtopics"
                 >
                   <h3>Subtopics</h3>
-                  <p>Select a subtopic to see its lessons.</p>
+                  <p>
+                    Open a subtopic to choose individual lessons, or work on the
+                    whole group.
+                  </p>
+                  <div className="scope-selection-bar">
+                    <span>{selectedLessons.length} lessons selected</span>
+                    <Button
+                      disabled={!selectedLessons.length}
+                      onClick={() =>
+                        chooseScope(
+                          level.steps.filter((s) =>
+                            selectedLessons.includes(s.id),
+                          ),
+                          "Selected lessons · " +
+                            (level.title || "Topic " + level.order),
+                        )
+                      }
+                    >
+                      Work on selection
+                    </Button>
+                    <Button
+                      disabled={!selectedLessons.length}
+                      onClick={() => setSelectedLessons([])}
+                    >
+                      Clear selection
+                    </Button>
+                  </div>
                   {modules.map((module, mi) => (
                     <details className="subtopic-group" key={module}>
                       <summary>
@@ -661,25 +747,66 @@ export default function StretchPlanner({
                           lessons
                         </small>
                       </summary>
+                      <div className="subtopic-actions">
+                        <Button
+                          onClick={() =>
+                            chooseScope(
+                              level.steps.filter(
+                                (s) => (s.moduleTitle ?? "") === module,
+                              ),
+                              module || "Subtopic " + (mi + 1),
+                            )
+                          }
+                        >
+                          Work on entire subtopic
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            setSelectedLessons((ids) => [
+                              ...new Set([
+                                ...ids,
+                                ...level.steps
+                                  .filter(
+                                    (s) => (s.moduleTitle ?? "") === module,
+                                  )
+                                  .map((s) => s.id),
+                              ]),
+                            ])
+                          }
+                        >
+                          Select all lessons
+                        </Button>
+                      </div>
                       {level.steps
                         .filter((s) => (s.moduleTitle ?? "") === module)
                         .map((s, li) => (
-                          <button
-                            key={s.id}
-                            aria-pressed={lesson?.id === s.id}
-                            onClick={() => setLessonId(s.id)}
-                          >
-                            <span>
-                              {s.status === "completed" ? (
-                                <Check size={15} />
-                              ) : (
-                                <BookOpen size={15} />
-                              )}
-                            </span>
-                            Lesson {li + 1}
-                            {s.title ? " — " + s.title : ""}
-                            <small>{s.duration} min focus</small>
-                          </button>
+                          <div className="scope-lesson-row" key={s.id}>
+                            <input
+                              type="checkbox"
+                              aria-label={
+                                "Select lesson " +
+                                (li + 1) +
+                                (s.title ? " — " + s.title : "")
+                              }
+                              checked={selectedLessons.includes(s.id)}
+                              onChange={() => toggleLesson(s.id)}
+                            />{" "}
+                            <button
+                              aria-pressed={lesson?.id === s.id}
+                              onClick={() => setLessonId(s.id)}
+                            >
+                              <span>
+                                {s.status === "completed" ? (
+                                  <Check size={15} />
+                                ) : (
+                                  <BookOpen size={15} />
+                                )}
+                              </span>
+                              Lesson {li + 1}
+                              {s.title ? " — " + s.title : ""}
+                              <small>{s.duration} min focus</small>
+                            </button>
+                          </div>
                         ))}
                     </details>
                   ))}
@@ -834,6 +961,151 @@ export default function StretchPlanner({
             </div>
           )}
         </>
+      )}
+      {scopeDraft && (
+        <Modal
+          title="Work on your selection"
+          onClose={() => setScopeDraft(null)}
+        >
+          <div className="scope-workspace">
+            <p>
+              {scopeDraft.pathwayStepIds.length} lessons · One chosen scope. A
+              focus session records progress without completing every lesson.
+            </p>
+            <Field label="Scope name">
+              <input
+                value={scopeDraft.title}
+                onChange={(e) =>
+                  setScopeDraft({ ...scopeDraft, title: e.target.value })
+                }
+              />
+            </Field>
+            <Field label="Workspace">
+              <select
+                aria-label="Workspace"
+                value={scopeDraft.type}
+                onChange={(e) =>
+                  setScopeDraft({
+                    ...scopeDraft,
+                    type: e.target.value,
+                    action: e.target.value === "stretch" ? "Apply" : "Peel",
+                  })
+                }
+              >
+                <option value="study">Study</option>
+                <option value="stretch">Stretch</option>
+              </select>
+            </Field>
+            {scopeDraft.type === "study" && (
+              <Field label="Study action">
+                <select
+                  aria-label="Study action"
+                  value={scopeDraft.action}
+                  onChange={(e) =>
+                    setScopeDraft({ ...scopeDraft, action: e.target.value })
+                  }
+                >
+                  {studyActions.map((a) => (
+                    <option key={a}>{a}</option>
+                  ))}
+                </select>
+              </Field>
+            )}
+            <Field label="Focus minutes">
+              <input
+                type="number"
+                min="5"
+                max="180"
+                value={scopeDraft.duration}
+                onChange={(e) =>
+                  setScopeDraft({
+                    ...scopeDraft,
+                    duration: Number(e.target.value),
+                  })
+                }
+              />
+            </Field>
+            <Field label="Objective for this focus block">
+              <textarea
+                value={scopeDraft.objective}
+                onChange={(e) =>
+                  setScopeDraft({ ...scopeDraft, objective: e.target.value })
+                }
+              />
+            </Field>
+            <Field label="Study resource">
+              <select
+                value={scopeDraft.resourceId || scopeDraft.resourceIds[0] || ""}
+                onChange={(e) =>
+                  setScopeDraft({
+                    ...scopeDraft,
+                    resourceId: e.target.value,
+                    resourceIds: [
+                      ...new Set(
+                        [...scopeDraft.resourceIds, e.target.value].filter(
+                          Boolean,
+                        ),
+                      ),
+                    ],
+                  })
+                }
+              >
+                <option value="">Choose resource</option>
+                {data.resources.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.title}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <details>
+              <summary>
+                Included lessons ({scopeDraft.pathwayStepIds.length})
+              </summary>
+              <ul>
+                {scopeDraft.topics.map((title, i) => (
+                  <li key={i}>{title}</li>
+                ))}
+              </ul>
+            </details>
+            <p>
+              Open this scope in the Knowledge Ecosystem to use its full
+              knowledge actions, notes and resources.
+            </p>
+            <div className="form-actions">
+              <Button
+                primary
+                disabled={
+                  !scopeDraft.title.trim() ||
+                  !scopeDraft.objective.trim() ||
+                  scopeDraft.duration < 5 ||
+                  scopeDraft.duration > 180
+                }
+                onClick={() => scopeAction("launch")}
+              >
+                {scopeDraft.type === "study"
+                  ? "Study selection now"
+                  : "Create Stretch for selection"}
+              </Button>
+              <Button
+                disabled={
+                  !scopeDraft.title.trim() ||
+                  scopeDraft.duration < 5 ||
+                  scopeDraft.duration > 180
+                }
+                onClick={() => scopeAction("schedule")}
+              >
+                Add selection to Time planner
+              </Button>
+              <Button
+                disabled={!scopeDraft.title.trim()}
+                onClick={() => scopeAction("grow")}
+              >
+                Grow / open in ecosystem
+              </Button>
+            </div>
+          </div>
+        </Modal>
       )}
       {manage && (
         <Modal
@@ -1243,7 +1515,9 @@ export default function StretchPlanner({
             onSubmit={(e) => {
               e.preventDefault();
               try {
-                const result = growLesson(data, growing, destination);
+                const result = growing.pathwayStepIds?.length
+                  ? growScope(data, growing, destination)
+                  : growLesson(data, growing, destination);
                 save(result.data);
                 setGrowing(null);
                 onKnowledge?.(result.id);
@@ -1254,7 +1528,7 @@ export default function StretchPlanner({
           >
             <h3>{lessonName(growing)}</h3>
             <p>
-              Save this lesson as a branch with its concepts as leaves. Existing
+              Save this scope with its lesson and concept structure. Existing
               knowledge stays intact. Repeating this action opens the same
               branch.
             </p>

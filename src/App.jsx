@@ -1176,7 +1176,7 @@ export default function App({ user, onSignOut }) {
                 const startAt=(gaps.find(w=>w.start>=480&&w.end-w.start>=duration)||gaps.find(w=>w.end-w.start>=duration))?.start;
                 if(startAt===undefined){notify('No opening fits this step on that day. Choose another day or a shorter duration.');return;}
                 const goal=data.goals.find(g=>g.id===step.goalId);
-                setDate(day);go('Time planner');setModal({type:'block',block:{id:uid(),pathwayStepId:step.id,title:step.title,objective:step.objective,kind:step.type==='study'?'deep':'stretch',start:startAt,end:startAt+duration,focusMinutes:step.duration,goalId:step.goalId,goalIds:[step.goalId],capacityIds:goal?.capacityIds||[],conceptId:step.conceptId,knowledgeIds:step.conceptId?[step.conceptId]:[],resourceId:step.resourceId||step.resourceIds[0]||'',intention:step.action.toLowerCase().replaceAll(' ','-'),repeat:'none'}});
+                setDate(day);go('Time planner');setModal({type:'block',block:{id:uid(),pathwayStepId:step.id,pathwayStepIds:step.pathwayStepIds||[],title:step.title,objective:step.objective,kind:step.type==='study'?'deep':'stretch',start:startAt,end:startAt+duration,focusMinutes:step.duration,goalId:step.goalId,goalIds:[step.goalId],capacityIds:goal?.capacityIds||[],conceptId:step.conceptId,knowledgeIds:step.conceptId?[step.conceptId]:[],resourceId:step.resourceId||step.resourceIds[0]||'',intention:step.action.toLowerCase().replaceAll(' ','-'),repeat:'none'}});
               }}
               onLaunch={step=>{
                 step={...step,title:step.title||`Lesson ${(step.lessonOrder||0)+1}`,objective:[step.objective,...(step.topics?.length?['Lesson scope:',...step.topics]:[])].join('\n')};
@@ -1185,8 +1185,8 @@ export default function App({ user, onSignOut }) {
                   if(data.timer){go('Study workspace');notify('Finish the active session before starting another step.');return;}
                   go('Study workspace');
                   if(existing){try{const now=new Date(),at=now.getHours()*60+now.getMinutes();const moved=changePlannerBlock(data,existing.scheduledDate,existing,'move',{date:today(),start:at});save(moved);start({...moved.plans[today()].find(b=>b.id===existing.id),scheduledDate:today()});}catch(e){notify(e.message);}return;}
-                  setModal({type:'session',draft:{pathwayStepId:step.id,topic:step.title,objective:step.objective,goal:step.goalId,goalIds:[step.goalId],mins:step.duration,concept:step.conceptId,resource:step.resourceId||step.resourceIds[0]||'',intention:step.action.toLowerCase().replaceAll(' ','-'),runNow:true}});
-                }else{const prior=data.stretches.find(s=>s.pathwayStepId===step.id),goal=data.goals.find(g=>g.id===step.goalId);setStretchDraft({...prior,areaId:goal?.areaId||'',subAreaId:goal?.subAreaId||'',capacityIds:goal?.capacityIds||[],pathwayStepId:step.id,title:step.title,objective:step.objective,success:step.success,goalId:step.goalId,goalIds:[step.goalId],planned:step.duration,knowledgeIds:step.conceptId?[step.conceptId]:[],resourceIds:step.resourceIds,resourceId:step.resourceId||step.resourceIds[0]||'',date:prior?.date||today()});go('Stretch workspace');}
+                  setModal({type:'session',draft:{pathwayStepId:step.id,pathwayStepIds:step.pathwayStepIds||[],topic:step.title,objective:step.objective,goal:step.goalId,goalIds:[step.goalId],mins:step.duration,concept:step.conceptId,resource:step.resourceId||step.resourceIds[0]||'',intention:step.action.toLowerCase().replaceAll(' ','-'),runNow:true}});
+                }else{const prior=data.stretches.find(s=>s.pathwayStepId===step.id),goal=data.goals.find(g=>g.id===step.goalId);setStretchDraft({...prior,areaId:goal?.areaId||'',subAreaId:goal?.subAreaId||'',capacityIds:goal?.capacityIds||[],pathwayStepId:step.id,pathwayStepIds:step.pathwayStepIds||[],title:step.title,objective:step.objective,success:step.success,goalId:step.goalId,goalIds:[step.goalId],planned:step.duration,knowledgeIds:step.conceptId?[step.conceptId]:[],resourceIds:step.resourceIds,resourceId:step.resourceId||step.resourceIds[0]||'',date:prior?.date||today()});go('Stretch workspace');}
               }}/>
           )}
           {page === "Study workspace" && (
@@ -1578,6 +1578,7 @@ function SessionModal({ block, data, scheduledDate, close, submit, draft={}, cre
             id: uid(),
             blockId: block?.id || uid(),
             pathwayStepId:draft.pathwayStepId || block?.pathwayStepId,
+            pathwayStepIds:draft.pathwayStepIds || block?.pathwayStepIds || [],
             date: today(),
             topic,
             objective,
