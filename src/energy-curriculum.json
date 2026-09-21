@@ -1,0 +1,3258 @@
+{
+  "id": "energy-strategy-v1",
+  "title": "Energy strategy & innovation",
+  "source": "Curriculum supplied by the learner",
+  "levels": [
+    {
+      "title": "Energy business foundations",
+      "outcome": "Explain an energy company’s place in the system, its sources, technologies, assets, stakeholders and physical and commercial flows.",
+      "modules": [
+        {
+          "title": "Energy Systems Fundamentals",
+          "lessons": [
+            {
+              "title": "Energy, work & power",
+              "topics": [
+                "Energy",
+                "Work",
+                "Power",
+                "Primary Energy",
+                "Secondary Energy",
+                "Final Energy",
+                "Useful Energy",
+                "Energy Services",
+                "Stored Energy",
+                "Energy Flow",
+                "Energy Conversion",
+                "Energy Transformation",
+                "Energy Carrier",
+                "Energy Resource"
+              ]
+            },
+            {
+              "title": "The energy system",
+              "topics": [
+                "Energy System",
+                "Energy Inputs",
+                "Energy Processes",
+                "Energy Outputs",
+                "Energy Flows",
+                "Energy Networks",
+                "Energy Infrastructure",
+                "Energy Producers",
+                "Energy Consumers",
+                "Energy Markets",
+                "Energy Institutions",
+                "System Boundaries",
+                "System Interdependencies",
+                "Energy System Mapping"
+              ]
+            },
+            {
+              "title": "From primary energy to useful services",
+              "topics": [
+                "Primary Energy",
+                "Secondary Energy",
+                "Final Energy",
+                "Useful Energy",
+                "Energy Services",
+                "Conversion Loss",
+                "Transmission Loss",
+                "Distribution Loss",
+                "End-Use Efficiency",
+                "Energy Conversion Chain"
+              ]
+            },
+            {
+              "title": "Forms of energy & conversion",
+              "topics": [
+                "Chemical Energy",
+                "Thermal Energy",
+                "Mechanical Energy",
+                "Electrical Energy",
+                "Nuclear Energy",
+                "Radiant Energy",
+                "Energy Conversion",
+                "Conversion Efficiency",
+                "Heat Rate",
+                "Energy Loss",
+                "Waste Heat",
+                "Conversion Technology"
+              ]
+            },
+            {
+              "title": "Efficiency & energy productivity",
+              "topics": [
+                "Energy Efficiency",
+                "Conversion Efficiency",
+                "System Efficiency",
+                "End-Use Efficiency",
+                "Energy Intensity",
+                "Energy Productivity",
+                "Energy Losses",
+                "Waste Energy",
+                "Conservation",
+                "Efficiency Improvement",
+                "Demand-Side Efficiency"
+              ]
+            },
+            {
+              "title": "Reliability, resilience & adequacy",
+              "topics": [
+                "Reliability",
+                "Resilience",
+                "Availability",
+                "Adequacy",
+                "Security of Supply",
+                "Redundancy",
+                "System Flexibility",
+                "Capacity",
+                "Reserve Capacity",
+                "Disruption",
+                "Recovery",
+                "Critical Infrastructure"
+              ]
+            },
+            {
+              "title": "Centralized & distributed systems",
+              "topics": [
+                "Centralized Generation",
+                "Distributed Generation",
+                "Distributed Energy Resources",
+                "Behind-the-Meter Resources",
+                "Microgrids",
+                "Prosumer",
+                "Local Energy Systems",
+                "Grid-Connected Systems",
+                "Off-Grid Systems",
+                "Energy Communities"
+              ]
+            },
+            {
+              "title": "Security, affordability & sustainability",
+              "topics": [
+                "Energy Security",
+                "Energy Affordability",
+                "Environmental Sustainability",
+                "Energy Equity",
+                "Accessibility",
+                "Reliability",
+                "Trade-offs",
+                "Energy Policy Objectives"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Energy Sources & Technologies",
+          "lessons": [
+            {
+              "title": "Comparing energy sources",
+              "topics": [
+                "Renewable Energy",
+                "Non-Renewable Energy",
+                "Fossil Fuels",
+                "Nuclear Energy",
+                "Primary Energy",
+                "Secondary Energy",
+                "Conventional Energy",
+                "Alternative Energy",
+                "Low-Carbon Energy",
+                "Clean Energy",
+                "Dispatchable Energy",
+                "Variable Energy"
+              ]
+            },
+            {
+              "title": "Petroleum & oil technologies",
+              "topics": [
+                "Petroleum",
+                "Crude Oil",
+                "Hydrocarbons",
+                "Oil Reservoir",
+                "Exploration",
+                "Drilling",
+                "Production",
+                "Conventional Oil",
+                "Unconventional Oil",
+                "Light Crude",
+                "Heavy Crude",
+                "Sweet Crude",
+                "Sour Crude",
+                "Refining",
+                "Petroleum Products"
+              ]
+            },
+            {
+              "title": "Natural gas technologies",
+              "topics": [
+                "Natural Gas",
+                "Methane",
+                "Associated Gas",
+                "Non-Associated Gas",
+                "Conventional Gas",
+                "Shale Gas",
+                "Gas Processing",
+                "Pipeline Gas",
+                "Liquefied Natural Gas",
+                "LNG",
+                "Compressed Natural Gas",
+                "Natural Gas Liquids",
+                "Gas Storage"
+              ]
+            },
+            {
+              "title": "Coal technologies",
+              "topics": [
+                "Coal",
+                "Lignite",
+                "Sub-Bituminous Coal",
+                "Bituminous Coal",
+                "Anthracite",
+                "Coal Mining",
+                "Thermal Coal",
+                "Metallurgical Coal",
+                "Coal-Fired Generation",
+                "Coal Combustion",
+                "Coal Emissions"
+              ]
+            },
+            {
+              "title": "Nuclear technologies",
+              "topics": [
+                "Nuclear Energy",
+                "Uranium",
+                "Nuclear Fission",
+                "Nuclear Fuel",
+                "Reactor",
+                "Nuclear Power Plant",
+                "Nuclear Fuel Cycle",
+                "Baseload Generation",
+                "Radioactive Waste",
+                "Reactor Safety",
+                "Small Modular Reactor",
+                "Advanced Nuclear"
+              ]
+            },
+            {
+              "title": "Solar technologies",
+              "topics": [
+                "Solar Radiation",
+                "Photovoltaics",
+                "Solar PV",
+                "Solar Cell",
+                "Solar Module",
+                "Solar Array",
+                "Inverter",
+                "Utility-Scale Solar",
+                "Rooftop Solar",
+                "Concentrated Solar Power",
+                "Capacity Factor",
+                "Solar Intermittency"
+              ]
+            },
+            {
+              "title": "Wind technologies",
+              "topics": [
+                "Wind Resource",
+                "Wind Turbine",
+                "Rotor",
+                "Generator",
+                "Wind Farm",
+                "Onshore Wind",
+                "Offshore Wind",
+                "Capacity Factor",
+                "Variable Generation",
+                "Curtailment"
+              ]
+            },
+            {
+              "title": "Hydropower technologies",
+              "topics": [
+                "Hydropower",
+                "Hydroelectricity",
+                "Dam",
+                "Reservoir",
+                "Run-of-River",
+                "Turbine",
+                "Pumped-Storage Hydropower",
+                "Dispatchability",
+                "Water-Energy Nexus"
+              ]
+            },
+            {
+              "title": "Geothermal technologies",
+              "topics": [
+                "Geothermal Energy",
+                "Geothermal Reservoir",
+                "Geothermal Wells",
+                "Steam",
+                "Geothermal Power Plant",
+                "Direct-Use Geothermal",
+                "Ground-Source Heat Pump",
+                "Enhanced Geothermal Systems"
+              ]
+            },
+            {
+              "title": "Bioenergy technologies",
+              "topics": [
+                "Biomass",
+                "Bioenergy",
+                "Biofuel",
+                "Biogas",
+                "Biodiesel",
+                "Ethanol",
+                "Renewable Natural Gas",
+                "Anaerobic Digestion",
+                "Waste-to-Energy",
+                "Feedstock"
+              ]
+            },
+            {
+              "title": "Hydrogen technologies",
+              "topics": [
+                "Hydrogen",
+                "Electrolysis",
+                "Electrolyzer",
+                "Grey Hydrogen",
+                "Blue Hydrogen",
+                "Green Hydrogen",
+                "Hydrogen Storage",
+                "Fuel Cell",
+                "Hydrogen Transportation",
+                "Hydrogen Value Chain"
+              ]
+            },
+            {
+              "title": "Energy storage technologies",
+              "topics": [
+                "Energy Storage",
+                "Battery Energy Storage System",
+                "Lithium-Ion Battery",
+                "Flow Battery",
+                "Pumped Hydro",
+                "Thermal Storage",
+                "Mechanical Storage",
+                "Hydrogen Storage",
+                "Charging",
+                "Discharging",
+                "Storage Duration",
+                "Round-Trip Efficiency"
+              ]
+            },
+            {
+              "title": "Comparing technology characteristics",
+              "topics": [
+                "Capital Cost",
+                "Operating Cost",
+                "Fuel Cost",
+                "Capacity",
+                "Capacity Factor",
+                "Dispatchability",
+                "Reliability",
+                "Scalability",
+                "Intermittency",
+                "Flexibility",
+                "Energy Density",
+                "Land Requirements",
+                "Emissions Intensity",
+                "Technology Maturity",
+                "Asset Life"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Energy Value Chains",
+          "lessons": [
+            {
+              "title": "Understanding value chains",
+              "topics": [
+                "Value Chain",
+                "Supply Chain",
+                "Energy Flow",
+                "Material Flow",
+                "Information Flow",
+                "Financial Flow",
+                "Value Creation",
+                "Value Capture",
+                "Value Chain Participant",
+                "Margin",
+                "Integration"
+              ]
+            },
+            {
+              "title": "The oil value chain",
+              "topics": [
+                "Exploration",
+                "Appraisal",
+                "Development",
+                "Drilling",
+                "Production",
+                "Gathering",
+                "Transportation",
+                "Storage",
+                "Refining",
+                "Distribution",
+                "Marketing",
+                "Retail",
+                "End User"
+              ]
+            },
+            {
+              "title": "The natural gas value chain",
+              "topics": [
+                "Exploration",
+                "Production",
+                "Gathering",
+                "Gas Processing",
+                "Compression",
+                "Transmission",
+                "Storage",
+                "Distribution",
+                "City Gate",
+                "Local Distribution Company",
+                "End User"
+              ]
+            },
+            {
+              "title": "The LNG value chain",
+              "topics": [
+                "Gas Production",
+                "Gas Treatment",
+                "Liquefaction",
+                "LNG Terminal",
+                "LNG Storage",
+                "LNG Carrier",
+                "Shipping",
+                "Regasification",
+                "Import Terminal",
+                "Pipeline Distribution",
+                "Offtake"
+              ]
+            },
+            {
+              "title": "The electricity value chain",
+              "topics": [
+                "Generation",
+                "Power Plant",
+                "Transmission",
+                "Substation",
+                "Distribution",
+                "Retail",
+                "Metering",
+                "Grid Operator",
+                "Utility",
+                "Customer",
+                "Electricity Flow"
+              ]
+            },
+            {
+              "title": "The renewable energy value chain",
+              "topics": [
+                "Raw Materials",
+                "Critical Minerals",
+                "Manufacturing",
+                "Component Supply",
+                "Project Development",
+                "Engineering",
+                "Procurement",
+                "Construction",
+                "Generation",
+                "Grid Connection",
+                "Operations & Maintenance",
+                "Decommissioning",
+                "Recycling"
+              ]
+            },
+            {
+              "title": "The battery value chain",
+              "topics": [
+                "Critical Minerals",
+                "Battery Materials",
+                "Cell Manufacturing",
+                "Battery Pack",
+                "System Integration",
+                "Deployment",
+                "Operation",
+                "Recycling",
+                "Second-Life Batteries"
+              ]
+            },
+            {
+              "title": "Integration & sector coupling",
+              "topics": [
+                "Vertical Integration",
+                "Horizontal Integration",
+                "Integrated Energy Company",
+                "Portfolio",
+                "Cross-Sector Integration",
+                "Power-to-X",
+                "Sector Coupling",
+                "Value Chain Synergies"
+              ]
+            },
+            {
+              "title": "Mapping energy value chains",
+              "topics": [
+                "Process Mapping",
+                "Asset Mapping",
+                "Stakeholder Mapping",
+                "Revenue Points",
+                "Cost Centers",
+                "Bottlenecks",
+                "Dependencies",
+                "Risks",
+                "Value Pools",
+                "Margin Pools"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Energy Supply, Demand & Consumption",
+          "lessons": [
+            {
+              "title": "Energy supply",
+              "topics": [
+                "Energy Supply",
+                "Domestic Production",
+                "Imports",
+                "Exports",
+                "Energy Availability",
+                "Production Capacity",
+                "Supply Capacity",
+                "Spare Capacity",
+                "Supply Constraints",
+                "Energy Mix"
+              ]
+            },
+            {
+              "title": "Energy demand",
+              "topics": [
+                "Energy Demand",
+                "Electricity Demand",
+                "Fuel Demand",
+                "Load",
+                "Peak Demand",
+                "Base Demand",
+                "Seasonal Demand",
+                "Demand Growth",
+                "Demand Drivers",
+                "Demand Elasticity"
+              ]
+            },
+            {
+              "title": "Consumption by sector",
+              "topics": [
+                "Residential",
+                "Commercial",
+                "Industrial",
+                "Transportation",
+                "Agriculture",
+                "Buildings",
+                "Power Sector",
+                "Sectoral Consumption",
+                "End Use"
+              ]
+            },
+            {
+              "title": "Drivers of demand",
+              "topics": [
+                "Population",
+                "GDP",
+                "Industrialization",
+                "Urbanization",
+                "Income",
+                "Technology",
+                "Weather",
+                "Electrification",
+                "Energy Prices",
+                "Consumer Behavior",
+                "Efficiency"
+              ]
+            },
+            {
+              "title": "Balancing supply & demand",
+              "topics": [
+                "Supply-Demand Balance",
+                "Surplus",
+                "Shortage",
+                "Inventory",
+                "Storage",
+                "Spare Capacity",
+                "Market Clearing",
+                "Supply Shock",
+                "Demand Shock",
+                "Price Response"
+              ]
+            },
+            {
+              "title": "Load profiles & peak demand",
+              "topics": [
+                "Load Curve",
+                "Load Profile",
+                "Peak Load",
+                "Baseload",
+                "Intermediate Load",
+                "Peak Period",
+                "Off-Peak Period",
+                "Seasonal Peak",
+                "Load Factor",
+                "Demand Curve"
+              ]
+            },
+            {
+              "title": "Demand-side management",
+              "topics": [
+                "Demand-Side Management",
+                "Demand Response",
+                "Load Shifting",
+                "Peak Shaving",
+                "Energy Conservation",
+                "Energy Efficiency",
+                "Smart Meter",
+                "Dynamic Pricing",
+                "Time-of-Use Pricing"
+              ]
+            },
+            {
+              "title": "Reading an energy balance",
+              "topics": [
+                "Energy Balance",
+                "Energy Inputs",
+                "Transformation",
+                "Energy Outputs",
+                "Imports",
+                "Exports",
+                "Stock Changes",
+                "Transformation Losses",
+                "Final Consumption",
+                "Energy Balance Diagram"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Energy Units, Measurements & Conversions",
+          "lessons": [
+            {
+              "title": "Energy versus power units",
+              "topics": [
+                "Energy",
+                "Power",
+                "Watt",
+                "Kilowatt",
+                "Megawatt",
+                "Gigawatt",
+                "Watt-Hour",
+                "Kilowatt-Hour",
+                "Megawatt-Hour",
+                "Gigawatt-Hour"
+              ]
+            },
+            {
+              "title": "Electricity measurements",
+              "topics": [
+                "W",
+                "kW",
+                "MW",
+                "GW",
+                "Wh",
+                "kWh",
+                "MWh",
+                "GWh",
+                "TWh",
+                "Demand",
+                "Consumption",
+                "Generation"
+              ]
+            },
+            {
+              "title": "Oil measurements",
+              "topics": [
+                "Barrel",
+                "Barrels per Day",
+                "Thousand Barrels per Day",
+                "Million Barrels per Day",
+                "Barrel of Oil Equivalent",
+                "API Gravity",
+                "Production Rate"
+              ]
+            },
+            {
+              "title": "Natural gas measurements",
+              "topics": [
+                "Cubic Foot",
+                "Thousand Cubic Feet",
+                "Million Cubic Feet",
+                "Billion Cubic Feet",
+                "Cubic Meter",
+                "MMBtu",
+                "LNG Tonne",
+                "Gas Flow Rate"
+              ]
+            },
+            {
+              "title": "Thermal energy measurements",
+              "topics": [
+                "British Thermal Unit",
+                "Btu",
+                "MMBtu",
+                "Joule",
+                "Megajoule",
+                "Gigajoule",
+                "Calorie",
+                "Therm"
+              ]
+            },
+            {
+              "title": "Conversions & normalization",
+              "topics": [
+                "Conversion Factor",
+                "Unit Normalization",
+                "kWh-to-Btu",
+                "MWh-to-GJ",
+                "Oil Equivalent",
+                "Gas Equivalent",
+                "Thermal Equivalent",
+                "Common Conversion Tables"
+              ]
+            },
+            {
+              "title": "Capacity versus output",
+              "topics": [
+                "Installed Capacity",
+                "Nameplate Capacity",
+                "Available Capacity",
+                "Generation",
+                "Capacity Factor",
+                "Utilization",
+                "Availability Factor",
+                "Maximum Output",
+                "Actual Output"
+              ]
+            },
+            {
+              "title": "Efficiency & intensity measurements",
+              "topics": [
+                "Energy Intensity",
+                "Energy Productivity",
+                "Heat Rate",
+                "Fuel Efficiency",
+                "Conversion Efficiency",
+                "Specific Energy Consumption",
+                "Energy per Unit of Output"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Energy Infrastructure & Assets",
+          "lessons": [
+            {
+              "title": "Assets & infrastructure",
+              "topics": [
+                "Energy Asset",
+                "Physical Asset",
+                "Infrastructure",
+                "Asset Lifecycle",
+                "Capital Asset",
+                "Asset Base",
+                "Asset Portfolio",
+                "Asset Utilization",
+                "Asset Availability",
+                "Asset Criticality"
+              ]
+            },
+            {
+              "title": "Upstream assets",
+              "topics": [
+                "Oilfield",
+                "Gas Field",
+                "Well",
+                "Wellhead",
+                "Drilling Rig",
+                "Production Platform",
+                "FPSO",
+                "Gathering System",
+                "Processing Facility"
+              ]
+            },
+            {
+              "title": "Midstream assets",
+              "topics": [
+                "Pipeline",
+                "Compressor Station",
+                "Pump Station",
+                "Gathering Network",
+                "Storage Terminal",
+                "Tank Farm",
+                "Gas Processing Plant",
+                "LNG Terminal"
+              ]
+            },
+            {
+              "title": "Downstream assets",
+              "topics": [
+                "Refinery",
+                "Distillation Unit",
+                "Cracker",
+                "Petrochemical Plant",
+                "Product Terminal",
+                "Storage Tank",
+                "Fuel Depot",
+                "Retail Station"
+              ]
+            },
+            {
+              "title": "Generation assets",
+              "topics": [
+                "Power Plant",
+                "Gas Turbine",
+                "Steam Turbine",
+                "Combined-Cycle Plant",
+                "Coal Plant",
+                "Nuclear Plant",
+                "Hydroelectric Plant",
+                "Solar Farm",
+                "Wind Farm",
+                "Generator"
+              ]
+            },
+            {
+              "title": "Grid infrastructure",
+              "topics": [
+                "Transmission Line",
+                "Distribution Line",
+                "Substation",
+                "Transformer",
+                "Switchgear",
+                "Interconnector",
+                "Grid",
+                "Feeder",
+                "Meter",
+                "Control Center"
+              ]
+            },
+            {
+              "title": "Renewable assets",
+              "topics": [
+                "Solar Panel",
+                "Inverter",
+                "Wind Turbine",
+                "Wind Farm",
+                "Solar Farm",
+                "Battery Storage",
+                "Offshore Platform",
+                "Interconnection Infrastructure"
+              ]
+            },
+            {
+              "title": "Storage assets",
+              "topics": [
+                "Oil Storage",
+                "Gas Storage",
+                "Battery Storage",
+                "Pumped Hydro",
+                "LNG Storage",
+                "Strategic Petroleum Reserve",
+                "Storage Capacity",
+                "Inventory"
+              ]
+            },
+            {
+              "title": "The asset lifecycle",
+              "topics": [
+                "Planning",
+                "Development",
+                "Design",
+                "Construction",
+                "Commissioning",
+                "Operation",
+                "Maintenance",
+                "Upgrade",
+                "Life Extension",
+                "Decommissioning",
+                "Retirement",
+                "Remediation"
+              ]
+            },
+            {
+              "title": "Asset performance & reliability",
+              "topics": [
+                "Availability",
+                "Reliability",
+                "Utilization",
+                "Capacity Factor",
+                "Downtime",
+                "Outage",
+                "Throughput",
+                "Production Efficiency",
+                "Asset Integrity",
+                "Maintenance",
+                "Reliability-Centered Maintenance"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Global Energy Landscape",
+          "lessons": [
+            {
+              "title": "The global energy mix",
+              "topics": [
+                "Global Primary Energy",
+                "Global Energy Mix",
+                "Energy Production",
+                "Energy Consumption",
+                "Energy Trade",
+                "Energy Flows",
+                "Regional Energy Systems",
+                "Energy Interdependence"
+              ]
+            },
+            {
+              "title": "Oil-producing regions",
+              "topics": [
+                "Middle East",
+                "North America",
+                "Russia",
+                "Latin America",
+                "Africa",
+                "Asia",
+                "Proven Reserves",
+                "Production",
+                "Export Capacity"
+              ]
+            },
+            {
+              "title": "Global gas & LNG",
+              "topics": [
+                "Gas-Producing Regions",
+                "Pipeline Gas",
+                "LNG",
+                "Export Terminals",
+                "Import Terminals",
+                "LNG Shipping",
+                "Regional Gas Markets",
+                "Global Gas Trade"
+              ]
+            },
+            {
+              "title": "Global electricity systems",
+              "topics": [
+                "Electricity Generation Mix",
+                "Grid Systems",
+                "Interconnection",
+                "Power Pools",
+                "Electricity Access",
+                "Reliability",
+                "Cross-Border Electricity Trade"
+              ]
+            },
+            {
+              "title": "Renewable deployment",
+              "topics": [
+                "Renewable Capacity",
+                "Solar Deployment",
+                "Wind Deployment",
+                "Hydropower",
+                "Renewable Investment",
+                "Manufacturing Capacity",
+                "Renewable Resource Geography"
+              ]
+            },
+            {
+              "title": "Producers, consumers & dependency",
+              "topics": [
+                "Producer",
+                "Consumer",
+                "Exporter",
+                "Importer",
+                "Net Exporter",
+                "Net Importer",
+                "Energy Dependency",
+                "Import Dependency",
+                "Export Dependency"
+              ]
+            },
+            {
+              "title": "Trade routes & chokepoints",
+              "topics": [
+                "Shipping Route",
+                "Pipeline Network",
+                "Chokepoint",
+                "Strait of Hormuz",
+                "Suez Canal",
+                "Strait of Malacca",
+                "Panama Canal",
+                "Energy Shipping",
+                "Supply Disruption"
+              ]
+            },
+            {
+              "title": "National energy security",
+              "topics": [
+                "Energy Security",
+                "Supply Security",
+                "Diversification",
+                "Strategic Reserves",
+                "Import Dependence",
+                "Domestic Production",
+                "Resilience",
+                "Geopolitical Risk",
+                "Critical Infrastructure"
+              ]
+            },
+            {
+              "title": "Energy access & development",
+              "topics": [
+                "Energy Access",
+                "Electricity Access",
+                "Energy Poverty",
+                "Affordability",
+                "Reliability",
+                "Clean Cooking",
+                "Rural Electrification",
+                "Economic Development",
+                "Universal Energy Access"
+              ]
+            },
+            {
+              "title": "Global transition trends",
+              "topics": [
+                "Energy Transition",
+                "Electrification",
+                "Decarbonization",
+                "Renewable Growth",
+                "Fossil Fuel Demand",
+                "Critical Minerals",
+                "Technology Change",
+                "Climate Policy",
+                "Investment Shift"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Energy Industry Players & Stakeholders",
+          "lessons": [
+            {
+              "title": "The industry ecosystem",
+              "topics": [
+                "Industry Ecosystem",
+                "Market Participant",
+                "Operator",
+                "Asset Owner",
+                "Developer",
+                "Supplier",
+                "Customer",
+                "Regulator",
+                "Investor",
+                "Contractor",
+                "Stakeholder"
+              ]
+            },
+            {
+              "title": "Integrated energy companies",
+              "topics": [
+                "Integrated Energy Company",
+                "International Oil Company",
+                "National Oil Company",
+                "Upstream",
+                "Midstream",
+                "Downstream",
+                "Integration",
+                "Diversification",
+                "Energy Portfolio"
+              ]
+            },
+            {
+              "title": "National oil companies",
+              "topics": [
+                "National Oil Company",
+                "State Ownership",
+                "Resource Ownership",
+                "Production Sharing",
+                "Government Revenue",
+                "National Energy Strategy",
+                "Resource Nationalism",
+                "Energy Sovereignty"
+              ]
+            },
+            {
+              "title": "Independent producers & developers",
+              "topics": [
+                "Independent Producer",
+                "Exploration & Production Company",
+                "Independent Power Producer",
+                "Renewable Developer",
+                "Specialized Operator",
+                "Asset Portfolio",
+                "Pure-Play Company"
+              ]
+            },
+            {
+              "title": "Utilities",
+              "topics": [
+                "Electric Utility",
+                "Gas Utility",
+                "Investor-Owned Utility",
+                "Public Utility",
+                "Municipal Utility",
+                "Cooperative Utility",
+                "Vertically Integrated Utility",
+                "Regulated Utility",
+                "Retail Utility"
+              ]
+            },
+            {
+              "title": "Grid & system operators",
+              "topics": [
+                "Transmission System Operator",
+                "Distribution System Operator",
+                "Independent System Operator",
+                "Regional Transmission Organization",
+                "Grid Operator",
+                "System Balancing",
+                "Dispatch",
+                "Reliability Coordination"
+              ]
+            },
+            {
+              "title": "Service & technology providers",
+              "topics": [
+                "Oilfield Services",
+                "Engineering Services",
+                "EPC",
+                "Equipment Manufacturer",
+                "Technology Provider",
+                "Digital Technology Provider",
+                "Energy Service Company",
+                "Consulting",
+                "Maintenance Services"
+              ]
+            },
+            {
+              "title": "Traders & marketers",
+              "topics": [
+                "Energy Trader",
+                "Commodity Trader",
+                "Energy Marketer",
+                "Physical Trading",
+                "Financial Trading",
+                "Brokerage",
+                "Trading House",
+                "Market Maker",
+                "Commodity Merchant"
+              ]
+            },
+            {
+              "title": "Governments & regulators",
+              "topics": [
+                "Energy Ministry",
+                "Regulatory Agency",
+                "Environmental Regulator",
+                "Utility Commission",
+                "Licensing",
+                "Permitting",
+                "Regulation",
+                "Energy Policy",
+                "Market Oversight",
+                "Public Interest"
+              ]
+            },
+            {
+              "title": "Investors & financiers",
+              "topics": [
+                "Commercial Bank",
+                "Investment Bank",
+                "Private Equity",
+                "Infrastructure Fund",
+                "Institutional Investor",
+                "Development Finance Institution",
+                "Project Finance",
+                "Equity Investor",
+                "Debt Investor"
+              ]
+            },
+            {
+              "title": "Energy customers",
+              "topics": [
+                "Residential Customer",
+                "Commercial Customer",
+                "Industrial Customer",
+                "Transportation",
+                "Government",
+                "Large Energy User",
+                "Retail Customer",
+                "Wholesale Customer",
+                "Prosumer",
+                "Offtaker"
+              ]
+            },
+            {
+              "title": "Communities & social license",
+              "topics": [
+                "Host Community",
+                "Local Community",
+                "Landowner",
+                "Indigenous Community",
+                "Community Engagement",
+                "Social License to Operate",
+                "Environmental Justice",
+                "Community Benefits",
+                "Public Acceptance"
+              ]
+            },
+            {
+              "title": "Stakeholder mapping",
+              "topics": [
+                "Stakeholder Identification",
+                "Stakeholder Mapping",
+                "Power",
+                "Interest",
+                "Influence",
+                "Impact",
+                "Dependency",
+                "Stakeholder Prioritization",
+                "Stakeholder Engagement",
+                "Conflicting Interests"
+              ]
+            },
+            {
+              "title": "Integrating the energy ecosystem",
+              "topics": [
+                "Resource Owner",
+                "Producer",
+                "Processor",
+                "Transporter",
+                "Generator",
+                "Grid Operator",
+                "Distributor",
+                "Trader",
+                "Retailer",
+                "Customer",
+                "Regulator",
+                "Investor",
+                "Technology Provider",
+                "Service Provider",
+                "Community",
+                "Physical Energy Flow",
+                "Financial Flow",
+                "Information Flow",
+                "Ownership Flow",
+                "Risk Flow"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Final applied lesson",
+          "lessons": [
+            {
+              "title": "Map an Energy Company",
+              "topics": [
+                "Where does it sit in the energy system?",
+                "What energy sources does it work with?",
+                "What technologies does it use?",
+                "Which value chains does it participate in?",
+                "What are its major physical assets?",
+                "Where does its energy come from?",
+                "Where does the energy go?",
+                "Who buys it?",
+                "Who supplies the company?",
+                "Who regulates it?",
+                "Who finances/invests in it?",
+                "What infrastructure does it depend on?",
+                "What units/KPIs would you use to measure its energy activities?",
+                "What happens if one critical part of its energy system fails?",
+                "Draw its complete energy-system/value-chain map."
+              ],
+              "applied": true,
+              "objective": "Select an actual energy company. Use dated, referenced sources to answer all 15 questions and draw its complete energy-system/value-chain map.",
+              "success": "A referenced company map covering physical flows, commercial flows, assets, stakeholders, measurements and a critical failure scenario."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Energy industries & technologies",
+      "outcome": "Explain how the major energy sectors work and connect.",
+      "modules": [
+        {
+          "title": "Energy industries & technologies",
+          "lessons": [
+            {
+              "title": "Oil & Gas Industry",
+              "topics": [
+                "Upstream",
+                "Midstream",
+                "Downstream",
+                "Oilfield services",
+                "Refining",
+                "Petrochemicals",
+                "LNG"
+              ]
+            },
+            {
+              "title": "Electric Power Industry",
+              "topics": [
+                "Generation",
+                "Transmission",
+                "Distribution",
+                "Retail",
+                "Grid operations"
+              ]
+            },
+            {
+              "title": "Natural Gas Industry",
+              "topics": [
+                "Natural Gas Industry"
+              ]
+            },
+            {
+              "title": "Nuclear Energy",
+              "topics": [
+                "Nuclear Energy"
+              ]
+            },
+            {
+              "title": "Renewable Energy",
+              "topics": [
+                "Solar",
+                "Wind",
+                "Hydropower",
+                "Geothermal",
+                "Bioenergy"
+              ]
+            },
+            {
+              "title": "Energy Storage",
+              "topics": [
+                "Energy Storage"
+              ]
+            },
+            {
+              "title": "Distributed Energy Resources",
+              "topics": [
+                "Distributed Energy Resources"
+              ]
+            },
+            {
+              "title": "Emerging Energy Technologies",
+              "topics": [
+                "Hydrogen",
+                "CCUS",
+                "Advanced nuclear",
+                "Long-duration storage"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Energy economics",
+      "outcome": "Explain energy decisions using costs, incentives, externalities and investment economics.",
+      "modules": [
+        {
+          "title": "Energy economics",
+          "lessons": [
+            {
+              "title": "Fundamentals of Energy Economics",
+              "topics": [
+                "Fundamentals of Energy Economics"
+              ]
+            },
+            {
+              "title": "Supply & Demand",
+              "topics": [
+                "Supply & Demand"
+              ]
+            },
+            {
+              "title": "Price Formation",
+              "topics": [
+                "Price Formation"
+              ]
+            },
+            {
+              "title": "Marginal Cost",
+              "topics": [
+                "Marginal Cost"
+              ]
+            },
+            {
+              "title": "Fixed vs Variable Costs",
+              "topics": [
+                "Fixed vs Variable Costs"
+              ]
+            },
+            {
+              "title": "Energy Elasticity",
+              "topics": [
+                "Energy Elasticity"
+              ]
+            },
+            {
+              "title": "Energy Scarcity",
+              "topics": [
+                "Energy Scarcity"
+              ]
+            },
+            {
+              "title": "Energy Externalities",
+              "topics": [
+                "Energy Externalities"
+              ]
+            },
+            {
+              "title": "Energy Investment Economics",
+              "topics": [
+                "Energy Investment Economics"
+              ]
+            },
+            {
+              "title": "Levelized Cost of Energy",
+              "topics": [
+                "Levelized Cost of Energy"
+              ]
+            },
+            {
+              "title": "Energy Efficiency Economics",
+              "topics": [
+                "Energy Efficiency Economics"
+              ]
+            },
+            {
+              "title": "Economics of Energy Transition",
+              "topics": [
+                "Economics of Energy Transition"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Markets, trading & contracts",
+      "outcome": "Explain how energy is priced, contracted and traded.",
+      "modules": [
+        {
+          "title": "Markets, trading & contracts",
+          "lessons": [
+            {
+              "title": "Introduction to Energy Markets",
+              "topics": [
+                "Introduction to Energy Markets"
+              ]
+            },
+            {
+              "title": "Crude Oil Markets",
+              "topics": [
+                "Crude Oil Markets"
+              ]
+            },
+            {
+              "title": "Petroleum Product Markets",
+              "topics": [
+                "Petroleum Product Markets"
+              ]
+            },
+            {
+              "title": "Natural Gas Markets",
+              "topics": [
+                "Natural Gas Markets"
+              ]
+            },
+            {
+              "title": "LNG Markets",
+              "topics": [
+                "LNG Markets"
+              ]
+            },
+            {
+              "title": "Electricity Markets",
+              "topics": [
+                "Electricity Markets"
+              ]
+            },
+            {
+              "title": "Renewable Energy Markets",
+              "topics": [
+                "Renewable Energy Markets"
+              ]
+            },
+            {
+              "title": "Commodity Markets",
+              "topics": [
+                "Commodity Markets"
+              ]
+            },
+            {
+              "title": "Spot vs Forward Markets",
+              "topics": [
+                "Spot vs Forward Markets"
+              ]
+            },
+            {
+              "title": "Futures & Derivatives",
+              "topics": [
+                "Futures & Derivatives"
+              ]
+            },
+            {
+              "title": "Energy Trading",
+              "topics": [
+                "Energy Trading"
+              ]
+            },
+            {
+              "title": "Hedging",
+              "topics": [
+                "Hedging"
+              ]
+            },
+            {
+              "title": "Power Purchase Agreements",
+              "topics": [
+                "Power Purchase Agreements"
+              ]
+            },
+            {
+              "title": "Renewable Energy Certificates",
+              "topics": [
+                "Renewable Energy Certificates"
+              ]
+            },
+            {
+              "title": "Carbon Markets",
+              "topics": [
+                "Carbon Markets"
+              ]
+            },
+            {
+              "title": "Market Forecasting",
+              "topics": [
+                "Market Forecasting"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Energy companies & business models",
+      "outcome": "Explain how different energy companies create and capture value.",
+      "modules": [
+        {
+          "title": "Energy companies & business models",
+          "lessons": [
+            {
+              "title": "Energy Business Models",
+              "topics": [
+                "Energy Business Models"
+              ]
+            },
+            {
+              "title": "Integrated Energy Companies",
+              "topics": [
+                "Integrated Energy Companies"
+              ]
+            },
+            {
+              "title": "Independent Oil & Gas Companies",
+              "topics": [
+                "Independent Oil & Gas Companies"
+              ]
+            },
+            {
+              "title": "Oilfield Service Companies",
+              "topics": [
+                "Oilfield Service Companies"
+              ]
+            },
+            {
+              "title": "Utilities",
+              "topics": [
+                "Utilities"
+              ]
+            },
+            {
+              "title": "Independent Power Producers",
+              "topics": [
+                "Independent Power Producers"
+              ]
+            },
+            {
+              "title": "Renewable Developers",
+              "topics": [
+                "Renewable Developers"
+              ]
+            },
+            {
+              "title": "Energy Retailers",
+              "topics": [
+                "Energy Retailers"
+              ]
+            },
+            {
+              "title": "Energy Traders",
+              "topics": [
+                "Energy Traders"
+              ]
+            },
+            {
+              "title": "Energy Service Companies",
+              "topics": [
+                "Energy Service Companies"
+              ]
+            },
+            {
+              "title": "Clean-Tech Companies",
+              "topics": [
+                "Clean-Tech Companies"
+              ]
+            },
+            {
+              "title": "Infrastructure Companies",
+              "topics": [
+                "Infrastructure Companies"
+              ]
+            },
+            {
+              "title": "Revenue Models",
+              "topics": [
+                "Revenue Models"
+              ]
+            },
+            {
+              "title": "Cost Structures",
+              "topics": [
+                "Cost Structures"
+              ]
+            },
+            {
+              "title": "Energy Company Financial Statements",
+              "topics": [
+                "Energy Company Financial Statements"
+              ]
+            },
+            {
+              "title": "Competitive Advantage in Energy",
+              "topics": [
+                "Competitive Advantage in Energy"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Operations & asset management",
+      "outcome": "Assess operations, assets, reliability and performance from a business perspective.",
+      "modules": [
+        {
+          "title": "Operations & asset management",
+          "lessons": [
+            {
+              "title": "Energy Operations Fundamentals",
+              "topics": [
+                "Energy Operations Fundamentals"
+              ]
+            },
+            {
+              "title": "Asset Management",
+              "topics": [
+                "Asset Management"
+              ]
+            },
+            {
+              "title": "Production Operations",
+              "topics": [
+                "Production Operations"
+              ]
+            },
+            {
+              "title": "Power & Utility Operations",
+              "topics": [
+                "Power & Utility Operations"
+              ]
+            },
+            {
+              "title": "Refining Operations",
+              "topics": [
+                "Refining Operations"
+              ]
+            },
+            {
+              "title": "Energy Supply Chains",
+              "topics": [
+                "Energy Supply Chains"
+              ]
+            },
+            {
+              "title": "Procurement",
+              "topics": [
+                "Procurement"
+              ]
+            },
+            {
+              "title": "Logistics",
+              "topics": [
+                "Logistics"
+              ]
+            },
+            {
+              "title": "Inventory Management",
+              "topics": [
+                "Inventory Management"
+              ]
+            },
+            {
+              "title": "Maintenance & Reliability",
+              "topics": [
+                "Maintenance & Reliability"
+              ]
+            },
+            {
+              "title": "Operational Excellence",
+              "topics": [
+                "Operational Excellence"
+              ]
+            },
+            {
+              "title": "Capacity Planning",
+              "topics": [
+                "Capacity Planning"
+              ]
+            },
+            {
+              "title": "Energy Efficiency",
+              "topics": [
+                "Energy Efficiency"
+              ]
+            },
+            {
+              "title": "Performance Management",
+              "topics": [
+                "Performance Management"
+              ]
+            },
+            {
+              "title": "Energy KPIs",
+              "topics": [
+                "Energy KPIs"
+              ]
+            },
+            {
+              "title": "Health, Safety, Security & Environment",
+              "topics": [
+                "Health, Safety, Security & Environment"
+              ]
+            },
+            {
+              "title": "Business Continuity",
+              "topics": [
+                "Business Continuity"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Energy finance & investment",
+      "outcome": "Evaluate an energy investment using explicit financial assumptions.",
+      "modules": [
+        {
+          "title": "Energy finance & investment",
+          "lessons": [
+            {
+              "title": "Energy Accounting",
+              "topics": [
+                "Energy Accounting"
+              ]
+            },
+            {
+              "title": "Corporate Finance for Energy",
+              "topics": [
+                "Corporate Finance for Energy"
+              ]
+            },
+            {
+              "title": "Financial Statement Analysis",
+              "topics": [
+                "Financial Statement Analysis"
+              ]
+            },
+            {
+              "title": "Capital Budgeting",
+              "topics": [
+                "Capital Budgeting"
+              ]
+            },
+            {
+              "title": "Time Value of Money",
+              "topics": [
+                "Time Value of Money"
+              ]
+            },
+            {
+              "title": "NPV, IRR & Payback",
+              "topics": [
+                "NPV, IRR & Payback"
+              ]
+            },
+            {
+              "title": "Energy Project Economics",
+              "topics": [
+                "Energy Project Economics"
+              ]
+            },
+            {
+              "title": "Energy Project Finance",
+              "topics": [
+                "Energy Project Finance"
+              ]
+            },
+            {
+              "title": "Infrastructure Finance",
+              "topics": [
+                "Infrastructure Finance"
+              ]
+            },
+            {
+              "title": "Energy Asset Valuation",
+              "topics": [
+                "Energy Asset Valuation"
+              ]
+            },
+            {
+              "title": "Financial Modeling",
+              "topics": [
+                "Financial Modeling"
+              ]
+            },
+            {
+              "title": "Investment Analysis",
+              "topics": [
+                "Investment Analysis"
+              ]
+            },
+            {
+              "title": "Cost of Capital",
+              "topics": [
+                "Cost of Capital"
+              ]
+            },
+            {
+              "title": "Energy M&A",
+              "topics": [
+                "Energy M&A"
+              ]
+            },
+            {
+              "title": "Joint Ventures",
+              "topics": [
+                "Joint Ventures"
+              ]
+            },
+            {
+              "title": "Energy Portfolio Investment",
+              "topics": [
+                "Energy Portfolio Investment"
+              ]
+            },
+            {
+              "title": "Renewable Project Finance",
+              "topics": [
+                "Renewable Project Finance"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Policy, regulation & geopolitics",
+      "outcome": "Identify institutional constraints and stakeholder obligations.",
+      "modules": [
+        {
+          "title": "Policy, regulation & geopolitics",
+          "lessons": [
+            {
+              "title": "Energy Policy Fundamentals",
+              "topics": [
+                "Energy Policy Fundamentals"
+              ]
+            },
+            {
+              "title": "Energy Law",
+              "topics": [
+                "Energy Law"
+              ]
+            },
+            {
+              "title": "Environmental Regulation",
+              "topics": [
+                "Environmental Regulation"
+              ]
+            },
+            {
+              "title": "Utility Regulation",
+              "topics": [
+                "Utility Regulation"
+              ]
+            },
+            {
+              "title": "Electricity Market Regulation",
+              "topics": [
+                "Electricity Market Regulation"
+              ]
+            },
+            {
+              "title": "Oil & Gas Regulation",
+              "topics": [
+                "Oil & Gas Regulation"
+              ]
+            },
+            {
+              "title": "Renewable Energy Policy",
+              "topics": [
+                "Renewable Energy Policy"
+              ]
+            },
+            {
+              "title": "Permitting",
+              "topics": [
+                "Permitting"
+              ]
+            },
+            {
+              "title": "Government Incentives",
+              "topics": [
+                "Government Incentives"
+              ]
+            },
+            {
+              "title": "Tax Credits",
+              "topics": [
+                "Tax Credits"
+              ]
+            },
+            {
+              "title": "International Energy Policy",
+              "topics": [
+                "International Energy Policy"
+              ]
+            },
+            {
+              "title": "Energy Security",
+              "topics": [
+                "Energy Security"
+              ]
+            },
+            {
+              "title": "Energy Geopolitics",
+              "topics": [
+                "Energy Geopolitics"
+              ]
+            },
+            {
+              "title": "Regulatory Strategy",
+              "topics": [
+                "Regulatory Strategy"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Risk & resilience",
+      "outcome": "Build a risk register and compare resilience responses.",
+      "modules": [
+        {
+          "title": "Risk & resilience",
+          "lessons": [
+            {
+              "title": "Enterprise Risk Management",
+              "topics": [
+                "Enterprise Risk Management"
+              ]
+            },
+            {
+              "title": "Energy Market Risk",
+              "topics": [
+                "Energy Market Risk"
+              ]
+            },
+            {
+              "title": "Commodity Price Risk",
+              "topics": [
+                "Commodity Price Risk"
+              ]
+            },
+            {
+              "title": "Financial Risk",
+              "topics": [
+                "Financial Risk"
+              ]
+            },
+            {
+              "title": "Credit Risk",
+              "topics": [
+                "Credit Risk"
+              ]
+            },
+            {
+              "title": "Operational Risk",
+              "topics": [
+                "Operational Risk"
+              ]
+            },
+            {
+              "title": "Project Risk",
+              "topics": [
+                "Project Risk"
+              ]
+            },
+            {
+              "title": "Supply Chain Risk",
+              "topics": [
+                "Supply Chain Risk"
+              ]
+            },
+            {
+              "title": "Regulatory Risk",
+              "topics": [
+                "Regulatory Risk"
+              ]
+            },
+            {
+              "title": "Geopolitical Risk",
+              "topics": [
+                "Geopolitical Risk"
+              ]
+            },
+            {
+              "title": "Climate Risk",
+              "topics": [
+                "Climate Risk"
+              ]
+            },
+            {
+              "title": "Cybersecurity & OT Risk",
+              "topics": [
+                "Cybersecurity & OT Risk"
+              ]
+            },
+            {
+              "title": "Hedging",
+              "topics": [
+                "Hedging"
+              ]
+            },
+            {
+              "title": "Scenario Analysis",
+              "topics": [
+                "Scenario Analysis"
+              ]
+            },
+            {
+              "title": "Business Continuity & Resilience",
+              "topics": [
+                "Business Continuity & Resilience"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Sustainability & decarbonization",
+      "outcome": "Assess emissions, sustainability choices and trade-offs.",
+      "modules": [
+        {
+          "title": "Sustainability & decarbonization",
+          "lessons": [
+            {
+              "title": "Sustainability Fundamentals",
+              "topics": [
+                "Sustainability Fundamentals"
+              ]
+            },
+            {
+              "title": "Energy & Climate Change",
+              "topics": [
+                "Energy & Climate Change"
+              ]
+            },
+            {
+              "title": "Corporate Sustainability",
+              "topics": [
+                "Corporate Sustainability"
+              ]
+            },
+            {
+              "title": "ESG",
+              "topics": [
+                "ESG"
+              ]
+            },
+            {
+              "title": "Carbon Accounting",
+              "topics": [
+                "Carbon Accounting"
+              ]
+            },
+            {
+              "title": "Scope 1, 2 & 3 Emissions",
+              "topics": [
+                "Scope 1, 2 & 3 Emissions"
+              ]
+            },
+            {
+              "title": "Carbon Markets",
+              "topics": [
+                "Carbon Markets"
+              ]
+            },
+            {
+              "title": "Carbon Pricing",
+              "topics": [
+                "Carbon Pricing"
+              ]
+            },
+            {
+              "title": "Decarbonization",
+              "topics": [
+                "Decarbonization"
+              ]
+            },
+            {
+              "title": "Net-Zero Strategy",
+              "topics": [
+                "Net-Zero Strategy"
+              ]
+            },
+            {
+              "title": "CCUS",
+              "topics": [
+                "CCUS"
+              ]
+            },
+            {
+              "title": "Methane Management",
+              "topics": [
+                "Methane Management"
+              ]
+            },
+            {
+              "title": "Climate Risk",
+              "topics": [
+                "Climate Risk"
+              ]
+            },
+            {
+              "title": "Circular Economy",
+              "topics": [
+                "Circular Economy"
+              ]
+            },
+            {
+              "title": "Sustainable Finance",
+              "topics": [
+                "Sustainable Finance"
+              ]
+            },
+            {
+              "title": "Corporate Energy Management",
+              "topics": [
+                "Corporate Energy Management"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Energy transition",
+      "outcome": "Compare transition pathways within the wider energy system.",
+      "modules": [
+        {
+          "title": "Energy transition",
+          "lessons": [
+            {
+              "title": "Energy Transition Fundamentals",
+              "topics": [
+                "Energy Transition Fundamentals"
+              ]
+            },
+            {
+              "title": "Drivers of Energy Transition",
+              "topics": [
+                "Drivers of Energy Transition"
+              ]
+            },
+            {
+              "title": "Electrification",
+              "topics": [
+                "Electrification"
+              ]
+            },
+            {
+              "title": "Renewable Integration",
+              "topics": [
+                "Renewable Integration"
+              ]
+            },
+            {
+              "title": "Grid Modernization",
+              "topics": [
+                "Grid Modernization"
+              ]
+            },
+            {
+              "title": "Energy Storage",
+              "topics": [
+                "Energy Storage"
+              ]
+            },
+            {
+              "title": "Electric Vehicles",
+              "topics": [
+                "Electric Vehicles"
+              ]
+            },
+            {
+              "title": "Hydrogen Economy",
+              "topics": [
+                "Hydrogen Economy"
+              ]
+            },
+            {
+              "title": "CCUS",
+              "topics": [
+                "CCUS"
+              ]
+            },
+            {
+              "title": "Distributed Energy",
+              "topics": [
+                "Distributed Energy"
+              ]
+            },
+            {
+              "title": "Prosumer Models",
+              "topics": [
+                "Prosumer Models"
+              ]
+            },
+            {
+              "title": "Decentralization",
+              "topics": [
+                "Decentralization"
+              ]
+            },
+            {
+              "title": "Energy Access",
+              "topics": [
+                "Energy Access"
+              ]
+            },
+            {
+              "title": "Transition Economics",
+              "topics": [
+                "Transition Economics"
+              ]
+            },
+            {
+              "title": "Transition Policy",
+              "topics": [
+                "Transition Policy"
+              ]
+            },
+            {
+              "title": "Transition Risk",
+              "topics": [
+                "Transition Risk"
+              ]
+            },
+            {
+              "title": "Energy Transition Business Models",
+              "topics": [
+                "Energy Transition Business Models"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Digital transformation",
+      "outcome": "Evaluate digital opportunities and their operational dependencies.",
+      "modules": [
+        {
+          "title": "Digital transformation",
+          "lessons": [
+            {
+              "title": "Digital Transformation in Energy",
+              "topics": [
+                "Digital Transformation in Energy"
+              ]
+            },
+            {
+              "title": "Digital Energy Strategy",
+              "topics": [
+                "Digital Energy Strategy"
+              ]
+            },
+            {
+              "title": "Energy Information Systems",
+              "topics": [
+                "Energy Information Systems"
+              ]
+            },
+            {
+              "title": "Energy Data Architecture",
+              "topics": [
+                "Energy Data Architecture"
+              ]
+            },
+            {
+              "title": "Cloud Computing in Energy",
+              "topics": [
+                "Cloud Computing in Energy"
+              ]
+            },
+            {
+              "title": "IoT & Connected Assets",
+              "topics": [
+                "IoT & Connected Assets"
+              ]
+            },
+            {
+              "title": "Industrial IoT",
+              "topics": [
+                "Industrial IoT"
+              ]
+            },
+            {
+              "title": "SCADA & Industrial Systems",
+              "topics": [
+                "SCADA & Industrial Systems"
+              ]
+            },
+            {
+              "title": "AI & Machine Learning in Energy",
+              "topics": [
+                "AI & Machine Learning in Energy"
+              ]
+            },
+            {
+              "title": "Advanced Analytics",
+              "topics": [
+                "Advanced Analytics"
+              ]
+            },
+            {
+              "title": "Predictive Maintenance",
+              "topics": [
+                "Predictive Maintenance"
+              ]
+            },
+            {
+              "title": "Digital Twins",
+              "topics": [
+                "Digital Twins"
+              ]
+            },
+            {
+              "title": "Automation",
+              "topics": [
+                "Automation"
+              ]
+            },
+            {
+              "title": "Robotics",
+              "topics": [
+                "Robotics"
+              ]
+            },
+            {
+              "title": "Remote Operations",
+              "topics": [
+                "Remote Operations"
+              ]
+            },
+            {
+              "title": "Smart Grids",
+              "topics": [
+                "Smart Grids"
+              ]
+            },
+            {
+              "title": "Smart Metering",
+              "topics": [
+                "Smart Metering"
+              ]
+            },
+            {
+              "title": "GIS",
+              "topics": [
+                "GIS"
+              ]
+            },
+            {
+              "title": "Energy Management Systems",
+              "topics": [
+                "Energy Management Systems"
+              ]
+            },
+            {
+              "title": "Digital Platforms",
+              "topics": [
+                "Digital Platforms"
+              ]
+            },
+            {
+              "title": "Digital Product Management",
+              "topics": [
+                "Digital Product Management"
+              ]
+            },
+            {
+              "title": "Technology Portfolio Management",
+              "topics": [
+                "Technology Portfolio Management"
+              ]
+            },
+            {
+              "title": "Digital Experience",
+              "topics": [
+                "Digital Experience"
+              ]
+            },
+            {
+              "title": "Digital Governance",
+              "topics": [
+                "Digital Governance"
+              ]
+            },
+            {
+              "title": "OT/ICS Cybersecurity",
+              "topics": [
+                "OT/ICS Cybersecurity"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Analytics & decision-making",
+      "outcome": "Use data and uncertainty to support a decision.",
+      "modules": [
+        {
+          "title": "Analytics & decision-making",
+          "lessons": [
+            {
+              "title": "Energy Data Fundamentals",
+              "topics": [
+                "Energy Data Fundamentals"
+              ]
+            },
+            {
+              "title": "Descriptive Analytics",
+              "topics": [
+                "Descriptive Analytics"
+              ]
+            },
+            {
+              "title": "Diagnostic Analytics",
+              "topics": [
+                "Diagnostic Analytics"
+              ]
+            },
+            {
+              "title": "Predictive Analytics",
+              "topics": [
+                "Predictive Analytics"
+              ]
+            },
+            {
+              "title": "Prescriptive Analytics",
+              "topics": [
+                "Prescriptive Analytics"
+              ]
+            },
+            {
+              "title": "Energy Forecasting",
+              "topics": [
+                "Energy Forecasting"
+              ]
+            },
+            {
+              "title": "Demand Forecasting",
+              "topics": [
+                "Demand Forecasting"
+              ]
+            },
+            {
+              "title": "Load Forecasting",
+              "topics": [
+                "Load Forecasting"
+              ]
+            },
+            {
+              "title": "Production Forecasting",
+              "topics": [
+                "Production Forecasting"
+              ]
+            },
+            {
+              "title": "Energy Modeling",
+              "topics": [
+                "Energy Modeling"
+              ]
+            },
+            {
+              "title": "Scenario Modeling",
+              "topics": [
+                "Scenario Modeling"
+              ]
+            },
+            {
+              "title": "Optimization",
+              "topics": [
+                "Optimization"
+              ]
+            },
+            {
+              "title": "Decision Analysis",
+              "topics": [
+                "Decision Analysis"
+              ]
+            },
+            {
+              "title": "Energy KPIs",
+              "topics": [
+                "Energy KPIs"
+              ]
+            },
+            {
+              "title": "Dashboard Design",
+              "topics": [
+                "Dashboard Design"
+              ]
+            },
+            {
+              "title": "Business Intelligence",
+              "topics": [
+                "Business Intelligence"
+              ]
+            },
+            {
+              "title": "Data Visualization",
+              "topics": [
+                "Data Visualization"
+              ]
+            },
+            {
+              "title": "Data-Driven Decision Making",
+              "topics": [
+                "Data-Driven Decision Making"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Projects & delivery",
+      "outcome": "Develop a delivery plan and evidence of benefits.",
+      "modules": [
+        {
+          "title": "Projects & delivery",
+          "lessons": [
+            {
+              "title": "Energy Project Lifecycle",
+              "topics": [
+                "Energy Project Lifecycle"
+              ]
+            },
+            {
+              "title": "Project Development",
+              "topics": [
+                "Project Development"
+              ]
+            },
+            {
+              "title": "Feasibility Studies",
+              "topics": [
+                "Feasibility Studies"
+              ]
+            },
+            {
+              "title": "Business Cases",
+              "topics": [
+                "Business Cases"
+              ]
+            },
+            {
+              "title": "Project Planning",
+              "topics": [
+                "Project Planning"
+              ]
+            },
+            {
+              "title": "Project Scheduling",
+              "topics": [
+                "Project Scheduling"
+              ]
+            },
+            {
+              "title": "Budgeting",
+              "topics": [
+                "Budgeting"
+              ]
+            },
+            {
+              "title": "Procurement",
+              "topics": [
+                "Procurement"
+              ]
+            },
+            {
+              "title": "Contract Management",
+              "topics": [
+                "Contract Management"
+              ]
+            },
+            {
+              "title": "Vendor Management",
+              "topics": [
+                "Vendor Management"
+              ]
+            },
+            {
+              "title": "Stakeholder Management",
+              "topics": [
+                "Stakeholder Management"
+              ]
+            },
+            {
+              "title": "Project Risk",
+              "topics": [
+                "Project Risk"
+              ]
+            },
+            {
+              "title": "Construction/Implementation Overview",
+              "topics": [
+                "Construction/Implementation Overview"
+              ]
+            },
+            {
+              "title": "Commissioning",
+              "topics": [
+                "Commissioning"
+              ]
+            },
+            {
+              "title": "Project Controls",
+              "topics": [
+                "Project Controls"
+              ]
+            },
+            {
+              "title": "Program Management",
+              "topics": [
+                "Program Management"
+              ]
+            },
+            {
+              "title": "Benefits Realization",
+              "topics": [
+                "Benefits Realization"
+              ]
+            },
+            {
+              "title": "Post-Implementation Review",
+              "topics": [
+                "Post-Implementation Review"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Strategy",
+      "outcome": "Choose where to compete and explain how to win.",
+      "modules": [
+        {
+          "title": "Strategy",
+          "lessons": [
+            {
+              "title": "Strategic Management Fundamentals",
+              "topics": [
+                "Strategic Management Fundamentals"
+              ]
+            },
+            {
+              "title": "Energy Industry Analysis",
+              "topics": [
+                "Energy Industry Analysis"
+              ]
+            },
+            {
+              "title": "Competitive Analysis",
+              "topics": [
+                "Competitive Analysis"
+              ]
+            },
+            {
+              "title": "PESTLE",
+              "topics": [
+                "PESTLE"
+              ]
+            },
+            {
+              "title": "Five Forces",
+              "topics": [
+                "Five Forces"
+              ]
+            },
+            {
+              "title": "Resource-Based View",
+              "topics": [
+                "Resource-Based View"
+              ]
+            },
+            {
+              "title": "Corporate Strategy",
+              "topics": [
+                "Corporate Strategy"
+              ]
+            },
+            {
+              "title": "Business Unit Strategy",
+              "topics": [
+                "Business Unit Strategy"
+              ]
+            },
+            {
+              "title": "Growth Strategy",
+              "topics": [
+                "Growth Strategy"
+              ]
+            },
+            {
+              "title": "Market Entry Strategy",
+              "topics": [
+                "Market Entry Strategy"
+              ]
+            },
+            {
+              "title": "Portfolio Strategy",
+              "topics": [
+                "Portfolio Strategy"
+              ]
+            },
+            {
+              "title": "Investment Strategy",
+              "topics": [
+                "Investment Strategy"
+              ]
+            },
+            {
+              "title": "Technology Strategy",
+              "topics": [
+                "Technology Strategy"
+              ]
+            },
+            {
+              "title": "Digital Strategy",
+              "topics": [
+                "Digital Strategy"
+              ]
+            },
+            {
+              "title": "Sustainability Strategy",
+              "topics": [
+                "Sustainability Strategy"
+              ]
+            },
+            {
+              "title": "Energy Transition Strategy",
+              "topics": [
+                "Energy Transition Strategy"
+              ]
+            },
+            {
+              "title": "Scenario Planning",
+              "topics": [
+                "Scenario Planning"
+              ]
+            },
+            {
+              "title": "Strategic Foresight",
+              "topics": [
+                "Strategic Foresight"
+              ]
+            },
+            {
+              "title": "Strategic Planning",
+              "topics": [
+                "Strategic Planning"
+              ]
+            },
+            {
+              "title": "Strategy Execution",
+              "topics": [
+                "Strategy Execution"
+              ]
+            },
+            {
+              "title": "Performance Measurement",
+              "topics": [
+                "Performance Measurement"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Innovation",
+      "outcome": "Assess, test and scale an innovation opportunity.",
+      "modules": [
+        {
+          "title": "Innovation",
+          "lessons": [
+            {
+              "title": "Innovation Management",
+              "topics": [
+                "Innovation Management"
+              ]
+            },
+            {
+              "title": "Energy Innovation Systems",
+              "topics": [
+                "Energy Innovation Systems"
+              ]
+            },
+            {
+              "title": "Technology Scouting",
+              "topics": [
+                "Technology Scouting"
+              ]
+            },
+            {
+              "title": "Emerging Technology Assessment",
+              "topics": [
+                "Emerging Technology Assessment"
+              ]
+            },
+            {
+              "title": "R&D Strategy",
+              "topics": [
+                "R&D Strategy"
+              ]
+            },
+            {
+              "title": "Corporate Innovation",
+              "topics": [
+                "Corporate Innovation"
+              ]
+            },
+            {
+              "title": "Open Innovation",
+              "topics": [
+                "Open Innovation"
+              ]
+            },
+            {
+              "title": "Clean-Tech Innovation",
+              "topics": [
+                "Clean-Tech Innovation"
+              ]
+            },
+            {
+              "title": "Business Model Innovation",
+              "topics": [
+                "Business Model Innovation"
+              ]
+            },
+            {
+              "title": "Digital Innovation",
+              "topics": [
+                "Digital Innovation"
+              ]
+            },
+            {
+              "title": "Venture Building",
+              "topics": [
+                "Venture Building"
+              ]
+            },
+            {
+              "title": "Energy Entrepreneurship",
+              "topics": [
+                "Energy Entrepreneurship"
+              ]
+            },
+            {
+              "title": "Corporate Venture Capital",
+              "topics": [
+                "Corporate Venture Capital"
+              ]
+            },
+            {
+              "title": "Startup Partnerships",
+              "topics": [
+                "Startup Partnerships"
+              ]
+            },
+            {
+              "title": "Innovation Portfolio Management",
+              "topics": [
+                "Innovation Portfolio Management"
+              ]
+            },
+            {
+              "title": "Commercialization",
+              "topics": [
+                "Commercialization"
+              ]
+            },
+            {
+              "title": "Technology Adoption",
+              "topics": [
+                "Technology Adoption"
+              ]
+            },
+            {
+              "title": "Scaling Innovation",
+              "topics": [
+                "Scaling Innovation"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Commercial development",
+      "outcome": "Develop a customer, partnership and commercial approach.",
+      "modules": [
+        {
+          "title": "Commercial development",
+          "lessons": [
+            {
+              "title": "Energy Marketing",
+              "topics": [
+                "Energy Marketing"
+              ]
+            },
+            {
+              "title": "Customer Segmentation",
+              "topics": [
+                "Customer Segmentation"
+              ]
+            },
+            {
+              "title": "Energy Sales",
+              "topics": [
+                "Energy Sales"
+              ]
+            },
+            {
+              "title": "B2B Energy Markets",
+              "topics": [
+                "B2B Energy Markets"
+              ]
+            },
+            {
+              "title": "Customer Experience",
+              "topics": [
+                "Customer Experience"
+              ]
+            },
+            {
+              "title": "Pricing Strategy",
+              "topics": [
+                "Pricing Strategy"
+              ]
+            },
+            {
+              "title": "Contract Negotiation",
+              "topics": [
+                "Contract Negotiation"
+              ]
+            },
+            {
+              "title": "Commercial Agreements",
+              "topics": [
+                "Commercial Agreements"
+              ]
+            },
+            {
+              "title": "Power Purchase Agreements",
+              "topics": [
+                "Power Purchase Agreements"
+              ]
+            },
+            {
+              "title": "Offtake Agreements",
+              "topics": [
+                "Offtake Agreements"
+              ]
+            },
+            {
+              "title": "Partnerships",
+              "topics": [
+                "Partnerships"
+              ]
+            },
+            {
+              "title": "Joint Ventures",
+              "topics": [
+                "Joint Ventures"
+              ]
+            },
+            {
+              "title": "Business Development",
+              "topics": [
+                "Business Development"
+              ]
+            },
+            {
+              "title": "Market Development",
+              "topics": [
+                "Market Development"
+              ]
+            },
+            {
+              "title": "Key Account Management",
+              "topics": [
+                "Key Account Management"
+              ]
+            },
+            {
+              "title": "Commercial Strategy",
+              "topics": [
+                "Commercial Strategy"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Leadership & organizations",
+      "outcome": "Lead change with attention to people, governance and ethics.",
+      "modules": [
+        {
+          "title": "Leadership & organizations",
+          "lessons": [
+            {
+              "title": "Organizational Behavior",
+              "topics": [
+                "Organizational Behavior"
+              ]
+            },
+            {
+              "title": "Leadership",
+              "topics": [
+                "Leadership"
+              ]
+            },
+            {
+              "title": "Energy Workforce Management",
+              "topics": [
+                "Energy Workforce Management"
+              ]
+            },
+            {
+              "title": "Organizational Design",
+              "topics": [
+                "Organizational Design"
+              ]
+            },
+            {
+              "title": "Change Management",
+              "topics": [
+                "Change Management"
+              ]
+            },
+            {
+              "title": "Culture",
+              "topics": [
+                "Culture"
+              ]
+            },
+            {
+              "title": "Decision-Making",
+              "topics": [
+                "Decision-Making"
+              ]
+            },
+            {
+              "title": "Negotiation",
+              "topics": [
+                "Negotiation"
+              ]
+            },
+            {
+              "title": "Conflict Management",
+              "topics": [
+                "Conflict Management"
+              ]
+            },
+            {
+              "title": "Cross-Functional Leadership",
+              "topics": [
+                "Cross-Functional Leadership"
+              ]
+            },
+            {
+              "title": "Stakeholder Leadership",
+              "topics": [
+                "Stakeholder Leadership"
+              ]
+            },
+            {
+              "title": "Ethics",
+              "topics": [
+                "Ethics"
+              ]
+            },
+            {
+              "title": "Corporate Governance",
+              "topics": [
+                "Corporate Governance"
+              ]
+            },
+            {
+              "title": "Leading Transformation",
+              "topics": [
+                "Leading Transformation"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Global energy systems",
+      "outcome": "Connect developments across countries and energy markets.",
+      "modules": [
+        {
+          "title": "International energy connections",
+          "lessons": [
+            {
+              "title": "OPEC",
+              "topics": [
+                "OPEC"
+              ]
+            },
+            {
+              "title": "Energy security",
+              "topics": [
+                "Energy security"
+              ]
+            },
+            {
+              "title": "International oil & gas",
+              "topics": [
+                "International oil & gas"
+              ]
+            },
+            {
+              "title": "LNG trade",
+              "topics": [
+                "LNG trade"
+              ]
+            },
+            {
+              "title": "Critical minerals",
+              "topics": [
+                "Critical minerals"
+              ]
+            },
+            {
+              "title": "Global electricity development",
+              "topics": [
+                "Global electricity development"
+              ]
+            },
+            {
+              "title": "Geopolitics",
+              "topics": [
+                "Geopolitics"
+              ]
+            },
+            {
+              "title": "International energy investment",
+              "topics": [
+                "International energy investment"
+              ]
+            },
+            {
+              "title": "Emerging markets",
+              "topics": [
+                "Emerging markets"
+              ]
+            },
+            {
+              "title": "Supply-chain dependencies",
+              "topics": [
+                "Supply-chain dependencies"
+              ]
+            },
+            {
+              "title": "National energy strategies",
+              "topics": [
+                "National energy strategies"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Integrated strategy & innovation",
+      "outcome": "Integrate the pathway into a defensible investment and innovation recommendation.",
+      "modules": [
+        {
+          "title": "Applied capstone",
+          "lessons": [
+            {
+              "title": "Design a five-year energy investment portfolio",
+              "applied": true,
+              "topics": [
+                "Upstream oil",
+                "LNG",
+                "Renewables",
+                "Grid-scale batteries",
+                "Hydrogen",
+                "CCUS",
+                "Digital optimization",
+                "Portfolio trade-offs"
+              ],
+              "objective": "An integrated energy company has $5 billion to invest over five years. Compare the options, state assumptions, assess risks and recommend a portfolio with an innovation roadmap.",
+              "success": "An evidence-backed investment recommendation, scenarios, implementation roadmap and measures of success."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

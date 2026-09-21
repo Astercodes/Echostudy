@@ -544,7 +544,7 @@ export default function App({ user, onSignOut }) {
           </div>
         </header>
         <main>
-          <div className="page-heading">
+          {page !== 'Growth Planner' && <div className="page-heading">
             <div>
               <div className="eyebrow">
                 <Sun size={15} />
@@ -634,7 +634,8 @@ export default function App({ user, onSignOut }) {
               )}
             </div>
           </div>
-          {!data.onboarded && (
+          }
+          {!data.onboarded && page !== 'Growth Planner' && (
             <div className="welcome">
               <div>
                 <strong>Your starting point, ready to make your own.</strong>
@@ -1165,8 +1166,10 @@ export default function App({ user, onSignOut }) {
           )}
           {page === "Growth Planner" && (
             <StretchPlanner data={data} save={save} go={go} initialGoalId={growthGoalId} onSelectGoal={setGrowthGoalId}
+              onKnowledge={id=>{setKnowledgeFocus(id);go('Knowledge Ecosystem');}}
               onSchedule={(step,day)=>{
-                const existing=Object.entries(data.plans).flatMap(([d,bs])=>bs.map(b=>({...b,scheduledDate:d}))).find(b=>b.pathwayStepId===step.id);
+                step={...step,objective:[step.objective,...(step.topics?.length?['Lesson scope:',...step.topics]:[])].join('\n')};
+                const existing=Object.entries(data.plans).flatMap(([d,bs])=>bs.map(b=>({...b,scheduledDate:d}))).find(b=>b.pathwayStepId===step.id&&!['completed','skipped'].includes(b.status)&&!data.sessions.some(s=>s.blockId===b.id)&&!data.stretches.some(s=>s.blockId===b.id&&s.status==='completed'));
                 if(existing){setDate(existing.scheduledDate);go('Time planner');setModal({type:'block',block:existing});return;}
                 const duration=step.type==='study'?focusWallMinutes(step.duration):step.duration;
                 const gaps=availableWindows(recurringCommitments(data,day).blocks);
@@ -1176,7 +1179,8 @@ export default function App({ user, onSignOut }) {
                 setDate(day);go('Time planner');setModal({type:'block',block:{id:uid(),pathwayStepId:step.id,title:step.title,objective:step.objective,kind:step.type==='study'?'deep':'stretch',start:startAt,end:startAt+duration,focusMinutes:step.duration,goalId:step.goalId,goalIds:[step.goalId],capacityIds:goal?.capacityIds||[],conceptId:step.conceptId,knowledgeIds:step.conceptId?[step.conceptId]:[],resourceId:step.resourceId||step.resourceIds[0]||'',intention:step.action.toLowerCase().replaceAll(' ','-'),repeat:'none'}});
               }}
               onLaunch={step=>{
-                const existing=Object.entries(data.plans).flatMap(([d,bs])=>bs.map(b=>({...b,scheduledDate:d}))).find(b=>b.pathwayStepId===step.id);
+                step={...step,objective:[step.objective,...(step.topics?.length?['Lesson scope:',...step.topics]:[])].join('\n')};
+                const existing=Object.entries(data.plans).flatMap(([d,bs])=>bs.map(b=>({...b,scheduledDate:d}))).find(b=>b.pathwayStepId===step.id&&!['completed','skipped'].includes(b.status)&&!data.sessions.some(s=>s.blockId===b.id)&&!data.stretches.some(s=>s.blockId===b.id&&s.status==='completed'));
                 if(step.type==='study'){
                   if(data.timer){go('Study workspace');notify('Finish the active session before starting another step.');return;}
                   go('Study workspace');
