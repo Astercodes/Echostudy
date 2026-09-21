@@ -30,6 +30,7 @@ import {
   upgradeEnergyPathways,
 } from "./curriculum-pathway";
 import "./growth-pathway.css";
+import { pathwayCards, changePathway } from "./pathway-library";
 const horizons = {
   Year: "Yearly",
   Quarter: "Quarterly",
@@ -96,6 +97,9 @@ export default function StretchPlanner({
       parentId: "",
     }),
     [lessonSearch, setLessonSearch] = useState("");
+  const [manage, setManage] = useState(null),
+    [manageValue, setManageValue] = useState("");
+  const cards = pathwayCards(data);
   const request = useRef(null);
   useEffect(() => {
     save((d) => upgradeEnergyPathways(d));
@@ -386,39 +390,106 @@ export default function StretchPlanner({
       </header>
       {!goal && (
         <>
-          <div className="section-head">
+          <div className="section-head pathway-library-heading">
             <div>
               <span className="eyebrow">YOUR LEARNING ROUTES</span>
               <h2>Saved pathways</h2>
             </div>
           </div>
           <div className="pathway-library">
-            {data.goals
-              .filter((g) => allSteps.some((s) => s.goalId === g.id))
-              .map((g) => {
-                const items = allSteps.filter((s) => s.goalId === g.id),
-                  complete = items.filter(
-                    (s) => s.status === "completed",
-                  ).length;
-                return (
+            {cards.map((card, index) => {
+              const complete = card.steps.filter(
+                (s) => s.status === "completed",
+              ).length;
+              return (
+                <article className="pathway-library-card" key={card.id}>
+                  <header>
+                    <Layers3 size={19} />
+                    <small>{horizons[card.goal?.level] || "Linked"} goal</small>
+                    <details className="pathway-card-menu">
+                      <summary aria-label={"Actions for " + card.title}>
+                        •••
+                      </summary>
+                      <div>
+                        <button
+                          onClick={() => {
+                            setManage({
+                              id: card.id,
+                              action: "edit",
+                              title: card.title,
+                            });
+                            setManageValue(card.title);
+                            setError("");
+                          }}
+                        >
+                          Edit name
+                        </button>
+                        <button
+                          disabled={index === 0}
+                          onClick={() =>
+                            save((d) => changePathway(d, card.id, "up"))
+                          }
+                        >
+                          Move earlier
+                        </button>
+                        <button
+                          disabled={index === cards.length - 1}
+                          onClick={() =>
+                            save((d) => changePathway(d, card.id, "down"))
+                          }
+                        >
+                          Move later
+                        </button>
+                        <button
+                          onClick={() => {
+                            setManage({
+                              id: card.id,
+                              action: "move",
+                              title: card.title,
+                            });
+                            setManageValue(card.goalId);
+                            setError("");
+                          }}
+                        >
+                          Move to another goal
+                        </button>
+                        <button
+                          className="pathway-delete"
+                          onClick={() => {
+                            setManage({
+                              id: card.id,
+                              action: "delete",
+                              title: card.title,
+                            });
+                            setError("");
+                          }}
+                        >
+                          Delete pathway
+                        </button>
+                      </div>
+                    </details>
+                  </header>
                   <button
-                    className="pathway-library-card"
-                    key={g.id}
-                    onClick={() => select(g.id)}
+                    className="pathway-card-open"
+                    onClick={() => {
+                      select(card.goalId);
+                      setBatchId(card.batch);
+                      setActiveLevel("");
+                      setLessonId("");
+                    }}
                   >
-                    <Layers3 size={24} />
-                    <small>{horizons[g.level]} goal</small>
-                    <h3>{g.title}</h3>
+                    <h3>{card.title}</h3>
                     <p>
-                      {items.length} lessons · {complete} completed
+                      {card.steps.length} lessons · {complete} completed
                     </p>
-                    <progress value={complete} max={items.length} />
+                    <progress value={complete} max={card.steps.length} />
                     <span>
-                      Open pathway <ArrowUpRight size={18} />
+                      Open pathway <ArrowUpRight size={15} />
                     </span>
                   </button>
-                );
-              })}
+                </article>
+              );
+            })}
           </div>
           {!allSteps.some((s) => s.goalId) && (
             <div className="pathway-empty">
@@ -442,7 +513,10 @@ export default function StretchPlanner({
               <button className="pathway-back" onClick={() => select("")}>
                 ← All pathways
               </button>
-              <h2>{goal.title}</h2>
+              <h2>
+                {cards.find((c) => c.goalId === goalId && c.batch === batch)
+                  ?.title || goal.title}
+              </h2>
               <p>
                 {steps.filter((s) => s.status === "completed").length} of{" "}
                 {steps.length} lessons completed · Study and Stretch can run in
@@ -760,6 +834,74 @@ export default function StretchPlanner({
             </div>
           )}
         </>
+      )}
+      {manage && (
+        <Modal
+          title={
+            manage.action === "delete"
+              ? "Delete pathway"
+              : manage.action === "move"
+                ? "Move pathway"
+                : "Edit pathway name"
+          }
+          onClose={() => setManage(null)}
+        >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              try {
+                save((d) =>
+                  changePathway(d, manage.id, manage.action, manageValue),
+                );
+                setManage(null);
+              } catch (err) {
+                setError(err.message);
+              }
+            }}
+          >
+            {manage.action === "delete" ? (
+              <p>
+                Delete “{manage.title}” and its lesson list? Your study history,
+                scheduled sessions and ecosystem knowledge will be kept.
+              </p>
+            ) : manage.action === "edit" ? (
+              <Field label="Pathway name">
+                <input
+                  required
+                  value={manageValue}
+                  onChange={(e) => setManageValue(e.target.value)}
+                />
+              </Field>
+            ) : (
+              <>
+                <Field label="Destination goal">
+                  <select
+                    required
+                    value={manageValue}
+                    onChange={(e) => setManageValue(e.target.value)}
+                  >
+                    {data.goals.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.title}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <p>
+                  Future lessons will contribute to this goal. Existing sessions
+                  keep their recorded goal links.
+                </p>
+              </>
+            )}
+            {error && <p role="alert">{error}</p>}
+            <Button primary type="submit">
+              {manage.action === "delete" ? "Delete pathway" : "Save changes"}
+            </Button>
+            <Button type="button" onClick={() => setManage(null)}>
+              Cancel
+            </Button>
+          </form>
+        </Modal>
       )}
       {preview && (
         <Modal title="Review your curriculum" onClose={() => setPreview(null)}>
