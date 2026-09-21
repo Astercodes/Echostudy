@@ -1158,27 +1158,6 @@ export default function StretchPlanner({
           </form>
         </Modal>
       )}
-      {allSteps.some((s) => !s.goalId) && (
-        <details className="pathway-legacy">
-          <summary>Earlier unlinked lessons</summary>
-          {allSteps
-            .filter((s) => !s.goalId)
-            .map((s) => (
-              <p key={s.id}>
-                {s.title}
-                {goal && (
-                  <Button
-                    onClick={() =>
-                      store({ ...s, goalId: goal.id, goalIds: [goal.id] })
-                    }
-                  >
-                    Link to this goal
-                  </Button>
-                )}
-              </p>
-            ))}
-        </details>
-      )}
     </div>
   );
 }
