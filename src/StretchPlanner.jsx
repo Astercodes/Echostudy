@@ -519,7 +519,7 @@ export default function StretchPlanner({
                         >
                           {lessonName(s)}
                           <small>
-                            Topic {(s.levelOrder || 0) + 1} · Subtopic{" "}
+                            Topic {s.levelOrder || 0} · Subtopic{" "}
                             {(s.moduleOrder || 0) + 1}
                           </small>
                         </button>
@@ -541,8 +541,10 @@ export default function StretchPlanner({
                           setLessonId("");
                         }}
                       >
-                        <span>Topic {l.order + 1}</span>
-                        <strong>{l.title}</strong>
+                        <strong>
+                          Topic {l.order}
+                          {l.title ? ` — ${l.title}` : ""}
+                        </strong>
                         <small>
                           {
                             l.steps.filter((s) => s.status === "completed")
@@ -557,13 +559,11 @@ export default function StretchPlanner({
               </aside>
               <section className="curriculum-content">
                 <header className="curriculum-level">
-                  <span className="eyebrow">
-                    TOPIC {(level?.order || 0) + 1}
-                  </span>
+                  <span className="eyebrow">TOPIC {level?.order || 0}</span>
                   {level?.steps[0]?.stageTitle && (
                     <p>{level.steps[0].stageTitle}</p>
                   )}
-                  <h2>{level?.title || `Topic ${(level?.order || 0) + 1}`}</h2>
+                  <h2>{level?.title || `Topic ${level?.order || 0}`}</h2>
                   <p>{level?.outcome}</p>
                 </header>
                 <section
@@ -616,7 +616,7 @@ export default function StretchPlanner({
                   >
                     <header>
                       <span className="eyebrow">
-                        Topic {(lesson.levelOrder || 0) + 1} → Subtopic{" "}
+                        Topic {lesson.levelOrder || 0} → Subtopic{" "}
                         {(lesson.moduleOrder || 0) + 1} → Lesson{" "}
                         {(lesson.lessonOrder || 0) + 1}
                       </span>
@@ -772,7 +772,7 @@ export default function StretchPlanner({
             {levelsFor(preview.steps).map((l) => (
               <details key={l.key}>
                 <summary>
-                  Topic {l.order + 1} · {l.title}
+                  Topic {l.order} · {l.title}
                   <small>{l.steps.length} lessons</small>
                 </summary>
                 <p>{l.outcome}</p>

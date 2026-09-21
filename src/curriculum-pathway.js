@@ -103,7 +103,10 @@ export function upgradeEnergyPathways(data) {
   const old = (data.learningPlanner || []).filter(
     (s) => s.blueprint === "energy-strategy-v1",
   );
-  if (!old.length) return data;
+  const missingNames = (data.learningPlanner || []).some(
+    (s) => s.blueprint === "energy-strategy-v2" && !s.levelTitle && s.sourceKey,
+  );
+  if (!old.length && !missingNames) return data;
   const template = curriculumPathway(
     data,
     { title: "Energy" },
@@ -115,6 +118,10 @@ export function upgradeEnergyPathways(data) {
   const byKey = new Map(template.map((s) => [s.sourceKey, s]));
   const batches = [...new Set(old.map((s) => s.pathwayId))];
   const learningPlanner = data.learningPlanner.map((s) => {
+    if (s.blueprint === "energy-strategy-v2" && !s.levelTitle) {
+      const named = byKey.get(s.sourceKey);
+      return named ? { ...s, levelTitle: named.levelTitle } : s;
+    }
     if (s.blueprint !== "energy-strategy-v1") return s;
     const t = byKey.get(
       `energy-v1:${s.levelOrder}:${s.moduleOrder}:${s.lessonOrder}`,
@@ -132,9 +139,11 @@ export function upgradeEnergyPathways(data) {
       levelOutcome: "",
       prerequisite: "",
       title: s.title === t.legacyTitle ? t.title : s.title,
-      objective: s.objective === `Explain ${t.legacyTitle?.toLowerCase()} in the energy industry. Work through the listed concepts, compare an example and a non-example, and record questions that need more study.`
-        ? t.objective
-        : s.objective,
+      objective:
+        s.objective ===
+        `Explain ${t.legacyTitle?.toLowerCase()} in the energy industry. Work through the listed concepts, compare an example and a non-example, and record questions that need more study.`
+          ? t.objective
+          : s.objective,
       order: t.levelOrder * 10000 + t.moduleOrder * 100 + t.lessonOrder,
     };
   });
@@ -154,7 +163,21 @@ export function upgradeEnergyPathways(data) {
         createdAt: new Date().toISOString(),
       });
   }
-  return { ...data, learningPlanner };
+  const growthPlannerFocus = Object.fromEntries(
+    Object.entries(data.growthPlannerFocus || {}).map(([id, focus]) => {
+      const lesson = learningPlanner.find((s) => s.id === focus.lesson);
+      return [
+        id,
+        lesson
+          ? {
+              ...focus,
+              level: `${lesson.levelOrder || 0}:${lesson.levelTitle ?? "Your pathway"}`,
+            }
+          : focus,
+      ];
+    }),
+  );
+  return { ...data, learningPlanner, growthPlannerFocus };
 }
 export function outlinePathway(text, goal) {
   let level = "",

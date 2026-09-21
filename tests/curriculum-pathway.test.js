@@ -147,7 +147,9 @@ test("business headings and concept ordering exactly follow the supplied hierarc
     "Markets",
   ]);
   assert.equal(b.modules[7].lessons[3].title, "Decline & Renewal");
-  assert.ok(energyCurriculum.levels.slice(1).every((t) => t.title === ""));
+  assert.ok(
+    energyCurriculum.levels.slice(1).every((t) => t.title === t.legacyTitle),
+  );
 });
 test("existing pathways update once and preserve identifiers, customized content and evidence", () => {
   const d = base();
@@ -199,4 +201,29 @@ test("markdown topic, subtopic, lesson and concept headings stay distinct", () =
   assert.equal(p.steps[0].title, "Definition of Business");
   assert.deepEqual(p.steps[0].topics, ["Business", "Enterprise"]);
   assert.equal(p.steps[1].lessonOrder, 1);
+});
+
+test("saved unnamed topics recover names without adding lessons or changing user content", () => {
+  let d = base();
+  const p = curriculumPathway(d, d.goals[0], "", [], []);
+  d = acceptPathway(d, d.goals[0], p);
+  d.learningPlanner = d.learningPlanner.map((s) =>
+    s.levelOrder > 0 ? { ...s, levelTitle: "" } : s,
+  );
+  const target = d.learningPlanner.find((s) => s.levelOrder === 15);
+  d.growthPlannerFocus = {
+    g: { lesson: target.id, level: "15:", batch: target.pathwayId },
+  };
+  const upgraded = upgradeEnergyPathways(d);
+  assert.equal(upgraded.learningPlanner.length, d.learningPlanner.length);
+  assert.equal(
+    upgraded.learningPlanner.find((s) => s.id === target.id).levelTitle,
+    "Strategy",
+  );
+  assert.equal(upgraded.growthPlannerFocus.g.level, "15:Strategy");
+  assert.deepEqual(
+    upgraded.learningPlanner.map((s) => s.id),
+    d.learningPlanner.map((s) => s.id),
+  );
+  assert.equal(upgradeEnergyPathways(upgraded), upgraded);
 });
