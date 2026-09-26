@@ -49,3 +49,69 @@ body :is(input,select,textarea):focus-visible, body button:focus-visible, body a
 @media (prefers-reduced-motion: reduce) { body .btn.primary { transition: none; } }
 .app .sidebar { background: radial-gradient(ellipse at 5% 0%,#c200fb55,transparent 55%),linear-gradient(165deg,#410e56,#210c2d 75%,#560c39); }
 .app .focus-card { background: linear-gradient(120deg,#8200a9,#a000cf 55%,#c00668); }
+
+/* Warm light is a primary part of the public palette, not a tiny accent. */
+.landing {
+  --sunrise-gradient: linear-gradient(115deg, #ec7d10 0%, #ffbc0a 65%, #ffe38c 100%);
+}
+.landing .landing-hero {
+  background: radial-gradient(ellipse at 88% 18%, #ffbc0a70, transparent 56%),
+    radial-gradient(ellipse at 8% 92%, #ec7d1045, transparent 60%),
+    linear-gradient(125deg, #fffdf6, #fff3da 54%, #fff0f8);
+}
+.landing .btn.primary {
+  background: var(--sunrise-gradient);
+  color: #351039;
+  box-shadow: 0 8px 28px #ec7d1040, inset 0 1px 0 #ffffff85;
+}
+.landing .btn.primary:hover {
+  background: linear-gradient(115deg, #ffbc0a, #ec7d10);
+  box-shadow: 0 10px 32px #ec7d1055;
+}
+.landing .hero-copy h1 em {
+  background-image: linear-gradient(100deg, #ec0868 0%, #fc2f00 32%, #ec7d10 65%, #ffbc0a 100%);
+}
+.landing .eco-sculpture {
+  border: 2px solid #ffbc0a;
+  background: radial-gradient(ellipse at 95% 0%, #ec7d1090, transparent 55%),
+    radial-gradient(ellipse at 0% 100%, #ec086850, transparent 60%),
+    linear-gradient(140deg, #521066, #25082e);
+  box-shadow: 0 22px 65px #ec7d1038, 0 0 28px #ffbc0a24;
+}
+.landing .sculpture-controls button[aria-pressed="true"] {
+  background: var(--sunrise-gradient); color: #351039;
+  border-radius: 8px; padding: 12px; margin-top: 8px;
+}
+.landing .landing-copy > .problem-scene {
+  background: linear-gradient(125deg, #ffbc0a 0%, #ffd66f 38%, #fff0c9 78%, #ffe0c4 100%);
+}
+.landing .scattered-learning {
+  background: radial-gradient(ellipse at center, #ec7d1070, transparent 72%);
+}
+.landing .problem-scene .eyebrow,
+.landing .problem-scene .editorial-intro p,
+.landing .problem-scene .problem-insights p,
+.landing .problem-scene .problem-resolution { color: #54364b; }
+.landing .life-strip {
+  background: linear-gradient(100deg, #ffbc0a, #ffdda1 55%, #fff0dc);
+  border-color: #ec7d1060;
+}
+.landing .landing-copy > .analytics-scene {
+  background: linear-gradient(135deg, #fff3cc, #fffaf0 50%, #ffe2ce);
+}
+.landing .analytics-canvas {
+  border: 1px solid #ec7d10;
+  box-shadow: 0 24px 60px #ec7d1026;
+}
+.landing .analytics-meter i { background: var(--sunrise-gradient); }
+.landing .landing-cta {
+  background: radial-gradient(ellipse at 95% 10%, #ffe38c, transparent 55%),
+    linear-gradient(115deg, #ec7d10, #ffbc0a 65%);
+  color: #351039; border: 0;
+  box-shadow: 0 18px 50px #ec7d1026;
+}
+.landing .landing-cta :is(h2, h2 em, p) { color: #351039; }
+.landing .landing-cta .btn {
+  background: var(--action-gradient); color: white;
+  border: 1px solid #ffffff40; box-shadow: 0 8px 24px #8200a92b;
+}
