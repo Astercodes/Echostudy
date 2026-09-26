@@ -139,15 +139,15 @@ test("invalid parent, sub-area, horizon and duplicate area names are rejected", 
       state.goals,
       state.lifeAreas,
     ),
-    /sub-area/,
+    /sub area/,
   );
   assert.match(
     validateGoal({ ...leaf, parent: leaf.id }, state.goals, state.lifeAreas),
-    /longer-horizon/,
+    /longer horizon/,
   );
   assert.match(
     validateGoal({ ...leaf, level: "Year" }, state.goals, state.lifeAreas),
-    /longer-horizon/,
+    /longer horizon/,
   );
   assert.match(
     validateLifeArea(

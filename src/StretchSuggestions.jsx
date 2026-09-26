@@ -109,7 +109,7 @@ export default function StretchSuggestions({ data, create }) {
       <span className="eyebrow">FIVE WAYS TO BEGIN</span>
       <h2>Where will your next stretch come from?</h2>
       <p>
-        A concept, a gap, a goal, something happening in life—or an idea of your
+        A concept, a gap, a goal, something happening in life · or an idea of your
         own. Choose a starting point and make it practical.
       </p>
       <div className="stretch-source-cards" aria-label="Opportunity source">
@@ -284,7 +284,7 @@ export default function StretchSuggestions({ data, create }) {
             {!gaps.length && (
               <p>
                 No recorded diagnostic gaps yet. You can still start a
-                knowledge-driven or user-created stretch now.
+                knowledge driven or user created stretch now.
               </p>
             )}
             <Field label="Describe a gap you noticed">

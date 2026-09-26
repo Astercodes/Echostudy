@@ -29,7 +29,7 @@ export const ACTION_COMPONENTS = {
       Foundations:
         "Prerequisites|Foundational Principles|Prior Concepts|Background|Origin",
       Language:
-        "Formal Definition|Plain-Language Definition|Key Terms|Notation/Symbols",
+        "Formal Definition|Plain Language Definition|Key Terms|Notation/Symbols",
       Anatomy: "Parts|Structure|Roles|Inputs & Outputs",
       Mechanics: "How It Works|Process|Cause & Effect|Rules",
       Boundaries: "What It Is|What It Isn't|Common Confusions|Scope",
@@ -42,7 +42,7 @@ export const ACTION_COMPONENTS = {
     fields: fields({
       Principles: "Core Principles|Key Ideas|Essential Takeaways",
       Relationships:
-        "Dependencies|Interactions|Cause-and-Effect Relationships|Cross-Concept Relationships",
+        "Dependencies|Interactions|Cause and Effect Relationships|Cross Concept Relationships",
       Patterns: "Recurring Patterns|Trends|Signals/Indicators|Sequences",
       "Assumptions & Conditions":
         "Explicit Assumptions|Hidden Assumptions|Necessary Conditions|Sufficient Conditions|Contextual Conditions",
@@ -52,11 +52,11 @@ export const ACTION_COMPONENTS = {
       Comparison:
         "Similarities|Differences|Alternatives|When to Use Which|Commonly Confused Distinctions",
       Implications:
-        "Direct Implications|Second-Order Effects|Broader Significance|Practical Implications",
+        "Direct Implications|Second Order Effects|Broader Significance|Practical Implications",
       Evidence:
         "Supporting Evidence|Counterevidence|Important Research/Data|Strength of Evidence|Source/Authority Context",
       "Expert Layer":
-        "Expert Insights|Common Novice Mistakes|Professional Heuristics|Non-obvious Insights|Advanced Considerations",
+        "Expert Insights|Common Novice Mistakes|Professional Heuristics|Non obvious Insights|Advanced Considerations",
     }),
   },
   chew: {
@@ -75,7 +75,7 @@ export const ACTION_COMPONENTS = {
     outcome: "This knowledge has become part of my mental model.",
     fields: fields({
       Integrate:
-        "Reflection|Meaning Making|Prior-Knowledge Connection|New Connections|Reconciliation|Misconception Revision|Synthesis|Mental Model Formation|Abstraction|Generalization|Contextualization|Personal Connection|Perspective Integration|Knowledge Compression|Insight Capture|Question Capture|Metacognitive Reflection|Knowledge Placement",
+        "Reflection|Meaning Making|Prior Knowledge Connection|New Connections|Reconciliation|Misconception Revision|Synthesis|Mental Model Formation|Abstraction|Generalization|Contextualization|Personal Connection|Perspective Integration|Knowledge Compression|Insight Capture|Question Capture|Metacognitive Reflection|Knowledge Placement",
     }),
   },
   regurgitate: {
@@ -103,7 +103,7 @@ export const ACTION_COMPONENTS = {
     title: "Graft",
     fields: fields({
       Relationship:
-        "Source knowledge|Target knowledge|Connection discovery|Connection type|Explanation|Direction|Dependency|Strength|Evidence for connection|Cross-Tree connection|Cross-Grove connection|Cross-Forest connection|Shared concepts|Conflicts|Implications of connection|Connection visualization",
+        "Source knowledge|Target knowledge|Connection discovery|Connection type|Explanation|Direction|Dependency|Strength|Evidence for connection|Cross Tree connection|Cross Grove connection|Cross Forest connection|Shared concepts|Conflicts|Implications of connection|Connection visualization",
     }),
   },
   prune: {
@@ -112,7 +112,7 @@ export const ACTION_COMPONENTS = {
       Diagnose:
         "Misconception detection|Incorrect knowledge|Outdated knowledge|Redundancy|Duplicate knowledge|Irrelevant material|Weak evidence|Unnecessary complexity|Overgrown concepts|Missing boundaries|Structural misplacement|Conflicting knowledge",
       Refine:
-        "Merge opportunities|Split opportunities|Reclassification|Correction|Removal|Archive/history preservation|Post-pruning integrity check",
+        "Merge opportunities|Split opportunities|Reclassification|Correction|Removal|Archive/history preservation|Post pruning integrity check",
     }),
   },
   test: {
@@ -121,7 +121,7 @@ export const ACTION_COMPONENTS = {
       "Knowledge Coverage":
         "Definitions|Facts|Principles|Processes|Relationships",
       "Understanding Assessment":
-        "Explain why|Explain how|Distinguish concepts|Identify examples/non-examples",
+        "Explain why|Explain how|Distinguish concepts|Identify examples/non examples",
       "Reasoning Assessment":
         "Analysis|Inference|Prediction|Diagnosis|Evaluation",
       "Scenario Assessment": "Novel situations|Cases|Contextual questions",

@@ -111,7 +111,7 @@ export default function StretchPlayer({
                 <br />
                 <small>
                   This is a guided scenario you perform and assess. For
-                  interactive role-play, practise with a partner.
+                  interactive role play, practise with a partner.
                 </small>
               </p>
             )}

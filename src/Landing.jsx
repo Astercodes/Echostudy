@@ -133,15 +133,15 @@ export default function Landing({ navigate }) {
             {[
               [
                 "Is ecostudy only for academic study?",
-                "No. Goals start with 24 life areas and 428 sub-areas, from faith and intellectual growth to civic life, digital wellbeing, safety, creativity, and legacy. Add your own areas and decide what growth means in each one.",
+                "No. Goals start with 24 life areas and 428 sub areas, from faith and intellectual growth to civic life, digital wellbeing, safety, creativity, and legacy. Add your own areas and decide what growth means in each one.",
               ],
               [
                 "How does my Knowledge Ecosystem grow?",
-                "Your life areas become forests and your sub-areas become groves. Add topic trees, foundations, core knowledge, branches, leaves and fruits. Plant questions as seeds, graft meaningful connections, or open any part in a focus tab. Your focused work edits the same knowledge, so closing a tab does not remove it.",
+                "Your life areas become forests and your sub areas become groves. Add topic trees, foundations, core knowledge, branches, leaves and fruits. Plant questions as seeds, graft meaningful connections, or open any part in a focus tab. Your focused work edits the same knowledge, so closing a tab does not remove it.",
               ],
               [
                 "How do goals connect to my day?",
-                "Create multiple yearly, quarterly, monthly, weekly and daily goals across your life areas. Link time blocks and study objectives to those goals so each session has a clear purpose. Add custom life areas and sub-areas as your priorities evolve.",
+                "Create multiple yearly, quarterly, monthly, weekly and daily goals across your life areas. Link time blocks and study objectives to those goals so each session has a clear purpose. Add custom life areas and sub areas as your priorities evolve.",
               ],
               [
                 "What is the difference between Study and Stretch?",
@@ -153,7 +153,7 @@ export default function Landing({ navigate }) {
               ],
               [
                 "Can I speak instead of typing?",
-                "Knowledge-action writing fields include audio recording. Where browser speech recognition is supported, you can review a transcript and insert it into your notes. Microphone permission is required, and transcription availability depends on your browser and its speech service.",
+                "Knowledge action writing fields include audio recording. Where browser speech recognition is supported, you can review a transcript and insert it into your notes. Microphone permission is required, and transcription availability depends on your browser and its speech service.",
               ],
               [
                 "Does Test automatically teach or grade me?",
@@ -165,7 +165,7 @@ export default function Landing({ navigate }) {
               ],
               [
                 "Can I read my resources here?",
-                "Yes. Upload PDFs or text documents to read and capture connected notes. Text-based PDFs support persistent highlights. You can also attach audio, video, and links to external resources.",
+                "Yes. Upload PDFs or text documents to read and capture connected notes. Text based PDFs support persistent highlights. You can also attach audio, video, and links to external resources.",
               ],
             ].map(([q, a]) => (
               <details key={q}>

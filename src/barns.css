@@ -26,10 +26,10 @@
   left: 0;
   width: 70px;
   height: 96px;
-  border: 3px solid #86aeb1;
-  border-top: 4px solid #638e92;
+  border: 3px solid #a686b1;
+  border-top: 4px solid #866392;
   border-radius: 5px 5px 22px 22px;
-  background: #eafafa80;
+  background: #f6eafa80;
   overflow: hidden;
   z-index: 2;
 }
@@ -67,7 +67,7 @@
   bottom: 22px;
   width: 28px;
   height: 48px;
-  border: 4px solid #86aeb1;
+  border: 4px solid #a686b1;
   border-radius: 0 22px 22px 0;
   z-index: 1;
 }
@@ -105,7 +105,7 @@
   background: #fff;
   font-size: 23px;
   font-weight: 750;
-  color: #204b50;
+  color: #442050;
 }
 .capacity-formula {
   padding: 12px 0;
@@ -184,8 +184,8 @@
   border-radius: 22px;
   background: linear-gradient(150deg, #ffffff 65%, #f2fbf9);
   box-shadow:
-    0 3px 6px #102c5408,
-    0 12px 28px -8px #102c5426,
+    0 3px 6px #43105408,
+    0 12px 28px -8px #43105426,
     inset 0 1px 0 #ffffff;
   transition:
     transform 0.2s ease,
@@ -195,8 +195,8 @@
   .barn-card:hover {
     transform: translateY(-5px);
     box-shadow:
-      0 5px 10px #102c540a,
-      0 20px 38px -10px #102c5436,
+      0 5px 10px #4310540a,
+      0 20px 38px -10px #43105436,
       inset 0 1px 0 #ffffff;
   }
 }
@@ -204,7 +204,7 @@
   transform: translateY(-1px);
 }
 .barn-card:focus-visible {
-  outline: 3px solid #173dc5;
+  outline: 3px solid #c200fb;
   outline-offset: 4px;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -286,7 +286,7 @@
 }
 .capacity-picker input {
   width: auto;
-  accent-color: #07529a;
+  accent-color: #970546;
 }
 @media (max-width: 1150px) {
   .barn-grid {
@@ -318,7 +318,7 @@
   color: #17665b;
 }
 .barn-evidence-line {
-  color: #07529a;
+  color: #970546;
   font-weight: 700;
 }
 .barn-indicators {
@@ -330,8 +330,8 @@
 .barn-indicators span {
   padding: 4px 7px;
   border-radius: 999px;
-  background: #edf4fc;
-  color: #315879;
+  background: #f8edfc;
+  color: #673179;
   font-size: 10px;
 }
 .barn-indicators.detail span {
@@ -343,18 +343,18 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: #f7faff;
+  background: #fdf7ff;
 }
 .barn-assessment span,
 .barn-assessment p {
   font-size: 11px;
-  color: #586e8a;
+  color: #7e588a;
   margin: 0;
 }
 .barn-next-step {
   margin-top: 14px;
   padding: 13px;
-  border-left: 3px solid #ff7900;
+  border-left: 3px solid #ec7d10;
   background: #fff8ed;
 }
 .barn-next-step p {

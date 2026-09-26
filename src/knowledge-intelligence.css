@@ -9,19 +9,19 @@
   margin: 22px 0;
 }
 .intelligence-summary > span {
-  background: #eef4ff;
+  background: #fbeeff;
   border-radius: 12px;
   padding: 16px;
-  color: #395778;
+  color: #683978;
 }
 .intelligence-summary strong {
   display: block;
   font-size: 27px;
-  color: #082b96;
+  color: #8200a9;
 }
 .intelligence-method {
   font-size: 12px;
-  border-left: 3px solid #ffd43b;
+  border-left: 3px solid #ffbc0a;
   padding-left: 12px;
 }
 .intelligence-filters {
@@ -35,17 +35,17 @@
   gap: 14px;
 }
 .intelligence-finding {
-  border: 1px solid #d5e2f2;
+  border: 1px solid #ebd5f2;
   background: #fff;
   border-radius: 14px;
   padding: 20px;
 }
 .intelligence-finding:first-child {
-  border-top: 3px solid #ff7900;
+  border-top: 3px solid #ec7d10;
 }
 .intelligence-priority {
   font-size: 11px;
-  color: #526986;
+  color: #795286;
   margin-bottom: 8px;
 }
 .intelligence-finding h3 {
@@ -53,7 +53,7 @@
   margin-bottom: 7px;
 }
 .intelligence-next {
-  background: #f2f7ff;
+  background: #fcf2ff;
   padding: 10px 12px;
   margin: 12px 0;
   border-radius: 8px;
@@ -63,7 +63,7 @@
 }
 .knowledge-intelligence details {
   margin-top: 20px;
-  color: #395778;
+  color: #683978;
 }
 @media (max-width: 600px) {
   .intelligence-summary {

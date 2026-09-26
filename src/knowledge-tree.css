@@ -1,5 +1,5 @@
 .orchard {
-  --tree-ink: #102c54;
+  --tree-ink: #431054;
 }
 .orchard-header {
   display: flex;
@@ -24,7 +24,7 @@
 .orchard-eyebrow {
   font-size: 10px;
   letter-spacing: 2px;
-  color: #173dc5;
+  color: #c200fb;
   font-weight: 750;
 }
 .orchard-toolbar {
@@ -60,9 +60,9 @@
 .ecosystem-search-panel {
   margin: 0 0 22px;
   padding: 18px;
-  border: 1px solid #d5e2f2;
+  border: 1px solid #ebd5f2;
   border-radius: 14px;
-  background: #f8fbff;
+  background: #fdf8ff;
 }
 .ecosystem-search-row {
   display: flex;
@@ -94,7 +94,7 @@
 .ecosystem-result-count {
   margin-top: 14px;
   font-size: 12px;
-  color: #07529a;
+  color: #970546;
 }
 .ecosystem-search-empty {
   padding: 15px 0;
@@ -127,7 +127,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #07529a;
+  color: #970546;
 }
 .orchard-scroll {
   overflow: auto;
@@ -136,8 +136,8 @@
   scrollbar-gutter: stable;
   height: 620px;
   background:
-    radial-gradient(#a9c5e54d 0.8px, transparent 0.8px) 0 0/20px 20px,
-    #f8fbff;
+    radial-gradient(#d6a9e54d 0.8px, transparent 0.8px) 0 0/20px 20px,
+    #fdf8ff;
 }
 .orchard-tree {
   display: block;
@@ -149,11 +149,11 @@
 }
 .orchard-node:focus-visible rect,
 .orchard-node:focus-visible circle {
-  stroke: #ff7900;
+  stroke: #ec7d10;
   stroke-width: 4px;
 }
 .orchard-node:hover {
-  filter: drop-shadow(0 3px 5px #102c5420);
+  filter: drop-shadow(0 3px 5px #43105420);
 }
 .orchard-view-controls {
   display: flex;
@@ -211,7 +211,7 @@
   line-height: 1.7;
 }
 .orchard-welcome > svg {
-  color: #009cde;
+  color: #ec0868;
 }
 .orchard-welcome p,
 .orchard-welcome small {
@@ -245,7 +245,7 @@
   background: none;
   width: 100%;
   text-align: left;
-  color: #173dc5;
+  color: #c200fb;
 }
 .orchard-connection small,
 .orchard-bin-row small,
@@ -276,7 +276,7 @@
 .fruit-source {
   max-height: 200px;
   overflow: auto;
-  background: #edf4fc;
+  background: #f8edfc;
   border-radius: 10px;
   padding: 15px;
   margin-bottom: 20px;
@@ -288,8 +288,8 @@
   margin-bottom: 15px;
 }
 .orchard-results button {
-  background: #dcefff;
-  color: #07529a;
+  background: #f6dcff;
+  color: #970546;
   padding: 8px 12px;
   border: 0;
   border-radius: 15px;
@@ -343,7 +343,7 @@
 .learning-meaning {
   font-size: 18px;
   font-weight: 650;
-  color: #07529a;
+  color: #970546;
 }
 .modal:has(.learning-workspace),
 .modal:has(.knowledge-focus) {
@@ -368,14 +368,14 @@
   align-items: center;
   text-align: left;
   gap: 10px;
-  background: #edf4fc;
-  border: 1px solid #d5e2f2;
+  background: #f8edfc;
+  border: 1px solid #ebd5f2;
   border-radius: 10px;
   padding: 13px;
-  color: #395778;
+  color: #683978;
 }
 .learning-layer-nav button[aria-selected="true"] {
-  background: #082b96;
+  background: #8200a9;
   color: white;
 }
 .learning-layer-nav button > span {
@@ -395,27 +395,27 @@
 .learning-component-section h4 {
   margin: 6px 0;
   padding: 7px 3px;
-  color: #07529a;
+  color: #970546;
   font-size: 12px;
   letter-spacing: 0.6px;
-  border-bottom: 1px solid #d5e2f2;
+  border-bottom: 1px solid #ebd5f2;
 }
 .learning-workspace textarea,
 .knowledge-focus textarea {
-  background: #f8fbff;
+  background: #fdf8ff;
   line-height: 1.7;
 }
 .learning-workspace details,
 .knowledge-focus details {
   padding: 15px;
-  background: #edf4fc;
+  background: #f8edfc;
   border-radius: 10px;
   margin: 12px 0;
 }
 .learning-workspace summary,
 .knowledge-focus summary {
   cursor: pointer;
-  color: #07529a;
+  color: #970546;
 }
 .learning-history {
   max-height: 350px;
@@ -423,16 +423,16 @@
 }
 .learning-history article,
 .taste-question {
-  border: 1px solid #d5e2f2;
+  border: 1px solid #ebd5f2;
   padding: 18px;
   border-radius: 12px;
   margin: 12px 0;
 }
 .learning-history small {
-  color: #586e8a;
+  color: #7e588a;
 }
 .taste-reveal {
-  background: #edf4fc;
+  background: #f8edfc;
   padding: 20px;
   border-radius: 14px;
 }
@@ -441,7 +441,7 @@
   flex-wrap: wrap;
 }
 .overlay:has(.knowledge-focus) {
-  background: #f3f7fd;
+  background: #fbf3fd;
 }
 .modal:has(.knowledge-focus) {
   box-shadow: none;
@@ -453,7 +453,7 @@
 }
 .graft-details section {
   padding: 15px;
-  border: 1px solid #d5e2f2;
+  border: 1px solid #ebd5f2;
   border-radius: 10px;
   margin-bottom: 10px;
 }
@@ -486,9 +486,9 @@
   flex-shrink: 0;
 }
 .ecosystem-tabs button {
-  border: 1px solid #a9c5e5;
+  border: 1px solid #d6a9e5;
   background: #fff;
-  color: #082b96;
+  color: #8200a9;
   padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;
@@ -496,7 +496,7 @@
   font: inherit;
 }
 .ecosystem-tabs [aria-selected="true"] {
-  background: #082b96;
+  background: #8200a9;
   color: #fff;
 }
 .ecosystem-tab-item [role="tab"] {
@@ -506,7 +506,7 @@
   border-radius: 0 10px 10px 0;
 }
 .ecosystem-tabs button:focus-visible {
-  outline: 3px solid #ff7900;
+  outline: 3px solid #ec7d10;
   outline-offset: 2px;
 }
 .ecosystem-tabs-workspace > [hidden] {

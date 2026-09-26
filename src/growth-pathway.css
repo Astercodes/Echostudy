@@ -1,15 +1,15 @@
 .growth-pathway {
-  --gp-blue: #082b96;
-  --gp-orange: #ff7900;
-  --gp-line: #dfe6f2;
-  color: #172d51;
+  --gp-blue: #8200a9;
+  --gp-orange: #ec7d10;
+  --gp-line: #eddff2;
+  color: #421751;
 }
 .growth-pathway-hero {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   align-items: center;
   gap: 36px;
-  background: linear-gradient(115deg, #082b96, #173dc5);
+  background: linear-gradient(115deg, #8200a9, #c200fb);
   color: #fff;
   border-radius: 24px;
   padding: 44px;
@@ -28,7 +28,7 @@
   margin: 18px 0;
 }
 .growth-pathway-hero p {
-  color: #e6edff;
+  color: #f9e6ff;
   max-width: 530px;
   line-height: 1.7;
   margin-bottom: 24px;
@@ -37,8 +37,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #ff7900;
-  color: #102657;
+  background: #ec7d10;
+  color: #451057;
   border: 0;
 }
 .pathway-illustration {
@@ -56,13 +56,13 @@
   width: 220px;
   background: #ffffff12;
   padding: 18px 22px;
-  box-shadow: 0 15px 28px #00144322;
+  box-shadow: 0 15px 28px #32004322;
   font-weight: 600;
 }
 .pathway-illustration span:nth-of-type(2) {
   transform: translateX(30px);
   background: #fff;
-  color: #082b96;
+  color: #8200a9;
 }
 .pathway-illustration span:last-of-type {
   border-color: #ffbb69;
@@ -72,7 +72,7 @@
   display: block;
   height: 24px;
   width: 2px;
-  background: #ff7900;
+  background: #ec7d10;
 }
 .pathway-library {
   display: grid;
@@ -82,28 +82,28 @@
 .pathway-library-card {
   font: inherit;
   text-align: left;
-  color: #172d51;
+  color: #421751;
   background: white;
   border: 1px solid var(--gp-line);
   border-radius: 20px;
   padding: 26px;
   cursor: pointer;
-  box-shadow: 0 8px 25px #082b9608;
+  box-shadow: 0 8px 25px #8200a908;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
 }
 .pathway-library-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 26px #082b9612;
+  box-shadow: 0 12px 26px #8200a912;
 }
 .pathway-library-card > svg {
-  color: #ff7900;
+  color: #ec7d10;
   margin-bottom: 22px;
 }
 .pathway-library-card small {
   display: block;
-  color: #526787;
+  color: #7a5287;
 }
 .pathway-library-card h3 {
   font-size: 20px;
@@ -113,12 +113,12 @@
 .pathway-library-card progress {
   width: 100%;
   height: 5px;
-  accent-color: #173dc5;
+  accent-color: #c200fb;
 }
 .pathway-library-card > span {
   display: flex;
   justify-content: space-between;
-  color: #082b96;
+  color: #8200a9;
   margin-top: 22px;
   font-weight: 650;
 }
@@ -133,7 +133,7 @@
   margin: 22px 0;
 }
 .pathway-empty > svg {
-  color: #ff7900;
+  color: #ec7d10;
 }
 .pathway-empty h3 {
   font-size: 24px;
@@ -142,7 +142,7 @@
 .pathway-empty p {
   max-width: 480px;
   line-height: 1.7;
-  color: #526787;
+  color: #7a5287;
 }
 .pathway-heading {
   display: flex;
@@ -157,13 +157,13 @@
   margin: 10px 0;
 }
 .pathway-heading p {
-  color: #526787;
+  color: #7a5287;
 }
 .pathway-back {
   border: 0;
   padding: 8px 0;
   background: none;
-  color: #082b96;
+  color: #8200a9;
   font: inherit;
   cursor: pointer;
   font-weight: 600;
@@ -183,7 +183,7 @@
 }
 .curriculum-nav .eyebrow {
   font-size: 10px;
-  color: #526787;
+  color: #7a5287;
 }
 .curriculum-nav nav {
   max-height: 640px;
@@ -198,7 +198,7 @@
   text-align: left;
   border: 0;
   background: transparent;
-  color: #293f60;
+  color: #522960;
   padding: 14px;
   border-radius: 12px;
   cursor: pointer;
@@ -207,7 +207,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #66768f;
+  color: #85668f;
 }
 .curriculum-nav nav button strong {
   display: block;
@@ -219,12 +219,12 @@
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #64758e;
+  color: #84648e;
 }
 .curriculum-nav nav button[aria-current="step"] {
-  background: #eaf0ff;
-  box-shadow: inset 3px 0 #ff7900;
-  color: #082b96;
+  background: #faeaff;
+  box-shadow: inset 3px 0 #ec7d10;
+  color: #8200a9;
 }
 .curriculum-nav input {
   width: 100%;
@@ -246,7 +246,7 @@
   padding: 8px 4px 18px;
 }
 .curriculum-level .eyebrow {
-  color: #082b96;
+  color: #8200a9;
 }
 .curriculum-level h2 {
   font-size: 28px;
@@ -254,7 +254,7 @@
   margin: 10px 0;
 }
 .curriculum-level p {
-  color: #526787;
+  color: #7a5287;
   line-height: 1.6;
   max-width: 700px;
 }
@@ -266,7 +266,7 @@
   padding: 18px 22px;
 }
 .lesson-directory > summary {
-  color: #082b96;
+  color: #8200a9;
   cursor: pointer;
   font-weight: 650;
 }
@@ -274,13 +274,13 @@
   float: right;
   font-weight: 400;
   font-size: 12px;
-  color: #64758e;
+  color: #84648e;
 }
 .lesson-directory > div {
   padding-top: 8px;
 }
 .lesson-directory h4 {
-  color: #526787;
+  color: #7a5287;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -293,38 +293,38 @@
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid #eef1f7;
+  border-bottom: 1px solid #f5eef7;
   text-align: left;
   font: inherit;
   font-size: 13px;
   padding: 14px 4px;
-  color: #172d51;
+  color: #421751;
   cursor: pointer;
 }
 .lesson-directory button > span {
-  color: #173dc5;
+  color: #c200fb;
 }
 .lesson-directory button small {
   margin-left: auto;
   font-size: 10px;
-  color: #64758e;
+  color: #84648e;
   white-space: nowrap;
 }
 .lesson-directory button[aria-pressed="true"] {
-  color: #082b96;
-  background: #edf3ff;
+  color: #8200a9;
+  background: #fbedff;
   border-radius: 8px;
 }
 .lesson-focus {
   border: 1px solid var(--gp-line);
-  border-top: 4px solid #173dc5;
+  border-top: 4px solid #c200fb;
   border-radius: 20px;
   background: #fff;
   padding: 30px;
-  box-shadow: 0 12px 35px #082b9608;
+  box-shadow: 0 12px 35px #8200a908;
 }
 .lesson-focus.step-stretch {
-  border-top-color: #ff7900;
+  border-top-color: #ec7d10;
 }
 .lesson-focus > header {
   display: flex;
@@ -332,13 +332,13 @@
   gap: 12px;
 }
 .lesson-focus .eyebrow {
-  color: #536987;
+  color: #7a5387;
   font-size: 10px;
 }
 .lesson-status {
   font-size: 11px;
-  color: #082b96;
-  border: 1px solid #dbe5ff;
+  color: #8200a9;
+  border: 1px solid #f6dbff;
   border-radius: 30px;
   padding: 4px 9px;
 }
@@ -349,14 +349,14 @@
   margin: 20px 0 14px;
 }
 .lesson-objective {
-  color: #4d617d;
+  color: #714d7d;
   line-height: 1.75;
 }
 .lesson-meta {
   display: flex;
   gap: 18px;
   padding: 16px 0;
-  color: #082b96;
+  color: #8200a9;
   font-size: 12px;
 }
 .lesson-meta span {
@@ -366,7 +366,7 @@
 }
 .lesson-prerequisite {
   font-size: 12px;
-  color: #64758e;
+  color: #84648e;
   padding-bottom: 12px;
 }
 .lesson-concepts {
@@ -381,7 +381,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px 32px;
   padding-left: 22px;
-  color: #405675;
+  color: #684075;
   line-height: 1.5;
   font-size: 13px;
 }
@@ -389,10 +389,10 @@
   grid-template-columns: 1fr;
 }
 .lesson-concepts li::marker {
-  color: #173dc5;
+  color: #c200fb;
 }
 .lesson-evidence {
-  border-left: 3px solid #ff7900;
+  border-left: 3px solid #ec7d10;
   background: #fff7ec;
   padding: 16px 20px;
   border-radius: 0 10px 10px 0;
@@ -410,7 +410,7 @@
 }
 .lesson-focus summary {
   font-size: 13px;
-  color: #082b96;
+  color: #8200a9;
   font-weight: 650;
   cursor: pointer;
 }
@@ -436,7 +436,7 @@
   gap: 8px;
 }
 .growth-step-resources a {
-  color: #173dc5;
+  color: #c200fb;
 }
 .growth-goal-options {
   display: grid;
@@ -447,10 +447,10 @@
 }
 .growth-goal-options button {
   font: inherit;
-  border: 1px solid var(--gp-line, #dfe6f2);
+  border: 1px solid var(--gp-line, #eddff2);
   border-radius: 12px;
   background: #fff;
-  color: #172d51;
+  color: #421751;
   padding: 14px;
   text-align: left;
   cursor: pointer;
@@ -458,15 +458,15 @@
 .growth-goal-options small {
   display: block;
   font-size: 10px;
-  color: #63758e;
+  color: #83638e;
   margin-bottom: 5px;
 }
 .growth-goal-options button[aria-pressed="true"] {
-  border-color: #173dc5;
-  background: #edf3ff;
+  border-color: #c200fb;
+  background: #fbedff;
 }
 .pathway-builder {
-  color: #172d51;
+  color: #421751;
 }
 .pathway-builder .form-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -474,14 +474,14 @@
 .pathway-builder .optional-generation {
   margin-top: 22px;
   padding-top: 18px;
-  border-top: 1px solid #dfe6f2;
+  border-top: 1px solid #eddff2;
   font-size: 13px;
 }
 .optional-generation summary {
   cursor: pointer;
 }
 .curriculum-preview > details {
-  border: 1px solid #dfe6f2;
+  border: 1px solid #eddff2;
   border-radius: 12px;
   padding: 14px;
   margin: 12px 0;
@@ -494,7 +494,7 @@
 .curriculum-preview summary small {
   display: block;
   font-weight: 400;
-  color: #526787;
+  color: #7a5287;
 }
 .curriculum-preview p {
   line-height: 1.7;
@@ -506,7 +506,7 @@
 .pathway-legacy {
   margin-top: 25px;
   padding: 20px;
-  border: 1px solid #dfe6f2;
+  border: 1px solid #eddff2;
   border-radius: 14px;
 }
 .growth-pathway p,
@@ -624,29 +624,29 @@
 .growth-pathway select,
 .growth-pathway textarea {
   background: #fff;
-  color: #172d51;
-  border: 1px solid #dfe6f2;
+  color: #421751;
+  border: 1px solid #eddff2;
 }
 .growth-pathway .btn:not(.primary) {
   background: #fff;
-  border: 1px solid #dfe6f2;
-  color: #082b96;
+  border: 1px solid #eddff2;
+  color: #8200a9;
 }
 
 .subtopic-group {
-  border-top: 1px solid #dfe6f2;
+  border-top: 1px solid #eddff2;
   padding: 16px 0;
 }
 .subtopic-group summary {
   cursor: pointer;
-  color: #082b96;
+  color: #8200a9;
   font-weight: 600;
   line-height: 1.6;
 }
 .subtopic-group summary small {
   display: block;
   margin-left: 18px;
-  color: #526787;
+  color: #7a5287;
   font-size: 12px;
   font-weight: 400;
 }
@@ -655,7 +655,7 @@
 }
 .lesson-directory > p {
   font-size: 13px;
-  color: #526787;
+  color: #7a5287;
 }
 .pathway-library-heading {
   margin-top: 40px !important;
@@ -676,10 +676,10 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  color: #082b96;
+  color: #8200a9;
 }
 .pathway-library-card > header > svg {
-  color: #ff7900;
+  color: #ec7d10;
 }
 .pathway-library-card > header > small {
   font-size: 11px;
@@ -708,7 +708,7 @@
 .pathway-library-card p {
   font-size: 12px;
   margin: 0 0 12px;
-  color: #526787;
+  color: #7a5287;
 }
 .pathway-card-open > span {
   display: flex;
@@ -716,7 +716,7 @@
   align-items: center;
   font-size: 12px;
   font-weight: 600;
-  color: #082b96;
+  color: #8200a9;
   margin-top: 13px;
 }
 .pathway-card-menu {
@@ -727,11 +727,11 @@
   list-style: none;
   cursor: pointer;
   padding: 4px 8px;
-  border: 1px solid #dfe6f2;
+  border: 1px solid #eddff2;
   border-radius: 8px;
   font-size: 13px;
   letter-spacing: 1px;
-  color: #082b96;
+  color: #8200a9;
 }
 .pathway-card-menu summary::-webkit-details-marker {
   display: none;
@@ -744,9 +744,9 @@
   width: 185px;
   background: #fff;
   padding: 6px;
-  border: 1px solid #dfe6f2;
+  border: 1px solid #eddff2;
   border-radius: 12px;
-  box-shadow: 0 12px 32px #082b9626;
+  box-shadow: 0 12px 32px #8200a926;
 }
 .pathway-card-menu button {
   display: block;
@@ -756,13 +756,13 @@
   border-radius: 7px;
   text-align: left;
   background: white;
-  color: #172d51;
+  color: #421751;
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 .pathway-card-menu button:hover {
-  background: #edf3ff;
+  background: #fbedff;
 }
 .pathway-card-menu button:disabled {
   opacity: 0.4;
@@ -773,7 +773,7 @@
 }
 .pathway-card-open:focus-visible,
 .pathway-card-menu summary:focus-visible {
-  outline: 2px solid #173dc5;
+  outline: 2px solid #c200fb;
   outline-offset: 4px;
 }
 @media (max-width: 600px) {
@@ -796,20 +796,20 @@
   margin: 14px 0;
 }
 .scope-selection-bar {
-  background: #edf3ff;
+  background: #fbedff;
   padding: 12px;
   border-radius: 10px;
 }
 .scope-selection-bar > span {
   font-size: 12px;
-  color: #082b96;
+  color: #8200a9;
   margin-right: auto;
 }
 .lesson-directory .subtopic-actions .btn,
 .lesson-directory .scope-selection-bar .btn {
   width: auto;
   padding: 8px 12px;
-  border: 1px solid #dfe6f2;
+  border: 1px solid #eddff2;
   font-size: 12px;
 }
 .scope-lesson-row {
@@ -821,14 +821,14 @@
   width: 18px;
   height: 18px;
   flex: 0 0 18px;
-  accent-color: #173dc5;
+  accent-color: #c200fb;
 }
 .scope-lesson-row > button {
   flex: 1;
   min-width: 0;
 }
 .scope-workspace details {
-  border: 1px solid #dfe6f2;
+  border: 1px solid #eddff2;
   padding: 12px;
   border-radius: 10px;
 }
@@ -840,7 +840,7 @@
 }
 .scope-workspace p {
   font-size: 13px;
-  color: #526787;
+  color: #7a5287;
   line-height: 1.6;
 }
 .scope-workspace .form-actions {

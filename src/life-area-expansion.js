@@ -25,7 +25,7 @@ export const additionalSubAreas = {
     "Major life transitions",
     "Grief/loss",
     "Mortality",
-    "End-of-life planning",
+    "End of life planning",
     "Aging and life course",
     "Intellectual legacy",
   ],
@@ -33,7 +33,7 @@ export const additionalSubAreas = {
 export const additionalAreas = [
   [
     "identity",
-    "Identity & self-knowledge",
+    "Identity & self knowledge",
     "#ffd7b0",
     [
       "Identity",
@@ -57,7 +57,7 @@ export const additionalAreas = [
   [
     "character",
     "Character & virtue",
-    "#173dc5",
+    "#c200fb",
     [
       "Integrity",
       "Honesty",
@@ -80,7 +80,7 @@ export const additionalAreas = [
   [
     "cognitive",
     "Cognitive & brain development",
-    "#009cde",
+    "#ec0868",
     [
       "Attention",
       "Concentration",
@@ -100,7 +100,7 @@ export const additionalAreas = [
   [
     "communication",
     "Communication & expression",
-    "#ff7900",
+    "#ec7d10",
     [
       "Speaking",
       "Writing",
@@ -121,7 +121,7 @@ export const additionalAreas = [
   [
     "leadership",
     "Leadership & influence",
-    "#07529a",
+    "#970546",
     [
       "Self-leadership",
       "People leadership",
@@ -142,7 +142,7 @@ export const additionalAreas = [
   [
     "civic",
     "Community, citizenship & civic life",
-    "#dcefff",
+    "#f6dcff",
     [
       "Citizenship",
       "Civic knowledge",
@@ -161,7 +161,7 @@ export const additionalAreas = [
   [
     "digital",
     "Digital & information life",
-    "#009cde",
+    "#ec0868",
     [
       "Digital identity",
       "Online reputation",

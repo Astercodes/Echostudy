@@ -4,9 +4,9 @@ export const ENVIRONMENTS = {
   internal: {
     title: "Internal",
     subtitle: "Rehearse within",
-    color: "#173dc5",
+    color: "#c200fb",
     description:
-      "Mental rehearsal, decision walkthroughs, visualization, reflection and self-explanation.",
+      "Mental rehearsal, decision walkthroughs, visualization, reflection and self explanation.",
     prompts: [
       "Picture the situation. What is happening and what matters?",
       "Walk through your response. What would you do, and why?",
@@ -17,13 +17,13 @@ export const ENVIRONMENTS = {
   simulated: {
     title: "Simulated",
     subtitle: "Try a constructed challenge",
-    color: "#009cde",
+    color: "#ec0868",
     description:
-      "Cases, mock interviews, practice presentations, role-play and scenario challenges.",
+      "Cases, mock interviews, practice presentations, role play and scenario challenges.",
     prompts: [
       "Respond to the opening scenario. Show what you would say or do.",
       "A constraint changes: you have half the time and someone challenges your approach. Respond.",
-      "Explain the trade-off you made. What evidence would change your decision?",
+      "Explain the trade off you made. What evidence would change your decision?",
       "Replay the weakest moment using a different approach.",
     ],
   },
@@ -41,16 +41,16 @@ export const ENVIRONMENTS = {
     ],
   },
   real: {
-    title: "Real-world",
+    title: "Real world",
     subtitle: "Use it where it matters",
-    color: "#df352d",
+    color: "#fc2f00",
     description:
       "Actual work, home, school, community, projects, relationships and creative practice.",
     prompts: [
       "Define the real situation, the people involved and the constraints.",
       "Take the action within your responsibility. Record what you actually did.",
       "Observe the outcome. What changed, and what evidence supports that?",
-      "Review consequences and follow-up. What will you do or study next?",
+      "Review consequences and follow up. What will you do or study next?",
     ],
   },
 };
@@ -72,7 +72,7 @@ const examples = [
     /^management$/i,
     "Grove",
     "Coordinate a small team initiative",
-    "Plan, coordinate and review a small team initiative this month. Combine people management, communication and decision-making.",
+    "Plan, coordinate and review a small team initiative this month. Combine people management, communication and decision making.",
     "A shared plan, named responsibilities and a review of the result.",
   ],
   [
@@ -92,16 +92,16 @@ const examples = [
   [
     /core principles.*manag/i,
     "Stem",
-    "Exercise expectation-setting, delegation and feedback",
-    "For one week, use expectation-setting, delegation and feedback in one responsibility involving another person.",
+    "Exercise expectation setting, delegation and feedback",
+    "For one week, use expectation setting, delegation and feedback in one responsibility involving another person.",
     "Clear expectations, an agreed delegation and a recorded feedback conversation.",
   ],
   [
     /performance management/i,
     null,
     "Set and review a performance expectation",
-    "Agree a measurable expectation with someone and set a follow-up point. Rehearse the discussion first if useful.",
-    "An agreed measure, a follow-up date and a record of how progress will be reviewed.",
+    "Agree a measurable expectation with someone and set a follow up point. Rehearse the discussion first if useful.",
+    "An agreed measure, a follow up date and a record of how progress will be reviewed.",
   ],
   [
     /^feedback$/i,
@@ -114,14 +114,14 @@ const examples = [
     /\bSBI\b|situation.behavio[u]?r.impact/i,
     null,
     "Rewrite three vague feedback statements",
-    "Rewrite “be more professional”, “communicate better” and “you are unreliable” using Situation–Behavior–Impact. Separate observations from interpretation.",
+    "Rewrite “be more professional”, “communicate better” and “you are unreliable” using Situation · Behavior · Impact. Separate observations from interpretation.",
     "Three statements with an observable situation, behaviour and impact; no personality labels.",
   ],
   [
     /corrective feedback/i,
     null,
     "Handle a defensive response to corrective feedback",
-    "Rehearse a corrective-feedback conversation. Your partner says: “That is unfair—you only notice my mistakes.” Respond, clarify the behaviour and agree a next step.",
+    "Rehearse a corrective feedback conversation. Your partner says: “That is unfair · you only notice my mistakes.” Respond, clarify the behaviour and agree a next step.",
     "A calm acknowledgement, a specific example, an invitation to respond and a clear agreement.",
   ],
 ];

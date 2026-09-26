@@ -165,14 +165,14 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
           <h2>There is room for every part of you.</h2>
           <p>
             Create as many goals as you need, at every horizon. Link them to a
-            life area and an optional sub-area.
+            life area and an optional sub area.
           </p>
         </div>
         <div className="area-total">
           <strong>{areas.length}</strong>
           <span>life areas</span>
           <small>
-            {areas.reduce((n, a) => n + a.subAreas.length, 0)} sub-areas
+            {areas.reduce((n, a) => n + a.subAreas.length, 0)} sub areas
           </small>
         </div>
       </div>
@@ -202,7 +202,7 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
         <>
           <p className="muted">
             Your starting areas are editable. Rename them, add your own, and
-            grow the sub-areas that matter to you.
+            grow the sub areas that matter to you.
           </p>
           <div className="life-area-grid">
             {areas.map((a, index) => {
@@ -227,11 +227,11 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
                   </div>
                   <h3>{a.name}</h3>
                   <small>
-                    {a.subAreas.length} sub-areas · All five horizons
+                    {a.subAreas.length} sub areas · All five horizons
                   </small>
                   <details className="sub-area-details">
                     <summary>
-                      Explore sub-areas <ChevronRight size={15} />
+                      Explore sub areas <ChevronRight size={15} />
                     </summary>
                     <ul>
                       {a.subAreas.map((s) => (
@@ -254,7 +254,7 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
                       ))}
                     </ul>
                     {!a.subAreas.length && (
-                      <p>No sub-areas yet. Add them with Edit area.</p>
+                      <p>No sub areas yet. Add them with Edit area.</p>
                     )}
                   </details>
                   <div className="area-card-actions">
@@ -262,7 +262,7 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
                       className="text-btn"
                       onClick={() => setAreaEditor(structuredClone(a))}
                     >
-                      Edit area & sub-areas
+                      Edit area & sub areas
                     </button>
                     <button
                       className="text-btn"
@@ -307,14 +307,14 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
                 ))}
               </select>
             </Field>
-            <Field label="Filter by sub-area">
+            <Field label="Filter by sub area">
               <select
-                aria-label="Filter by sub-area"
+                aria-label="Filter by sub area"
                 value={subAreaId}
                 disabled={!area}
                 onChange={(e) => setSubAreaId(e.target.value)}
               >
-                <option value="all">All sub-areas</option>
+                <option value="all">All sub areas</option>
                 {area?.subAreas.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -425,7 +425,7 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
           )}
           <p className="muted">
             Parent progress is the average of its children. Use + on a goal to
-            add another shorter-horizon goal beneath it.
+            add another shorter horizon goal beneath it.
           </p>
         </>
       )}
@@ -447,7 +447,7 @@ export default function Goals({ data, save, edit, create, notify, buildPathway }
                 : [...d.lifeAreas, a],
             }));
             setAreaEditor(null);
-            notify("Life area and sub-areas saved.");
+            notify("Life area and sub areas saved.");
           }}
         />
       )}
@@ -563,12 +563,12 @@ export function GoalModal({
         {hasChildren && (
           <p className="muted">
             This goal has child goals, so its life area and horizon stay
-            connected to them. Its title and sub-area can be edited.
+            connected to them. Its title and sub area can be edited.
           </p>
         )}
-        <Field label="Sub-area (optional)">
+        <Field label="Sub area (optional)">
           <select
-            aria-label="Sub-area (optional)"
+            aria-label="Sub area (optional)"
             value={g.subAreaId || ""}
             onChange={(e) => { setManualArea(true); setG({ ...g, subAreaId: e.target.value }); }}
           >
@@ -606,19 +606,19 @@ export function GoalModal({
             <select aria-label={`Additional sub-area ${i+1}`} value={location.subAreaId || ''} onChange={e=>setG({...g,locations:g.locations.map((l,j)=>j===i?{...l,subAreaId:e.target.value}:l)})}><option value="">Whole life area</option>{areas.find(a=>a.id===location.areaId)?.subAreas.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select>
             <button type="button" className="text-btn" aria-label={`Remove additional location ${i+1}`} onClick={()=>setG({...g,locations:g.locations.filter((_,j)=>j!==i)})}>Remove</button>
           </div>)}
-          <Button type="button" onClick={()=>setG({...g,locations:[...(g.locations || []),{areaId:'',subAreaId:''}]})}>Add life area / sub-area</Button>
+          <Button type="button" onClick={()=>setG({...g,locations:[...(g.locations || []),{areaId:'',subAreaId:''}]})}>Add life area / sub area</Button>
           <fieldset className="goal-contribution-list"><legend>Other larger goals this contributes to</legend>
           {goals.filter(x=>x.id!==g.id && x.id!==g.parent && (!x.repeat || x.repeat==='none') && LEVELS.indexOf(x.level)<LEVELS.indexOf(g.level)).map(x=><label key={x.id}><input type="checkbox" checked={(g.contributesTo || []).includes(x.id)} onChange={e=>setG({...g,contributesTo:e.target.checked?[...(g.contributesTo || []),x.id]:(g.contributesTo || []).filter(id=>id!==x.id)})}/><span>{x.title}<small>{horizonLabels[x.level]} · {goalLocation(x,areas)}</small></span></label>)}
-          {!goals.some(x=>x.id!==g.id && x.id!==g.parent && (!x.repeat || x.repeat==='none') && LEVELS.indexOf(x.level)<LEVELS.indexOf(g.level)) && <p className="muted">Create a longer-horizon goal to link it here. Goals can belong to different life areas.</p>}
+          {!goals.some(x=>x.id!==g.id && x.id!==g.parent && (!x.repeat || x.repeat==='none') && LEVELS.indexOf(x.level)<LEVELS.indexOf(g.level)) && <p className="muted">Create a longer horizon goal to link it here. Goals can belong to different life areas.</p>}
           </fieldset>
         </details>
         <p className="muted">Life area and capacities are suggested from your goal wording. Review them here; your selections stay in place as you edit.</p>
         <Field label="Does this goal repeat?">
           <select aria-label="Does this goal repeat?" value={g.repeat || 'none'} disabled={hasChildren} onChange={e => setG({...g, repeat:e.target.value, due:'', periodStart:''})}>
-            <option value="none">One-time goal</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option><option value="yearly">Every year</option>
+            <option value="none">One time goal</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option><option value="yearly">Every year</option>
           </select>
         </Field>
-        {g.repeat && g.repeat !== 'none' ? <p className="auth-notice">Repeats {g.repeat}. Progress resets for each new {g.repeat === 'daily' ? 'day' : g.repeat === 'weekly' ? 'week (Monday–Sunday)' : g.repeat === 'yearly' ? 'calendar year (January–December)' : 'calendar month'}; previous progress is kept. No deadline to keep updating. Current period ends {goalPeriod(g.repeat, today()).end}.</p> : <Field label="Target date (optional)">
+        {g.repeat && g.repeat !== 'none' ? <p className="auth-notice">Repeats {g.repeat}. Progress resets for each new {g.repeat === 'daily' ? 'day' : g.repeat === 'weekly' ? "week (Monday · Sunday)" : g.repeat === 'yearly' ? "calendar year (January · December)" : 'calendar month'}; previous progress is kept. No deadline to keep updating. Current period ends {goalPeriod(g.repeat, today()).end}.</p> : <Field label="Target date (optional)">
           <input
             type="date"
             value={g.due || ""}
@@ -637,11 +637,11 @@ export function GoalModal({
             />
           </Field>
         )}
-        <details className="goal-capacity-review"><summary>Capacities this goal builds · {(g.capacityIds || []).length ? 'suggested — review or change' : 'optional'}</summary>
+        <details className="goal-capacity-review"><summary>Capacities this goal builds · {(g.capacityIds || []).length ? "suggested · review or change" : 'optional'}</summary>
           <p className="muted">Suggestions describe likely areas of development, not evidence that capacity has increased.</p>
           <CapacityPicker value={g.capacityIds || []} onChange={capacityIds => { setManualCapacity(true); setG({...g,capacityIds}); }}/>
         </details>
-        {g.periodHistory?.length > 0 && <details><summary>Previous periods ({g.periodHistory.length})</summary>{g.periodHistory.slice().reverse().map(p=><p key={p.start}>{p.start} – {p.end}: {p.progress}%</p>)}</details>}
+        {g.periodHistory?.length > 0 && <details><summary>Previous periods ({g.periodHistory.length})</summary>{g.periodHistory.slice().reverse().map(p=><p key={p.start}>{p.start} · {p.end}: {p.progress}%</p>)}</details>}
         {error && (
           <p className="error" role="alert">
             {error}
@@ -668,7 +668,7 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
   const existing = areas.some((x) => x.id === a.id);
   return (
     <Modal
-      title={existing ? "Edit life area & sub-areas" : "Create a life area"}
+      title={existing ? "Edit life area & sub areas" : "Create a life area"}
       onClose={close}
     >
       <form
@@ -730,7 +730,7 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
         </fieldset>
         <div className="section-head sub-area-head">
           <h3>
-            Sub-areas <small>({a.subAreas.length})</small>
+            Sub areas <small>({a.subAreas.length})</small>
           </h3>
           <button
             type="button"
@@ -740,7 +740,7 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
             }
           >
             <Plus size={15} />
-            Add sub-area
+            Add sub area
           </button>
         </div>
         <div className="sub-area-editor">
@@ -753,7 +753,7 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
                 <label>
                   <span>{i + 1}</span>
                   <input
-                    aria-label={"Sub-area " + (i + 1)}
+                    aria-label={"Sub area " + (i + 1)}
                     value={s.name}
                     placeholder="Name this part of your life"
                     maxLength="120"
@@ -763,12 +763,12 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
                 <button
                   type="button"
                   className="icon-btn"
-                  aria-label={"Remove sub-area " + (i + 1)}
+                  aria-label={"Remove sub area " + (i + 1)}
                   disabled={used}
                   title={
                     used
-                      ? "Move linked goals, Barns evidence and stretch activities before removing this sub-area."
-                      : "Remove sub-area"
+                      ? "Move linked goals, Barns evidence and stretch activities before removing this sub area."
+                      : "Remove sub area"
                   }
                   onClick={() =>
                     setA({
@@ -785,14 +785,14 @@ function LifeAreaModal({ area, areas, goals, evidence, close, submit }) {
         </div>
         {!a.subAreas.length && (
           <p className="muted">
-            Sub-areas are optional. Add them now or return as this area grows.
+            Sub areas are optional. Add them now or return as this area grows.
           </p>
         )}
         {a.subAreas.some((s) =>
           goals.some((g) => g.areaId === a.id && g.subAreaId === s.id),
         ) && (
           <p className="muted">
-            Sub-areas used by goals can be renamed. Move their goals before
+            Sub areas used by goals can be renamed. Move their goals before
             removing them.
           </p>
         )}

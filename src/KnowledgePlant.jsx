@@ -34,7 +34,7 @@ export default function KnowledgePlant({
     >
       <p>
         {grow
-          ? "Let this question grow into independent knowledge or a topic tree within a grove. Its source stays attached; your life-area catalog stays unchanged."
+          ? "Let this question grow into independent knowledge or a topic tree within a grove. Its source stays attached; your life area catalog stays unchanged."
           : "Knowledge produces questions. Select a passage below, then name the question or idea you want to plant. The source remains untouched."}
       </p>
       <form
@@ -125,7 +125,7 @@ export default function KnowledgePlant({
                   ))}
               </select>
             </Field>
-            <Field label="Source passage — select text to capture a seed">
+            <Field label="Source passage · select text to capture a seed">
               <textarea
                 readOnly
                 rows={5}

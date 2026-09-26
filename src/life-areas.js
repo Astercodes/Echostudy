@@ -6,12 +6,12 @@ const catalog = [
   [
     "faith",
     "Faith & spirituality",
-    "#173dc5",
+    "#c200fb",
     [
       "Faith and beliefs",
       "Relationship with God / spirituality",
       "Prayer and meditation",
-      "Scripture / sacred-text knowledge",
+      "Scripture / sacred text knowledge",
       "Worship",
       "Spiritual disciplines",
       "Discernment",
@@ -26,7 +26,7 @@ const catalog = [
   [
     "mind",
     "Mind & intellectual capacity",
-    "#009cde",
+    "#ec0868",
     [
       "Critical thinking",
       "Analytical reasoning",
@@ -71,7 +71,7 @@ const catalog = [
   [
     "health",
     "Physical health & vitality",
-    "#07529a",
+    "#970546",
     [
       "Nutrition",
       "Exercise",
@@ -96,7 +96,7 @@ const catalog = [
   [
     "knowledge",
     "Knowledge & education",
-    "#dcefff",
+    "#f6dcff",
     [
       "Formal education",
       "Professional education",
@@ -123,7 +123,7 @@ const catalog = [
   [
     "skills",
     "Skills & competence",
-    "#ff7900",
+    "#ec7d10",
     [
       "Writing",
       "Speaking",
@@ -145,13 +145,13 @@ const catalog = [
       "Networking",
       "Practical/life skills",
       "Craftsmanship",
-      "Domain-specific expertise",
+      "Domain specific expertise",
     ],
   ],
   [
     "career",
     "Career & professional life",
-    "#009cde",
+    "#ec0868",
     [
       "Career direction",
       "Professional identity",
@@ -167,7 +167,7 @@ const catalog = [
       "Credentials/certifications",
       "Compensation",
       "Workplace relationships",
-      "Work-life integration",
+      "Work life integration",
       "Career transitions",
       "Entrepreneurship as a career path",
     ],
@@ -175,7 +175,7 @@ const catalog = [
   [
     "business",
     "Business & entrepreneurship",
-    "#173dc5",
+    "#c200fb",
     [
       "Entrepreneurship",
       "Business ideas",
@@ -203,7 +203,7 @@ const catalog = [
   [
     "finance",
     "Personal finance & wealth",
-    "#07529a",
+    "#970546",
     [
       "Income",
       "Expenses",
@@ -255,7 +255,7 @@ const catalog = [
   [
     "marriage",
     "Marriage & romantic partnership",
-    "#173dc5",
+    "#c200fb",
     [
       "Dating/courtship",
       "Partner selection",
@@ -281,7 +281,7 @@ const catalog = [
   [
     "parenting",
     "Parenting & family life",
-    "#dcefff",
+    "#f6dcff",
     [
       "Preparing for parenthood",
       "Pregnancy/birth knowledge",
@@ -306,7 +306,7 @@ const catalog = [
   [
     "home",
     "Home & lifestyle",
-    "#ff7900",
+    "#ec7d10",
     [
       "Housing",
       "Home organization",
@@ -330,7 +330,7 @@ const catalog = [
   [
     "discipline",
     "Discipline & personal effectiveness",
-    "#07529a",
+    "#970546",
     [
       "Time management",
       "Attention management",
@@ -382,7 +382,7 @@ const catalog = [
   [
     "purpose",
     "Purpose, contribution & legacy",
-    "#009cde",
+    "#ec0868",
     [
       "Life purpose",
       "Calling",
@@ -436,13 +436,9 @@ export const LEGACY_GOAL_AREAS = [
 export function migrateWorkspace(state) {
   // Upgrade only the previous built-in palette; preserve custom user colors.
   const palette = {
-    "#00b7c7": "#009cde",
-    "#b00c60": "#173dc5",
-    "#658d10": "#07529a",
-    "#d7e525": "#ff7900",
-    "#bff5f5": "#dcefff",
-    "#fadf96": "#ffd7b0",
-  };
+"#00b7c7":"#ec0868", "#b00c60":"#c200fb", "#658d10":"#970546", "#d7e525":"#ec7d10", "#bff5f5":"#f6dcff", "#fadf96":"#ffd7b0",
+"#009cde":"#ec0868", "#173dc5":"#c200fb", "#082b96":"#8200a9", "#07529a":"#970546", "#ff7900":"#ec7d10", "#dcefff":"#f6dcff", "#ffd43b":"#ffbc0a", "#df352d":"#fc2f00"
+};
   const recolor = (value) =>
     Array.isArray(value)
       ? value.map(recolor)
@@ -493,9 +489,9 @@ export function validateLifeArea(area, areas) {
   if (!/^#[0-9a-f]{6}$/i.test(area.color)) return "Choose a palette color.";
   const names = area.subAreas.map((s) => normalized(s.name));
   if (names.some((n) => !n))
-    return "Name each sub-area or remove its empty row.";
+    return "Name each sub area or remove its empty row.";
   if (new Set(names).size !== names.length)
-    return "Use a different name for each sub-area within this area.";
+    return "Use a different name for each sub area within this area.";
   return "";
 }
 

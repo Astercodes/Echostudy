@@ -90,7 +90,7 @@ export default function KnowledgeTest({ node, persist, close }) {
           Assess: What do I currently know, and where are my gaps?
         </p>
         <p>
-          Test at any point. These results are self-assessed against your
+          Test at any point. These results are self assessed against your
           references. They do not move a fruit into Stretch.
         </p>
         <div className="segmented">
@@ -451,8 +451,8 @@ export default function KnowledgeTest({ node, persist, close }) {
             <h3>Performance profile</h3>
             <p>
               {profile.count} scored attempts · Accuracy:{" "}
-              {profile.accuracy ?? "—"}% · Consistency:{" "}
-              {profile.consistency ?? "—"}% · Improvement:{" "}
+              {profile.accuracy ?? " · "}% · Consistency:{" "}
+              {profile.consistency ?? " · "}% · Improvement:{" "}
               {profile.improvement === null
                 ? "More attempts needed"
                 : profile.improvement + " percentage points"}

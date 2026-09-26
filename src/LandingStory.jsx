@@ -24,7 +24,7 @@ const stages = [
     name: "Knowledge",
     icon: Network,
     question: "What do I need to know?",
-    copy: "Life Areas become Forests; Sub-Life Areas become Groves. Grow topic Trees with Roots, Stems, Branches, Leaves and Fruits. Graft connections across them.",
+    copy: "Life Areas become Forests; Sub Life Areas become Groves. Grow topic Trees with Roots, Stems, Branches, Leaves and Fruits. Graft connections across them.",
     example: "Leadership → Management → Feedback",
     next: "A connected idea becomes something you can study.",
   },

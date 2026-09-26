@@ -187,7 +187,7 @@ export default function Resources({ data, save, notify }) {
                       ))}
                     </select>
                   </Field>
-                  <Field label="Grove / Sub-life area">
+                  <Field label="Grove / Sub life area">
                     <select
                       value={groveFilter}
                       disabled={!areaFilter}
@@ -555,7 +555,7 @@ function AddResource({ data, close, submit, notify }) {
               ))}
             </select>
           </Field>
-          <Field label="Grove / Sub-life area">
+          <Field label="Grove / Sub life area">
             <select
               value={r.subAreaId}
               disabled={!r.areaId}

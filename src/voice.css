@@ -5,10 +5,10 @@
   margin-bottom: 7px;
 }
 .voice-recorder {
-  border: 1px solid #d5e2f2;
+  border: 1px solid #ebd5f2;
   border-radius: 10px;
   padding: 10px;
-  background: #f3f7fd;
+  background: #fbf3fd;
   font-size: 12px;
 }
 .voice-buttons {
@@ -22,8 +22,8 @@
   gap: 6px;
   align-items: center;
   background: white;
-  border: 1px solid #a9c5e5;
-  color: #07529a;
+  border: 1px solid #d6a9e5;
+  color: #970546;
   border-radius: 7px;
   padding: 8px 10px;
   font-size: 12px;
@@ -34,7 +34,7 @@
 }
 .voice-help {
   font-size: 11px;
-  color: #586e8a;
+  color: #7e588a;
   line-height: 1.6;
 }
 .voice-error {
@@ -54,13 +54,13 @@
   max-width: 200px;
 }
 .voice-clip {
-  border-top: 1px solid #d5e2f2;
+  border-top: 1px solid #ebd5f2;
   padding: 13px 0;
   margin-top: 10px;
 }
 .voice-clip small {
   display: block;
-  color: #586e8a;
+  color: #7e588a;
   margin-bottom: 8px;
 }
 .voice-clip audio {
@@ -72,10 +72,10 @@
 .voice-clip a {
   display: inline-block;
   margin-bottom: 12px;
-  color: #07529a;
+  color: #970546;
 }
 .voice-live {
   white-space: pre-wrap;
-  color: #102c54;
+  color: #431054;
   line-height: 1.6;
 }

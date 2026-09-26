@@ -18,7 +18,7 @@ const actions = [
   [
     "Squeeze",
     "Look beyond the obvious.",
-    "Investigate assumptions, exceptions, evidence, trade-offs and second-order effects. Capture what a surface reading would miss.",
+    "Investigate assumptions, exceptions, evidence, trade offs and second order effects. Capture what a surface reading would miss.",
     "Hidden assumptions · Counterevidence · Expert insights",
   ],
   [
@@ -102,12 +102,12 @@ export default function LandingDetails({ navigate }) {
             <em>Room for a lifetime of ideas.</em>
           </h2>
           <p>
-            Your life areas are forests. Their sub-areas are groves. Inside each
+            Your life areas are forests. Their sub areas are groves. Inside each
             grove, grow trees around the subjects you want to understand.
           </p>
           <p>
             Give each tree foundational roots and a core stem. Develop branches
-            and sub-branches, capture atomic knowledge as leaves, and explore
+            and sub branches, capture atomic knowledge as leaves, and explore
             deeper subjects as fruits. New questions become seeds for what comes
             next.
           </p>
@@ -220,7 +220,7 @@ export default function LandingDetails({ navigate }) {
         </div>
         <p className="landing-small">
           Search within the expanded learning components. Your notes save as you
-          work. Test uses self-assessment against references; its results do not
+          work. Test uses self assessment against references; its results do not
           certify readiness for practical work.
         </p>
       </section>
@@ -242,7 +242,7 @@ export default function LandingDetails({ navigate }) {
             <p>
               Describe the ability you will use, the activity you will attempt,
               and what successful practice looks like. Link it to goals, life
-              areas, sub-areas and the capacities it builds.
+              areas, sub areas and the capacities it builds.
             </p>
             <ul>
               <li>Set a practical objective with a clear outcome.</li>
@@ -279,7 +279,7 @@ export default function LandingDetails({ navigate }) {
                 and leadership capacity.
               </strong>
               <p>
-                Effort indicators show activity. Your self-assessment records
+                Effort indicators show activity. Your self assessment records
                 what you believe you can now handle.
               </p>
             </div>

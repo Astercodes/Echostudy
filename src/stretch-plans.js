@@ -2,7 +2,7 @@ export const HORIZONS = {
   daily: {
     name: "Daily",
     title: "Micro Stretch",
-    description: "Small deliberate behaviours · typically 5–15 minutes",
+    description: "Small deliberate behaviours · typically 5 · 15 minutes",
     example:
       "Ask one better question or practise listening in one conversation.",
     rank: 1,
@@ -18,7 +18,7 @@ export const HORIZONS = {
     name: "Monthly",
     title: "Performance Stretch",
     description: "A substantial performance challenge",
-    example: "Lead a meeting from planning through follow-up.",
+    example: "Lead a meeting from planning through follow up.",
     rank: 3,
   },
   quarterly: {

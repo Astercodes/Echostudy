@@ -50,7 +50,7 @@ export default function KnowledgeIntelligence({ data, focusIds, close, act }) {
           </span>
         </div>
         <p className="intelligence-method">
-          Analysis uses your content, graph, self-assessments, references and
+          Analysis uses your content, graph, self assessments, references and
           study records. Suggested connections use text and structural matches;
           they require your judgment. Missing records do not prove missing
           ability.
@@ -139,13 +139,13 @@ export default function KnowledgeIntelligence({ data, focusIds, close, act }) {
           <summary>How this analysis works</summary>
           <p>
             Latest results for each question take precedence over old failures.
-            Self-assessed accuracy below 80%, recorded misconceptions and
-            uncertain answers trigger diagnostic follow-up. Prerequisites match
+            Self assessed accuracy below 80%, recorded misconceptions and
+            uncertain answers trigger diagnostic follow up. Prerequisites match
             titles or aliases across the active ecosystem. Review intervals are
             3 days for weak evidence, 14 days for strong assessment results,
             otherwise 7 days. Connections are suggestions, never added
             automatically. Goal relevance increases priority only when there is
-            an explicit source or study-session link. The engine cannot
+            an explicit source or study session link. The engine cannot
             establish that a field covers everything in a discipline without a
             supplied curriculum.
           </p>

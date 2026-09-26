@@ -100,14 +100,14 @@ const NAV = [
   ["Barns", Library],
 ];
 const KINDS = {
-  combined: ["Study + Stretch", "#ff7900"],
-  stretch: ["Stretch practice", "#ff7900"],
-  deep: ["Deep study", "#009cde"],
-  light: ["Light study", "#07529a"],
-  reflection: ["Reflection", "#173dc5"],
-  recovery: ["Recovery", "#a9c5e5"],
-  life: ["Life", "#ff7900"],
-  fixed: ["Commitment", "#586e8a"],
+  combined: ["Study + Stretch", "#ec7d10"],
+  stretch: ["Stretch practice", "#ec7d10"],
+  deep: ["Deep study", "#ec0868"],
+  light: ["Light study", "#970546"],
+  reflection: ["Reflection", "#c200fb"],
+  recovery: ["Recovery", "#d6a9e5"],
+  life: ["Life", "#ec7d10"],
+  fixed: ["Commitment", "#7e588a"],
 };
 function read(key) {
   try {
@@ -701,7 +701,7 @@ export default function App({ user, onSignOut }) {
                 </div>
                 <div className="dashboard-plan-grid">
                   <div>
-                    <Badge color="#009cde">STUDY</Badge>
+                    <Badge color="#ec0868">STUDY</Badge>
                     {studyBlocks.slice(0, 3).map((b) => (
                       <button
                         className="dashboard-plan-item"
@@ -722,7 +722,7 @@ export default function App({ user, onSignOut }) {
                     )}
                   </div>
                   <div>
-                    <Badge color="#ff7900">STRETCH</Badge>
+                    <Badge color="#ec7d10">STRETCH</Badge>
                     {(data.learningPlanner || [])
                       .filter((x) => (x.type||x.kind)==='stretch' && !['complete','completed'].includes(x.status))
                       .slice(0, 3)
@@ -747,7 +747,7 @@ export default function App({ user, onSignOut }) {
                     )}
                   </div>
                   <div>
-                    <Badge color="#173dc5">GOALS</Badge>
+                    <Badge color="#c200fb">GOALS</Badge>
                     {data.goals
                       .filter((g) => goalForDay(g, date))
                       .slice(0, 3)
@@ -777,14 +777,14 @@ export default function App({ user, onSignOut }) {
                   label="Study planned"
                   value={duration(planned)}
                   foot={studyBlocks.length + " intentional study windows"}
-                  color="#009cde"
+                  color="#ec0868"
                 />
                 <Stat
                   icon={Flame}
                   label="Focused today"
                   value={duration(actual)}
                   foot={sessions.length + " completed sessions"}
-                  color="#ff7900"
+                  color="#ec7d10"
                 />
                 <Stat
                   icon={Network}
@@ -796,14 +796,14 @@ export default function App({ user, onSignOut }) {
                       0,
                     ) + " cross-concept connections"
                   }
-                  color="#173dc5"
+                  color="#c200fb"
                 />
                 <Stat
                   icon={Target}
                   label="Goals in motion"
                   value={data.goals.filter((g) => g.level === "Week").length}
                   foot="Weekly priorities with a purpose"
-                  color="#07529a"
+                  color="#970546"
                 />
               </div>
               <div className="dashboard-grid">
@@ -1475,13 +1475,13 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
   return (
     <>
       <div className="planner-view-bar"><div className="planner-category-filters" role="group" aria-label="Planner view">{['day','week'].map(v=><button key={v} type="button" aria-pressed={view===v} onClick={()=>setView(v)}>{v==='day'?'Day':'Week'}</button>)}</div></div>
-      <p className="planner-horizon-help">Set your longer-term direction in Goals. Plan the days and weeks that bring it to life here.</p>
+      <p className="planner-horizon-help">Set your longer term direction in Goals. Plan the days and weeks that bring it to life here.</p>
       <header className="planner-day-hero"><div><span className="eyebrow">YOUR TIME, AT A GLANCE</span><h2>Make time for what matters.</h2><p>Plan your weekly focus and make time for it in your day.</p><div className="planner-category-filters" role="group" aria-label="Filter time blocks">{categories.map(([id,label])=><button key={id} type="button" aria-pressed={category===id} aria-controls="planner-filtered-blocks" onClick={()=>setCategory(id)}>{label}<span>{scopeBlocks.filter(b=>matches(b,id)).length}</span></button>)}</div></div><time dateTime={today()} className="planner-current-date"><span>{new Date().getFullYear()} · {new Date().toLocaleString(undefined,{month:'long'})}</span><strong>{String(new Date().getDate()).padStart(2,'0')}</strong><small>{new Date().toLocaleString(undefined,{weekday:'long'})}</small></time></header>
       {view==='week'?<PlannerWeek data={data} date={date} category={category} selectDate={selectDate} openDay={day=>{selectDate(day);setView('day');}} add={add} edit={edit} start={start} stretch={stretch} save={save} notify={notify}/>:<>
-      {conflicts.length>0 && <div className="auth-notice" role="status">Recurring commitments need attention: {conflicts.map(b=>`${b.title} (${clock(b.start)}–${clock(b.end)})`).join(', ')}. They overlap existing blocks and haven't been added to this day.</div>}
+      {conflicts.length>0 && <div className="auth-notice" role="status">Recurring commitments need attention: {conflicts.map(b=>`${b.title} (${clock(b.start)}·${clock(b.end)})`).join(', ')}. They overlap existing blocks and haven't been added to this day.</div>}
       <div className="planner-summary">
         <Badge>{duration(booked)} allocated</Badge>
-        <Badge color="#173dc5">Unplanned / Available: {duration(Math.max(0,1440 - booked))}</Badge>
+        <Badge color="#c200fb">Unplanned / Available: {duration(Math.max(0,1440 - booked))}</Badge>
         <span>
           Leave breathing room for transitions, delays and rest.
         </span>
@@ -1510,7 +1510,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
         {visibleBlocks.map((b) => (
           <div className={`plan-row planner-kind-${categoryOf(b)}`} key={b.id}>
             <span className="mono">
-              {clock(b.start)} <small>— {clock(b.end)}</small>
+              {clock(b.start)} <small> · {clock(b.end)}</small>
             </span>
             <button className="plan-title" onClick={() => edit(b)}>
               <i style={{ background: KINDS[b.kind]?.[1] }} />
@@ -1527,7 +1527,7 @@ function Planner({ blocks, data, date, update, edit, start, stretch, notify, sav
                   {b.goalIds?.length > 1 ? `${b.goalIds.length} contributing goals` : b.goalId
                     ? "Goal: " +
                       (data.goals.find((g) => g.id === b.goalId)?.title ||
-                        "Unavailable — choose another goal")
+                        "Unavailable · choose another goal")
                     : "No linked goal · Edit to connect"}
                 </small>
               </span>
@@ -1670,7 +1670,7 @@ function SessionModal({ block, data, scheduledDate, close, submit, draft={}, cre
           <label><input type="checkbox" checked={runNow} onChange={e=>setRunNow(e.target.checked)}/> Start now</label>
         </div>
         {!runNow && <div className="form-grid"><Field label="Session date"><input type="date" required min={today()} disabled={Boolean(block)} value={scheduleDate} onChange={e=>setScheduleDate(e.target.value)}/></Field><Field label="Scheduled start"><input type="time" required value={scheduleTime} onChange={e=>setScheduleTime(e.target.value)}/></Field></div>}
-        {block && <p className="muted">Linked planner block: {scheduleDate} · {clock(block.start)}–{clock(block.end)}. Saved details update this same block.</p>}
+        {block && <p className="muted">Linked planner block: {scheduleDate} · {clock(block.start)} · {clock(block.end)}. Saved details update this same block.</p>}
         {sessionError && <p role="alert" className="error">{sessionError} Adjust the duration or choose a free time in the planner.</p>}
         <div className="form-actions">
           <Button primary type="submit">
@@ -1689,7 +1689,7 @@ function Study({ data, save, tick, start, finish, go }) {
   const upcomingPanel = (
       <details className="card study-upcoming study-upcoming-compact"><summary><span>Upcoming study <strong>{upcoming.length}</strong></span><span>View sessions <ChevronDown size={16}/></span></summary><div className="study-upcoming-content"><button className="text-btn" onClick={()=>go('Time planner')}>Open planner</button>
         <p className="muted">Your scheduled Study blocks, shared with the Time planner.</p>
-        {upcoming.map(b=><article key={`${b.scheduledDate}-${b.id}`} className="study-upcoming-row"><div><small>{b.scheduledDate} · {clock(b.start)}–{clock(b.end)}</small><h3>{b.title}</h3><p>{b.objective || 'Set an objective when you open this session.'}</p><small>{duration(studyMinutes(b))}{b.intention?` · ${b.intention}`:''}{b.goalIds?.length?` · ${b.goalIds.length} linked goals`:''}</small></div><Button disabled={Boolean(t)} onClick={()=>start(b)}>{b.scheduledDate===today()?'Begin session':'Prepare session'}</Button></article>)}
+        {upcoming.map(b=><article key={`${b.scheduledDate}-${b.id}`} className="study-upcoming-row"><div><small>{b.scheduledDate} · {clock(b.start)} · {clock(b.end)}</small><h3>{b.title}</h3><p>{b.objective || 'Set an objective when you open this session.'}</p><small>{duration(studyMinutes(b))}{b.intention?` · ${b.intention}`:''}{b.goalIds?.length?` · ${b.goalIds.length} linked goals`:''}</small></div><Button disabled={Boolean(t)} onClick={()=>start(b)}>{b.scheduledDate===today()?'Begin session':'Prepare session'}</Button></article>)}
         {!upcoming.length&&<p>No upcoming study yet. Set your study intention to start now or schedule for later.</p>}
       </div></details>
   );
@@ -1775,8 +1775,8 @@ function Study({ data, save, tick, start, finish, go }) {
     <div className={focus ? "study-area distraction-free" : "study-area"}>
       {!focus && upcomingPanel}
       <div className="section-head">
-        <Badge color="#009cde">
-          {t.cyclePhase==='break'?'FIVE-MINUTE BREAK':t.cyclePhase==='complete'?'FOCUS COMPLETE':t.started ? "FOCUS IN PROGRESS" : "PAUSED · TAKE A BREATH"}
+        <Badge color="#ec0868">
+          {t.cyclePhase==='break'?"FIVE MINUTE BREAK":t.cyclePhase==='complete'?'FOCUS COMPLETE':t.started ? "FOCUS IN PROGRESS" : "PAUSED · TAKE A BREATH"}
         </Badge>
         <button className="text-btn" onClick={() => setFocus(!focus)}>
           <Maximize2 size={16} />
@@ -2204,7 +2204,7 @@ function Growth({ data }) {
                         ? data.goals.filter((g) => g.progress >= 100).length
                         : view === "Harvest"
                           ? (data.harvests || []).length
-                          : "—"}
+                          : " · "}
               </strong>
               <span>
                 {view === "Knowledge"
@@ -2303,21 +2303,21 @@ function Growth({ data }) {
             duration(days.reduce((n, d) => n + d.planned, 0)) +
             " planned"
           }
-          color="#009cde"
+          color="#ec0868"
         />
         <Stat
           icon={CheckCircle2}
           label="Study sessions"
           value={data.sessions.length}
-          foot="All-time completed sessions"
-          color="#ff7900"
+          foot="All time completed sessions"
+          color="#ec7d10"
         />
         <Stat
           icon={Network}
           label="Confident concepts"
           value={data.concepts.filter((c) => c.status === "Confident").length}
-          foot="Self-assessed understanding"
-          color="#173dc5"
+          foot="Self assessed understanding"
+          color="#c200fb"
         />
         <Stat
           icon={NotebookPen}
@@ -2326,7 +2326,7 @@ function Growth({ data }) {
             Object.values(data.reflections).filter((r) => r.savedAt).length
           }
           foot="Learning carried forward"
-          color="#07529a"
+          color="#970546"
         />
       </div>
       <section className="card growth-chart">
@@ -2337,11 +2337,11 @@ function Growth({ data }) {
           </div>
           <div className="tree-legend">
             <span>
-              <i style={{ background: "#edf4fc" }} />
+              <i style={{ background: "#f8edfc" }} />
               Planned
             </span>
             <span>
-              <i style={{ background: "#009cde" }} />
+              <i style={{ background: "#ec0868" }} />
               Focused
             </span>
           </div>
@@ -2358,7 +2358,7 @@ function Growth({ data }) {
                 <div
                   style={{
                     height: (d.actual / max) * 180,
-                    background: "#009cde",
+                    background: "#ec0868",
                   }}
                   title={"Focused: " + Math.round(d.actual) + " minutes"}
                 />

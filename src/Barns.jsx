@@ -67,7 +67,7 @@ function ProgressVisual({ s, color }) {
         role="img"
         aria-label={`${s.percent}% milestone progress: ${s.practice.toFixed(1)} percentage points from practice, ${s.study.toFixed(1)} from study, ${s.goal.toFixed(1)} from goals`}
         style={{
-          background: `conic-gradient(#173dc5 0 ${s.practice}%, ${color} ${s.practice}% ${s.practice + s.study}%, #ff7900 ${s.practice + s.study}% ${s.practice + s.study + s.goal}%, #e6efeb ${s.practice + s.study + s.goal}% 100%)`,
+          background: `conic-gradient(#c200fb 0 ${s.practice}%, ${color} ${s.practice}% ${s.practice + s.study}%, #ec7d10 ${s.practice + s.study}% ${s.practice + s.study + s.goal}%, #e6efeb ${s.practice + s.study + s.goal}% 100%)`,
         }}
       >
         <span>{s.percent}%</span>
@@ -106,7 +106,7 @@ export default function Barns({ data, save }) {
         <p className="muted">
           Watch your cups fill as you practise abilities, complete study and
           achieve goals. Each percentage measures progress toward a
-          capacity-building milestone.
+          capacity building milestone.
         </p>
         <details className="capacity-formula">
           <summary>How your percentage grows</summary>
@@ -114,11 +114,11 @@ export default function Barns({ data, save }) {
             Practice contributes up to 60%: ten fully completed activities in
             the Stretch workspace, with partial completion counted. Study
             contributes up to 20%: ten completed sessions at their planned
-            duration. A half-length session earns half credit; extra time cannot
+            duration. A half length session earns half credit; extra time cannot
             inflate one session. Goals contribute up to 20%: five completed
-            goals, with partial progress counted. Only the lowest-level goals
+            goals, with partial progress counted. Only the lowest level goals
             count, including capacities linked to their parents. Each cup fills
-            to 100% at this milestone. Self-assessment notes remain separate.
+            to 100% at this milestone. Self assessment notes remain separate.
           </p>
           <p>
             Tag goals and sessions with capacities to connect them. Filters show
@@ -143,13 +143,13 @@ export default function Barns({ data, save }) {
               ))}
             </select>
           </Field>
-          <Field label="Barn sub-area">
+          <Field label="Barn sub area">
             <select
               disabled={!area}
               value={subAreaId}
               onChange={(e) => setSub(e.target.value)}
             >
-              <option value="">All sub-areas</option>
+              <option value="">All sub areas</option>
               {area?.subAreas.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -187,10 +187,10 @@ export default function Barns({ data, save }) {
                 ))}
               </div>
               <small>
-                <span style={{ color: "#173dc5" }}>●</span> Practice{" "}
+                <span style={{ color: "#c200fb" }}>●</span> Practice{" "}
                 {s.practice.toFixed(1)}% · <span style={{ color }}>●</span>{" "}
                 Study {s.study.toFixed(1)}% ·{" "}
-                <span style={{ color: "#ff7900" }}>●</span> Goals{" "}
+                <span style={{ color: "#ec7d10" }}>●</span> Goals{" "}
                 {s.goal.toFixed(1)}%
               </small>
               {s.organic > 0 && (
@@ -222,7 +222,7 @@ export default function Barns({ data, save }) {
           onClose={() => setSelected(null)}
         >
           <p>{CAPACITIES.find((c) => c.id === selected).question}</p>
-          <ProgressVisual s={stats(selected)} color="#009cde" />
+          <ProgressVisual s={stats(selected)} color="#ec0868" />
           <p>
             {stats(selected).practiceUnits.toFixed(1)} / 10 practice credits ·{" "}
             {stats(selected).studyUnits.toFixed(1)} / 10 study credits ·{" "}
@@ -252,7 +252,7 @@ export default function Barns({ data, save }) {
               EcoStudy also detected {stats(selected).organicSignals} organic
               evidence signal{stats(selected).organicSignals === 1 ? "" : "s"}{" "}
               from activity elsewhere in your workspace. This is supporting
-              evidence, not a self-assessment.
+              evidence, not a self assessment.
             </p>
           )}
           <div className="barn-next-step">
@@ -304,7 +304,7 @@ export default function Barns({ data, save }) {
               <h3>Capability Harvest</h3>
               <p className="muted">
                 Evidence recorded through practice. These claims do not
-                automatically change your self-assessment stage.
+                automatically change your self assessment stage.
               </p>
               {stats(selected).harvestEvidence.map((h) => (
                 <article className="barn-entry" key={`${h.planId}:${h.id}`}>
@@ -321,7 +321,7 @@ export default function Barns({ data, save }) {
             </section>
           )}
           <p className="muted">
-            Compare stages within the same life area and sub-area. A lower stage
+            Compare stages within the same life area and sub area. A lower stage
             in a harder context does not mean you have regressed.
           </p>
           {[...stats(selected).evidence].reverse().map((e) => (
@@ -410,7 +410,7 @@ export default function Barns({ data, save }) {
                 ))}
               </select>
             </Field>
-            <Field label="Evidence sub-area">
+            <Field label="Evidence sub area">
               <select
                 value={editing.subAreaId}
                 onChange={(e) =>
@@ -473,7 +473,7 @@ export default function Barns({ data, save }) {
                   setEditing({ ...editing, sessionId: e.target.value })
                 }
               >
-                <option value="">Real-life practice or other evidence</option>
+                <option value="">Real life practice or other evidence</option>
                 {capacitySummary(
                   data,
                   editing.capacityId,

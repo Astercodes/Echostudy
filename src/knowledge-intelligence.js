@@ -294,7 +294,7 @@ export function knowledgeIntelligence(
         `Revisit the weak material with ${prescriptions[gap] || "Test"}, then retest the same question.`,
         prescriptions[gap] || "test",
         items.some((a) => a.result === "Misconception") ? 98 : 90,
-        { topic: gap, basis: "Self-assessed Test evidence" },
+        { topic: gap, basis: "Self assessed Test evidence" },
       );
     const over = attempts.filter(
       (a) => Number.isFinite(a.confidence) && a.confidence - a.accuracy > 20,
@@ -308,7 +308,7 @@ export function knowledgeIntelligence(
         "Explain from memory before checking the source, then compare confidence with accuracy.",
         "regurgitate",
         80,
-        { basis: "Self-assessed calibration" },
+        { basis: "Self assessed calibration" },
       );
     const recall = [...(n.learning?.regurgitate?.attempts || [])]
       .sort((a, b) => time(a.at) - time(b.at))
@@ -408,11 +408,11 @@ export function knowledgeIntelligence(
           n,
           "application",
           `Take ${n.title} into practice`,
-          "Readiness is recorded, but this concept has no explicit application record. Area-level Stretch activity cannot prove this particular concept was applied.",
+          "Readiness is recorded, but this concept has no explicit application record. Area level Stretch activity cannot prove this particular concept was applied.",
           "Use Stretch to practise this concept, then document its application on the source.",
           "content",
           50,
-          { basis: "Missing concept-level application evidence" },
+          { basis: "Missing concept level application evidence" },
         );
     }
     const question = text(n.learning?.squeeze?.questions);
@@ -425,7 +425,7 @@ export function knowledgeIntelligence(
         "Investigate the question, update the field when resolved, or Plant it as a learning question.",
         "squeeze",
         70,
-        { basis: "Learner-recorded open question" },
+        { basis: "Learner recorded open question" },
       );
     if (n.kind === "seed")
       add(
@@ -510,7 +510,7 @@ export function knowledgeIntelligence(
           n,
           "connection",
           `Explore connections for ${n.title}`,
-          "This source has no active cross-links. There is not enough matching evidence to name a reliable target.",
+          "This source has no active cross links. There is not enough matching evidence to name a reliable target.",
           "Describe its relationships in Absorb, or add prerequisite concepts and related resources.",
           "absorb",
           30,

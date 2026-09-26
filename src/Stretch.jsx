@@ -178,7 +178,7 @@ export default function Stretch({
               </h2>
               <p>
                 Exercise knowledge through internal rehearsal, simulations,
-                social practice and real-world situations. Start small and
+                social practice and real world situations. Start small and
                 increase the challenge as you learn. No study completion score
                 is required.
               </p>
@@ -329,7 +329,7 @@ export default function Stretch({
                       ))}
                     </select>
                   </Field>
-                  <Field label="Stretch sub-area">
+                  <Field label="Stretch sub area">
                     <select
                       disabled={!area}
                       value={subAreaId}
@@ -338,7 +338,7 @@ export default function Stretch({
                         setGoal("");
                       }}
                     >
-                      <option value="">All sub-areas</option>
+                      <option value="">All sub areas</option>
                       {area?.subAreas.map((s) => (
                         <option key={s.id} value={s.id}>
                           {s.name}
@@ -810,16 +810,16 @@ export default function Stretch({
                   onChange={(e) =>
                     setEditor({ ...editor, title: e.target.value })
                   }
-                  placeholder="Lead a ten-minute team discussion"
+                  placeholder="Lead a ten minute team discussion"
                 />
               </Field>
-              <Field label="Apply — what will you actually do?">
+              <Field label="Apply · what will you actually do?">
                 <input
                   value={editor.applyAction || ""}
                   onChange={(e) =>
                     setEditor({ ...editor, applyAction: e.target.value })
                   }
-                  placeholder="Conduct the difficult-feedback conversation"
+                  placeholder="Conduct the difficult feedback conversation"
                 />
               </Field>
               <div className="form-grid">
@@ -837,7 +837,7 @@ export default function Stretch({
                     <option value="">Choose a horizon</option>
                     {Object.entries(HORIZONS).map(([id, spec]) => (
                       <option key={id} value={id}>
-                        {spec.name} — {spec.title}
+                        {spec.name} · {spec.title}
                       </option>
                     ))}
                   </select>
@@ -1081,7 +1081,7 @@ export default function Stretch({
                     </div>
                   ))}
                 </fieldset>
-                <Field label="Practice sub-area">
+                <Field label="Practice sub area">
                   <select
                     value={editor.subAreaId}
                     onChange={(e) =>

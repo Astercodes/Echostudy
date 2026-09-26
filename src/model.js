@@ -3,25 +3,26 @@ import { validateBarns } from "./barns.js";
 export { migrateWorkspace } from "./life-areas.js";
 
 export const COLORS = [
-  "#009cde",
-  "#173dc5",
-  "#07529a",
-  "#ff7900",
-  "#dcefff",
+  "#ec0868",
+  "#c200fb",
+  "#970546",
+  "#ec7d10",
+  "#f6dcff",
   "#ffd7b0",
-  "#ffd43b",
-  "#df352d",
+  "#ffbc0a",
+  "#fc2f00",
 ];
 export const readableAccent = (color) =>
   ({
-    "#009cde": "#006596",
-    "#a9c5e5": "#526b8c",
-    "#07529a": "#073d75",
-    "#ff7900": "#984400",
-    "#dcefff": "#164c7e",
+    "#ec0868": "#a00546",
+    "#c200fb": "#8200a9",
+    "#d6a9e5": "#7e528c",
+    "#970546": "#5a0775",
+    "#ec7d10": "#984400",
+    "#f6dcff": "#64167e",
     "#ffd7b0": "#8a450e",
-    "#ffd43b": "#765600",
-    "#df352d": "#b4231c",
+    "#ffbc0a": "#765600",
+    "#fc2f00": "#b4231c",
   })[color?.toLowerCase()] || color;
 export const DOMAINS = [
   "Mind & expertise",
@@ -182,7 +183,7 @@ export function insights(concepts) {
         concept: c.id,
         type: "Make a connection",
         title: "Connect " + c.title,
-        body: "This concept has no cross-links yet. Connect it to an idea in another branch.",
+        body: "This concept has no cross links yet. Connect it to an idea in another branch.",
       });
     if (c.status === "Confident" && !c.applied)
       out.push({
@@ -190,7 +191,7 @@ export function insights(concepts) {
         concept: c.id,
         type: "Put it into practice",
         title: "Apply " + c.title,
-        body: "You marked this confident, but have not recorded an application. Try a small real-world exercise.",
+        body: "You marked this confident, but have not recorded an application. Try a small real world exercise.",
       });
     if (
       c.reviewed &&
@@ -502,7 +503,7 @@ export function validateGoal(goal, goals, areas) {
   if (!LEVELS.includes(goal.level)) return "Choose a time horizon.";
   for (const location of goal.locations || []) {
     const linkedArea = areas.find(a=>a.id===location.areaId);
-    if (!linkedArea || (location.subAreaId && !linkedArea.subAreas.some(s=>s.id===location.subAreaId))) return 'Choose a valid life area and sub-area for each additional location, or remove the empty row.';
+    if (!linkedArea || (location.subAreaId && !linkedArea.subAreas.some(s=>s.id===location.subAreaId))) return "Choose a valid life area and sub area for each additional location, or remove the empty row.";
   }
   for (const id of goal.contributesTo || []) {
     const linked = goals.find(g=>g.id===id);
@@ -513,7 +514,7 @@ export function validateGoal(goal, goals, areas) {
   const area = areas.find((a) => a.id === goal.areaId);
   if (!area) return "Choose a life area.";
   if (goal.subAreaId && !area.subAreas.some((s) => s.id === goal.subAreaId))
-    return "Choose a sub-area that belongs to this life area.";
+    return "Choose a sub area that belongs to this life area.";
   if (
     !Number.isFinite(goal.progress) ||
     goal.progress < 0 ||
@@ -528,7 +529,7 @@ export function validateGoal(goal, goals, areas) {
       parent.areaId !== goal.areaId ||
       LEVELS.indexOf(parent.level) >= LEVELS.indexOf(goal.level)
     )
-      return "Link to a longer-horizon goal in the same life area.";
+      return "Link to a longer horizon goal in the same life area.";
   }
   if (
     goals.some(

@@ -280,7 +280,7 @@ function KnowledgeView({
       groups.unshift({
         id: "branch:unplaced",
         subAreaId: "",
-        title: "Choose a sub-area",
+        title: "Choose a sub area",
       });
     return groups
       .map((b) => ({
@@ -378,11 +378,11 @@ function KnowledgeView({
             <h2>{focusNode?.title || area.name}</h2>
             <p>
               One life area. A forest of knowledge, with a grove for each
-              sub-area.
+              sub area.
             </p>
           </div>
           {!focusNode && (
-            <Field label="Life-area tree">
+            <Field label="Life area tree">
               <select
                 value={area.id}
                 onChange={(e) => {
@@ -405,7 +405,7 @@ function KnowledgeView({
         {!compact && (
           <div className="orchard-toolbar">
             {!focusNode && (
-              <Field label="Grove (sub-area)">
+              <Field label="Grove (sub area)">
                 <select
                   value={branchId}
                   onChange={(e) => {
@@ -524,8 +524,8 @@ function KnowledgeView({
               >
                 <defs>
                   <linearGradient id={barkId}>
-                    <stop stopColor="#082b96" />
-                    <stop offset="1" stopColor="#009cde" />
+                    <stop stopColor="#8200a9" />
+                    <stop offset="1" stopColor="#ec0868" />
                   </linearGradient>
                 </defs>
                 {layout.paths.map((e, i) => {
@@ -538,7 +538,7 @@ function KnowledgeView({
                       fill="none"
                       data-knowledge-connection="true"
                       stroke={
-                        e.fruit && !focusNode ? "#ff7900" : `url(#${barkId})`
+                        e.fruit && !focusNode ? "#ec7d10" : `url(#${barkId})`
                       }
                       strokeWidth={e.main ? 12 : e.fruit ? 2 : 5}
                       strokeLinecap="round"
@@ -554,7 +554,7 @@ function KnowledgeView({
                       <path
                         key={"link" + n.id}
                         d={`M${a.x},${a.y} Q0,${Math.min(a.y, b.y) - 60} ${b.x},${b.y}`}
-                        stroke="#ff7900"
+                        stroke="#ec7d10"
                         strokeWidth="2"
                         strokeDasharray="5 7"
                         fill="none"
@@ -616,7 +616,7 @@ function KnowledgeView({
                         <>
                           <path
                             d="M-12 26 Q-16 70 -60 86 M0 24 V95 M14 26 Q20 65 64 84"
-                            stroke="#082b96"
+                            stroke="#8200a9"
                             strokeWidth="8"
                             fill="none"
                             strokeLinecap="round"
@@ -627,7 +627,7 @@ function KnowledgeView({
                             width="220"
                             height="74"
                             rx="28"
-                            fill="#082b96"
+                            fill="#8200a9"
                           />
                           <text
                             textAnchor="middle"
@@ -653,7 +653,7 @@ function KnowledgeView({
                         <>
                           <path
                             d="M0 -22 Q-2 -39 11 -39"
-                            stroke="#07529a"
+                            stroke="#970546"
                             strokeWidth="3"
                             fill="none"
                           />
@@ -663,12 +663,12 @@ function KnowledgeView({
                             rx="12"
                             ry="5"
                             transform="rotate(-25 13 -34)"
-                            fill="#009cde"
+                            fill="#ec0868"
                           />
                           <circle
                             r="24"
-                            fill={active ? "#ffd7b0" : "#ff7900"}
-                            stroke={active ? "#082b96" : "#d96300"}
+                            fill={active ? "#ffd7b0" : "#ec7d10"}
+                            stroke={active ? "#8200a9" : "#d96300"}
                             strokeWidth="2"
                           />
                           <path
@@ -682,7 +682,7 @@ function KnowledgeView({
                             textAnchor="middle"
                             y="45"
                             fontSize="12"
-                            fill="#102c54"
+                            fill="#431054"
                           >
                             {n.title.length > 23
                               ? n.title.slice(0, 21) + "…"
@@ -698,16 +698,16 @@ function KnowledgeView({
                             height="48"
                             rx={p.branch ? 20 : 10}
                             fill={
-                              active ? "#dcefff" : p.branch ? "#e7efff" : "#fff"
+                              active ? "#f6dcff" : p.branch ? "#f9e7ff" : "#fff"
                             }
-                            stroke={active ? "#ff7900" : "#a9c5e5"}
+                            stroke={active ? "#ec7d10" : "#d6a9e5"}
                             strokeWidth={active ? 3 : 1}
                           />
                           <text
                             textAnchor="middle"
                             y="-7"
                             fontSize="8"
-                            fill="#586e8a"
+                            fill="#7e588a"
                             letterSpacing="1"
                           >
                             {p.branch
@@ -718,7 +718,7 @@ function KnowledgeView({
                             textAnchor="middle"
                             y="11"
                             fontSize="12"
-                            fill="#102c54"
+                            fill="#431054"
                           >
                             {n.title.length > 23
                               ? n.title.slice(0, 21) + "…"
@@ -763,7 +763,7 @@ function KnowledgeView({
                 <>
                   <div className="orchard-eyebrow">
                     {sel.kind === "life-area"
-                      ? "LIFE-AREA FOREST"
+                      ? "LIFE AREA FOREST"
                       : sel.kind === "sub-area"
                         ? "GROVE"
                         : sel.kind === "fruit"
@@ -820,7 +820,7 @@ function KnowledgeView({
                         ? "Forest workspace"
                         : sel.standalone
                           ? "Independent knowledge & seeds"
-                          : "Choose a sub-area")}
+                          : "Choose a sub area")}
                   </p>
                   {isScopeNode(sel) ? (
                     <>
@@ -888,7 +888,7 @@ function KnowledgeView({
                       {["branch", "sub-branch"].includes(sel.kind) && (
                         <>
                           <Button onClick={() => create("sub-branch", sel)}>
-                            Grow a sub-branch
+                            Grow a sub branch
                           </Button>
                           <Button onClick={() => create("fruit", sel)}>
                             Grow a fruit
@@ -1027,9 +1027,9 @@ function KnowledgeView({
                   <Sprout size={42} />
                   <h2>A place for every idea.</h2>
                   <p>
-                    Each life area is a forest; each sub-area is a grove. Grow
+                    Each life area is a forest; each sub area is a grove. Grow
                     topic trees with foundational roots, a core stem, branches
-                    and sub-branches. Leaves hold atomic knowledge, fruits
+                    and sub branches. Leaves hold atomic knowledge, fruits
                     support deep study, and seeds hold new questions.
                   </p>
                   <p>
@@ -1037,8 +1037,8 @@ function KnowledgeView({
                     until you open it.
                   </p>
                   <small>
-                    Older concepts stay on “Choose a sub-area” until you place
-                    them. Manage life areas and sub-areas under Goals.
+                    Older concepts stay on “Choose a sub area” until you place
+                    them. Manage life areas and sub areas under Goals.
                   </small>
                 </div>
               )}
@@ -1276,7 +1276,7 @@ function KnowledgeView({
               <p>
                 Archive this knowledge workspace and its knowledge branches.
                 Notes, history and connections are preserved for restoration.
-                The life-area catalog and its goals remain available.
+                The life area catalog and its goals remain available.
               </p>
             ) : (
               <p>
@@ -1375,14 +1375,14 @@ function NodeEditor({ node, data, close, submit }) {
                 ))}
               </select>
             </Field>
-            <Field label="Grove (sub-area)">
+            <Field label="Grove (sub area)">
               <select
                 value={v.subAreaId}
                 onChange={(e) =>
                   setV({ ...v, subAreaId: e.target.value, parent: "" })
                 }
               >
-                <option value="">Choose a sub-area</option>
+                <option value="">Choose a sub area</option>
                 {area.subAreas.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -1441,7 +1441,7 @@ function NodeEditor({ node, data, close, submit }) {
           />
         </VoiceField>
         {v.kind !== "fruit" && (
-          <Field label="Prerequisites (comma-separated concept names)">
+          <Field label="Prerequisites (comma separated concept names)">
             <input
               value={(v.prerequisites || []).join(", ")}
               onChange={(e) =>

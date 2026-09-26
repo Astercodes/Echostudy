@@ -19,31 +19,31 @@ const growth = [
   },
 ];
 function PracticeArt() {
-  return <svg viewBox="0 0 600 460" role="img" aria-label="A golden idea travels over blue stepping stones through practice and feedback toward a real-world doorway">
-    <defs><linearGradient id="practice-step" x2="0" y2="1"><stop stopColor="#29b4f1"/><stop offset="1" stopColor="#133d94"/></linearGradient><radialGradient id="practice-light"><stop stopColor="#ffab36" stopOpacity=".25"/><stop offset="1" stopColor="#ffab36" stopOpacity="0"/></radialGradient></defs>
+  return <svg viewBox="0 0 600 460" role="img" aria-label="A golden idea travels over blue stepping stones through practice and feedback toward a real world doorway">
+    <defs><linearGradient id="practice-step" x2="0" y2="1"><stop stopColor="#bf29f1"/><stop offset="1" stopColor="#741394"/></linearGradient><radialGradient id="practice-light"><stop stopColor="#ffab36" stopOpacity=".25"/><stop offset="1" stopColor="#ffab36" stopOpacity="0"/></radialGradient></defs>
     <circle cx="390" cy="200" r="210" fill="url(#practice-light)"/>
-    <g fill="none" stroke="#86cfff" strokeOpacity=".16"><ellipse cx="300" cy="330" rx="250" ry="85"/><ellipse cx="300" cy="330" rx="195" ry="55"/></g>
-    <g className="practice-door"><path d="M418 286V105Q418 62 463 62Q508 62 508 105V286" fill="#ff932d"/><path d="M436 286V110Q436 82 463 82Q490 82 490 110V286" fill="#081d39"/><path d="M449 154l13-13 13 13m-13-13v53" fill="none" stroke="#ffd43b" strokeWidth="3"/></g>
-    {[[90,320,66],[192,280,66],[294,240,66],[396,200,66]].map(([x,y,w],i)=><g key={x} className="practice-stone" style={{animationDelay:`${i*.12}s`}}><path d={`M${x} ${y}l40-20 ${w} 20-40 22Z`} fill="#64c9ff"/><path d={`M${x} ${y}v35l66 24 40-24v-35l-40 22Z`} fill="url(#practice-step)"/></g>)}
+    <g fill="none" stroke="#e186ff" strokeOpacity=".16"><ellipse cx="300" cy="330" rx="250" ry="85"/><ellipse cx="300" cy="330" rx="195" ry="55"/></g>
+    <g className="practice-door"><path d="M418 286V105Q418 62 463 62Q508 62 508 105V286" fill="#ff932d"/><path d="M436 286V110Q436 82 463 82Q490 82 490 110V286" fill="#2d0839"/><path d="M449 154l13-13 13 13m-13-13v53" fill="none" stroke="#ffbc0a" strokeWidth="3"/></g>
+    {[[90,320,66],[192,280,66],[294,240,66],[396,200,66]].map(([x,y,w],i)=><g key={x} className="practice-stone" style={{animationDelay:`${i*.12}s`}}><path d={`M${x} ${y}l40-20 ${w} 20-40 22Z`} fill="#d864ff"/><path d={`M${x} ${y}v35l66 24 40-24v-35l-40 22Z`} fill="url(#practice-step)"/></g>)}
     <path className="practice-feedback" d="M437 313C380 419 154 413 104 368" fill="none" stroke="#ffad45" strokeWidth="2" strokeDasharray="7 8"/>
     <path d="M106 384l-6-19 20 3" fill="none" stroke="#ffad45" strokeWidth="2"/>
-    <g className="practice-idea"><circle r="24" fill="#ffab32"/><circle cx="-7" cy="-8" r="7" fill="#ffe5a0"/><circle r="33" fill="none" stroke="#ffd43b" strokeOpacity=".3"/></g>
-    <g fill="#c8def4" fontSize="10" letterSpacing="2"><text x="87" y="398">TRY</text><text x="240" y="418">REFLECT & RETURN</text><text x="404" y="40">REAL LIFE</text></g>
+    <g className="practice-idea"><circle r="24" fill="#ffab32"/><circle cx="-7" cy="-8" r="7" fill="#ffe5a0"/><circle r="33" fill="none" stroke="#ffbc0a" strokeOpacity=".3"/></g>
+    <g fill="#e9c8f4" fontSize="10" letterSpacing="2"><text x="87" y="398">TRY</text><text x="240" y="418">REFLECT & RETURN</text><text x="404" y="40">REAL LIFE</text></g>
   </svg>;
 }
 function BecomeArt() {
   return <svg viewBox="0 0 600 460" role="img" aria-label="Drops of practice and evidence fill a blue glass capacity vessel as golden rings expand outward">
-    <defs><linearGradient id="capacity-glass" x2="1" y2="1"><stop stopColor="#54c9ff" stopOpacity=".35"/><stop offset=".5" stopColor="#258bdf" stopOpacity=".08"/><stop offset="1" stopColor="#70d6ff" stopOpacity=".4"/></linearGradient><linearGradient id="capacity-water" x2="0" y2="1"><stop stopColor="#ffce49"/><stop offset="1" stopColor="#f36b27"/></linearGradient><clipPath id="capacity-clip"><path d="M190 170L211 348Q300 405 389 348L410 170Z"/></clipPath></defs>
-    <g className="capacity-halo" fill="none" stroke="#62baff" strokeOpacity=".24"><ellipse cx="300" cy="357" rx="235" ry="65"/><ellipse cx="300" cy="357" rx="190" ry="45"/></g>
-    <path d="M190 170L211 348Q300 405 389 348L410 170" fill="url(#capacity-glass)" stroke="#80cdff" strokeWidth="2"/>
+    <defs><linearGradient id="capacity-glass" x2="1" y2="1"><stop stopColor="#d454ff" stopOpacity=".35"/><stop offset=".5" stopColor="#b125df" stopOpacity=".08"/><stop offset="1" stopColor="#db70ff" stopOpacity=".4"/></linearGradient><linearGradient id="capacity-water" x2="0" y2="1"><stop stopColor="#ffce49"/><stop offset="1" stopColor="#f36b27"/></linearGradient><clipPath id="capacity-clip"><path d="M190 170L211 348Q300 405 389 348L410 170Z"/></clipPath></defs>
+    <g className="capacity-halo" fill="none" stroke="#d862ff" strokeOpacity=".24"><ellipse cx="300" cy="357" rx="235" ry="65"/><ellipse cx="300" cy="357" rx="190" ry="45"/></g>
+    <path d="M190 170L211 348Q300 405 389 348L410 170" fill="url(#capacity-glass)" stroke="#df80ff" strokeWidth="2"/>
     <g clipPath="url(#capacity-clip)"><g className="hero-water"><path d="M180 260Q240 243 300 260T420 260V410H180Z" fill="url(#capacity-water)" opacity=".9"/><ellipse cx="300" cy="260" rx="118" ry="14" fill="#ffe28b"/></g></g>
-    <ellipse cx="300" cy="170" rx="110" ry="29" fill="#0b2c55" fillOpacity=".6" stroke="#a0dcff" strokeWidth="2"/>
-    <path d="M206 193l18 141" stroke="#daf2ff" strokeWidth="5" opacity=".4" strokeLinecap="round"/>
+    <ellipse cx="300" cy="170" rx="110" ry="29" fill="#420b55" fillOpacity=".6" stroke="#e7a0ff" strokeWidth="2"/>
+    <path d="M206 193l18 141" stroke="#f6daff" strokeWidth="5" opacity=".4" strokeLinecap="round"/>
     <path className="hero-capacity-drop" d="M300 73Q274 108 300 113Q326 108 300 73" fill="#ffce49"/>
-    <g className="capacity-evidence" fill="#102f59" stroke="#63bbef"><rect x="77" y="112" width="95" height="66" rx="12"/><rect x="424" y="224" width="95" height="66" rx="12"/></g>
-    <g fill="none" stroke="#ffd43b" strokeWidth="3"><path d="M110 140l8 8 19-20M457 252l8 8 19-20"/></g>
-    <g fill="#c8def4" fontSize="10" letterSpacing="2"><text x="74" y="98">EXPERIENCE</text><text x="426" y="315">EVIDENCE</text><text x="223" y="431">ROOM FOR MORE</text></g>
-    <path d="M172 146Q200 112 255 116M424 256h-24" fill="none" stroke="#7ecbfa" strokeDasharray="4 6"/>
+    <g className="capacity-evidence" fill="#471059" stroke="#cc63ef"><rect x="77" y="112" width="95" height="66" rx="12"/><rect x="424" y="224" width="95" height="66" rx="12"/></g>
+    <g fill="none" stroke="#ffbc0a" strokeWidth="3"><path d="M110 140l8 8 19-20M457 252l8 8 19-20"/></g>
+    <g fill="#e9c8f4" fontSize="10" letterSpacing="2"><text x="74" y="98">EXPERIENCE</text><text x="426" y="315">EVIDENCE</text><text x="223" y="431">ROOM FOR MORE</text></g>
+    <path d="M172 146Q200 112 255 116M424 256h-24" fill="none" stroke="#db7efa" strokeDasharray="4 6"/>
   </svg>;
 }
 export function EcosystemSculpture() {
@@ -70,8 +70,8 @@ export function EcosystemSculpture() {
       >
         <defs>
           <radialGradient id="eco-glow">
-            <stop stopColor="#168fff" stopOpacity=".35" />
-            <stop offset="1" stopColor="#168fff" stopOpacity="0" />
+            <stop stopColor="#c516ff" stopOpacity=".35" />
+            <stop offset="1" stopColor="#c516ff" stopOpacity="0" />
           </radialGradient>
           <linearGradient id="eco-fruit" x2="1" y2="1">
             <stop stopColor="#ffd949" />
@@ -83,7 +83,7 @@ export function EcosystemSculpture() {
         <g
           className="sculpture-orbits"
           fill="none"
-          stroke="#98caff"
+          stroke="#e598ff"
           strokeOpacity=".18"
         >
           <ellipse cx="300" cy="235" rx="247" ry="142" />
@@ -99,7 +99,7 @@ export function EcosystemSculpture() {
         <g
           className="sculpture-branches"
           fill="none"
-          stroke="#66bfff"
+          stroke="#d966ff"
           strokeWidth="3"
           strokeLinecap="round"
         >
@@ -111,15 +111,15 @@ export function EcosystemSculpture() {
           />
         </g>
         <g className="sculpture-fruit">
-          <circle cx="103" cy="91" r="19" fill="#ffd43b" />
-          <circle cx="208" cy="75" r="10" fill="#91d5ff" />
+          <circle cx="103" cy="91" r="19" fill="#ffbc0a" />
+          <circle cx="208" cy="75" r="10" fill="#e391ff" />
           <circle cx="300" cy="91" r="29" fill="url(#eco-fruit)" />
           <circle cx="397" cy="57" r="9" fill="#ff6350" />
-          <circle cx="481" cy="79" r="20" fill="#009cde" />
+          <circle cx="481" cy="79" r="20" fill="#ec0868" />
           <circle cx="119" cy="279" r="29" fill="url(#eco-fruit)" />
           <circle cx="465" cy="255" r="33" fill="url(#eco-fruit)" />
-          <path d="M463 221q-8-30 21-39q10 28-21 39" fill="#80d2ff" />
-          <path d="M296 58q-3-22 20-25q5 22-20 25" fill="#80d2ff" />
+          <path d="M463 221q-8-30 21-39q10 28-21 39" fill="#df80ff" />
+          <path d="M296 58q-3-22 20-25q5 22-20 25" fill="#df80ff" />
         </g>
         <g fill="#fff" fontFamily="inherit" fontSize="10" letterSpacing="2">
           <text x="60" y="137">
@@ -142,14 +142,14 @@ export function EcosystemSculpture() {
           cx="300"
           cy="248"
           r="42"
-          fill="#102e63"
-          stroke="#84c7ff"
+          fill="#4e1063"
+          stroke="#e084ff"
           strokeWidth="1"
         />
         <path
           d="M300 269v-27q-25 0-25-23q26-4 25 23q0-32 27-31q4 25-27 31"
           fill="none"
-          stroke="#ffd43b"
+          stroke="#ffbc0a"
           strokeWidth="3"
         />
         <circle
@@ -158,7 +158,7 @@ export function EcosystemSculpture() {
           cy="248"
           r="49"
           fill="none"
-          stroke="#ffd43b"
+          stroke="#ffbc0a"
           strokeOpacity=".6"
         />
       </svg>}

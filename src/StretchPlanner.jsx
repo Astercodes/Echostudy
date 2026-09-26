@@ -667,7 +667,7 @@ export default function StretchPlanner({
                       >
                         <strong>
                           Topic {l.order}
-                          {l.title ? ` — ${l.title}` : ""}
+                          {l.title ? ` · ${l.title}` : ""}
                         </strong>
                         <small>
                           {
@@ -737,7 +737,7 @@ export default function StretchPlanner({
                     <details className="subtopic-group" key={module}>
                       <summary>
                         Subtopic {mi + 1}
-                        {module ? " — " + module : ""}
+                        {module ? " · " + module : ""}
                         <small>
                           {
                             level.steps.filter(
@@ -786,7 +786,7 @@ export default function StretchPlanner({
                               aria-label={
                                 "Select lesson " +
                                 (li + 1) +
-                                (s.title ? " — " + s.title : "")
+                                (s.title ? " · " + s.title : "")
                               }
                               checked={selectedLessons.includes(s.id)}
                               onChange={() => toggleLesson(s.id)}
@@ -803,7 +803,7 @@ export default function StretchPlanner({
                                 )}
                               </span>
                               Lesson {li + 1}
-                              {s.title ? " — " + s.title : ""}
+                              {s.title ? " · " + s.title : ""}
                               <small>{s.duration} min focus</small>
                             </button>
                           </div>
@@ -1197,7 +1197,7 @@ export default function StretchPlanner({
                         Subtopic{" "}
                         {l.steps.find((s) => s.moduleTitle === m)?.moduleOrder +
                           1 || 1}
-                        {m ? " — " + m : ""}
+                        {m ? " · " + m : ""}
                       </h4>
                       <ul>
                         {l.steps
@@ -1205,7 +1205,7 @@ export default function StretchPlanner({
                           .map((s, i) => (
                             <li key={i}>
                               Lesson {(s.lessonOrder || 0) + 1}
-                              {s.title ? " — " + s.title : ""}
+                              {s.title ? " · " + s.title : ""}
                             </li>
                           ))}
                       </ul>
@@ -1276,13 +1276,13 @@ export default function StretchPlanner({
                   ))}
                 </select>
               </Field>
-              <Field label="Sub-life area">
+              <Field label="Sub life area">
                 <select
                   disabled={!area || busy}
                   value={sub}
                   onChange={(e) => setSub(e.target.value)}
                 >
-                  <option value="">All sub-areas</option>
+                  <option value="">All sub areas</option>
                   {data.lifeAreas
                     .find((a) => a.id === area)
                     ?.subAreas.map((s) => (

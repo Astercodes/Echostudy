@@ -234,7 +234,7 @@ function Content({ node, mode, data, persist, close, switchMode, documents, sele
               {node.learning?.test?.attempts?.length ??
                 node.learning?.taste?.attempts?.length ??
                 0}{" "}
-              self-tests · {node.learning?.apply?.entries?.length || 0}{" "}
+              self tests · {node.learning?.apply?.entries?.length || 0}{" "}
               applications recorded
             </p>
           </>
@@ -346,7 +346,7 @@ function Taste({ node, persist, close }) {
                   {q.answer ||
                     "No reference answer saved. Check your sources and notes, then assess honestly. You can add a reference in Questions & answers."}
                 </p>
-                <p>This is your self-assessment, not an automatic grade.</p>
+                <p>This is your self assessment, not an automatic grade.</p>
                 <div className="fruit-actions">
                   {[
                     "Needs work",
@@ -497,7 +497,7 @@ function Apply({ node, persist, close }) {
               }
             >
               {[
-                "Real-life situation",
+                "Real life situation",
                 "Problem",
                 "Case",
                 "Project",
@@ -557,7 +557,7 @@ function Apply({ node, persist, close }) {
             <article key={e.id}>
               <small>
                 {new Date(e.at).toLocaleString()} ·{" "}
-                {e.type || "Real-life situation"}
+                {e.type || "Real life situation"}
               </small>
               <h3>{e.context}</h3>
               <p className="orchard-text">{e.evidence}</p>
@@ -619,7 +619,7 @@ function Regurgitate({ node, persist, close }) {
         </Field>
         <details>
           <summary>Optional progressive hints</summary>
-          <p>Hints are learner-authored. Open only when needed.</p>
+          <p>Hints are learner authored. Open only when needed.</p>
           <details>
             <summary>Edit hint ladder</summary>
             <VoiceField label="Hint ladder">

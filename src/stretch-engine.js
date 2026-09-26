@@ -80,7 +80,7 @@ const scopes = {
     15,
   ],
   Leaf: [
-    "Try a five-minute micropractice",
+    "Try a five minute micropractice",
     "Use this definition, fact, formula or principle in three small examples and check your reasoning.",
     5,
   ],
@@ -107,7 +107,7 @@ export function knowledgeStretch(
     internal:
       "Mentally rehearse the task and write out your decisions before trying it.",
     simulated:
-      "Use a made-up case or mock scenario with clear constraints; record your performance.",
+      "Use a made up case or mock scenario with clear constraints; record your performance.",
     social:
       "Practise with a willing peer or mentor and ask for specific feedback.",
     real: "Choose an appropriate real situation within your responsibility and document what happens.",

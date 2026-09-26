@@ -101,7 +101,7 @@ export function saveTreeNode(data, node) {
   if (!node.title.trim() || !area)
     throw new Error("Give this idea a title and life area.");
   if (node.subAreaId && !area.subAreas.some((s) => s.id === node.subAreaId))
-    throw new Error("Choose a sub-area in this life area.");
+    throw new Error("Choose a sub area in this life area.");
   const parent = data.concepts.find((n) => n.id === node.parent);
   if (
     node.parent &&

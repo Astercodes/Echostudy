@@ -23,8 +23,8 @@ const ids = {
 const planned = {
   "Choose a capacity you want to intentionally build, create a focused Build, and develop it over 7, 30, 90 days, or your own timeframe.":
     "Planned: focused Capacity Builds over 7, 30, 90 days, or your own timeframe.",
-  "And keep your focus with a built-in timer or Pomodoro sessions with scheduled breaks.":
-    "Keep your focus with the built-in timer. Pomodoro sessions with scheduled breaks are planned.",
+  "And keep your focus with a built in timer or Pomodoro sessions with scheduled breaks.":
+    "Keep your focus with the built in timer. Pomodoro sessions with scheduled breaks are planned.",
   "Or choose your own timeframe.":
     "Custom goal horizons are planned; daily through yearly goals are available.",
   "And discover patterns in how you learn best.":

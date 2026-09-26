@@ -435,7 +435,7 @@ export default function KnowledgeSources({ scope, label }) {
                   <input
                     aria-label={`Reference location for ${r.title}`}
                     value={ref.locator || ""}
-                    placeholder="e.g. pp. 24–28 or 12:40–15:10"
+                    placeholder="e.g. pp. 24 · 28 or 12:40 · 15:10"
                     onChange={(e) =>
                       save((d) =>
                         updateReference(d, r.id, ref.id, {
