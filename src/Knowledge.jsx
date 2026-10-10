@@ -12,7 +12,6 @@ import {
 import { Button, Field, Modal } from "./App";
 import { uid, validateBackup } from "./model";
 import KnowledgeIntelligence from "./KnowledgeIntelligence";
-import KnowledgeMastery from "./KnowledgeMastery";
 import EcosystemSearch from "./EcosystemSearch";
 import { knowledgeStretch } from "./stretch-engine";
 import {
@@ -87,7 +86,7 @@ export default function Knowledge(props) {
   const [tabs, setTabs] = useState(
       props.initialNodeId ? [props.initialNodeId] : [],
     ),
-    [active, setActive] = useState(props.initialNodeId || props.initialView || "ecosystem");
+    [active, setActive] = useState(props.initialNodeId || "ecosystem");
   if (props.compact) return <KnowledgeView {...props} />;
   const entries = knowledgeEntries(props.data);
   const focus = (node) => {
@@ -116,9 +115,6 @@ export default function Knowledge(props) {
           onClick={() => setActive("ecosystem")}
         >
           Knowledge Ecosystem
-        </button>
-        <button type="button" role="tab" id="mastery-tab" aria-controls="mastery-panel" aria-selected={active === "mastery"} onClick={() => setActive("mastery")}>
-          Knowledge Mastery {props.data.masteryDecks?.filter(d => d.dueAt <= Date.now()).length > 0 && <span>· {props.data.masteryDecks.filter(d => d.dueAt <= Date.now()).length} ready</span>}
         </button>
         {tabs.map((id) => {
           const node = entries.find((n) => n.id === id);
@@ -155,7 +151,6 @@ export default function Knowledge(props) {
       >
         <KnowledgeView {...props} onFocus={focus} />
       </div>
-      {active === "mastery" && <div role="tabpanel" id="mastery-panel" aria-labelledby="mastery-tab"><KnowledgeMastery data={props.data} save={props.save} onFocus={focus} /></div>}
       {tabs.map((id) => {
         const node = entries.find((n) => n.id === id && !n.trashedAt);
         return (

@@ -1,6 +1,6 @@
 # Knowledge Mastery Engine
 
-Open **Knowledge Ecosystem → Knowledge Mastery**, or **Open Knowledge Mastery** in Study workspace.
+Open **Knowledge Mastery** directly from the main sidebar. It is a standalone feature with its own library and workspace. The Study workspace shortcut opens the same feature; linked ecosystem sources still open in Knowledge Ecosystem.
 
 This MVP accepts pasted source text, TXT and Markdown uploads, and text files from the Resource Library. Other library resources can be linked with a chapter, page or timestamp while the relevant passage is pasted. Documents are not silently truncated. The limit is 18,000 characters per source and 80 concepts per structure.
 

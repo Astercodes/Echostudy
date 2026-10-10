@@ -133,9 +133,8 @@ const {
     );
     await page.reload();
     await page
-      .getByRole("button", { name: "Knowledge Ecosystem", exact: true })
+      .getByRole("button", { name: "Knowledge Mastery", exact: true })
       .click();
-    await page.getByRole("tab", { name: /Knowledge Mastery/ }).click();
     await page
       .getByRole("button", { name: /Cybersecurity.*Resume saved answer/ })
       .click();
@@ -197,9 +196,8 @@ const {
     );
     await page.reload();
     await page
-      .getByRole("button", { name: "Knowledge Ecosystem", exact: true })
+      .getByRole("button", { name: "Knowledge Mastery", exact: true })
       .click();
-    await page.getByRole("tab", { name: /Knowledge Mastery/ }).click();
     await page
       .locator(".kme-deck")
       .filter({ hasText: "Cybersecurity" })

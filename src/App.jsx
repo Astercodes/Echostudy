@@ -21,6 +21,7 @@ import {
   Target,
   BookOpen,
   Network,
+  Brain,
   Library,
   NotebookPen,
   ChartNoAxesCombined,
@@ -80,6 +81,7 @@ import {
 } from "./model";
 import { putFile, getFile } from "./files";
 import Knowledge from "./Knowledge";
+import KnowledgeMastery from "./KnowledgeMastery";
 import Resources from "./Resources";
 import Goals, { GoalModal } from "./Goals";
 import Barns, { CapacityPicker } from "./Barns.jsx";
@@ -94,6 +96,7 @@ const NAV = [
   ["Study workspace", BookOpen],
   ["Stretch workspace", Flame],
   ["Knowledge Ecosystem", Network],
+  ["Knowledge Mastery", Brain],
   ["Resource library", Library],
   ["Reflection", NotebookPen],
   ["Growth", ChartNoAxesCombined],
@@ -282,7 +285,6 @@ export default function App({ user, onSignOut }) {
   const [stretchDraft, setStretchDraft] = useState(null);
   const [growthGoalId,setGrowthGoalId]=useState('');
   const [knowledgeFocus, setKnowledgeFocus] = useState(null);
-  const [knowledgeView, setKnowledgeView] = useState("ecosystem");
   const nextKnowledgeStep = useMemo(
     () =>
       page === "Dashboard" ? knowledgeIntelligence(data).suggestions[0] : null,
@@ -545,7 +547,7 @@ export default function App({ user, onSignOut }) {
           </div>
         </header>
         <main>
-          {page !== 'Growth Planner' && <div className="page-heading">
+          {!['Growth Planner', 'Knowledge Mastery'].includes(page) && <div className="page-heading">
             <div>
               <div className="eyebrow">
                 <Sun size={15} />
@@ -1192,7 +1194,7 @@ export default function App({ user, onSignOut }) {
           )}
           {page === "Study workspace" && (
             <>
-            <div className="kme-study-entry"><div><strong>Reconstruct what you know.</strong><p>Structure a source, practise active recall and check for missing ideas. {(data.masteryDecks || []).filter(d => d.dueAt <= Date.now()).length} ready for retrieval.</p></div><Button onClick={() => {setKnowledgeFocus(null);setKnowledgeView("mastery");go("Knowledge Ecosystem");}}>Open Knowledge Mastery</Button></div>
+            <div className="kme-study-entry"><div><strong>Reconstruct what you know.</strong><p>Structure a source, practise active recall and check for missing ideas. {(data.masteryDecks || []).filter(d => d.dueAt <= Date.now()).length} ready for retrieval.</p></div><Button onClick={() => go("Knowledge Mastery")}>Open Knowledge Mastery</Button></div>
             <Study
               data={data}
               save={save}
@@ -1216,13 +1218,15 @@ export default function App({ user, onSignOut }) {
               }}
             />
           )}
+          {page === "Knowledge Mastery" && (
+            <KnowledgeMastery data={data} save={save} onFocus={node => {setKnowledgeFocus(node.id);go("Knowledge Ecosystem");}} />
+          )}
           {page === "Knowledge Ecosystem" && (
             <Knowledge
               data={data}
               save={save}
               notify={notify}
               initialNodeId={knowledgeFocus}
-              initialView={knowledgeView}
               onStretch={(draft) => {
                 setStretchDraft(draft);
                 go("Stretch workspace");
