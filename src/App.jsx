@@ -282,6 +282,7 @@ export default function App({ user, onSignOut }) {
   const [stretchDraft, setStretchDraft] = useState(null);
   const [growthGoalId,setGrowthGoalId]=useState('');
   const [knowledgeFocus, setKnowledgeFocus] = useState(null);
+  const [knowledgeView, setKnowledgeView] = useState("ecosystem");
   const nextKnowledgeStep = useMemo(
     () =>
       page === "Dashboard" ? knowledgeIntelligence(data).suggestions[0] : null,
@@ -1190,6 +1191,8 @@ export default function App({ user, onSignOut }) {
               }}/>
           )}
           {page === "Study workspace" && (
+            <>
+            <div className="kme-study-entry"><div><strong>Reconstruct what you know.</strong><p>Structure a source, practise active recall and check for missing ideas. {(data.masteryDecks || []).filter(d => d.dueAt <= Date.now()).length} ready for retrieval.</p></div><Button onClick={() => {setKnowledgeFocus(null);setKnowledgeView("mastery");go("Knowledge Ecosystem");}}>Open Knowledge Mastery</Button></div>
             <Study
               data={data}
               save={save}
@@ -1198,6 +1201,7 @@ export default function App({ user, onSignOut }) {
               finish={() => setModal({ type: "finish" })}
               go={go}
             />
+            </>
           )}
           {page === "Stretch workspace" && (
             <Stretch
@@ -1218,6 +1222,7 @@ export default function App({ user, onSignOut }) {
               save={save}
               notify={notify}
               initialNodeId={knowledgeFocus}
+              initialView={knowledgeView}
               onStretch={(draft) => {
                 setStretchDraft(draft);
                 go("Stretch workspace");

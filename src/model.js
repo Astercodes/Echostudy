@@ -1,5 +1,6 @@
 import { migrateWorkspace, validateLifeArea } from "./life-areas.js";
 import { validateBarns } from "./barns.js";
+import { validMasteryState } from "./mastery-engine.js";
 export { migrateWorkspace } from "./life-areas.js";
 
 export const COLORS = [
@@ -432,6 +433,7 @@ export function validateBackup(s) {
   if (![s.goals, s.concepts, s.sessions, s.notes, s.resources].every(unique))
     return false;
   if (!validateBarns(s)) return false;
+  if (!validMasteryState(s)) return false;
   if (s.version === 2) {
     if (
       !Array.isArray(s.lifeAreas) ||
